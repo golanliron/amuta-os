@@ -75,12 +75,12 @@ const T = {
     nav: { features: "יתרונות", how: "איך זה עובד", pricing: "מחירים", cta: "התחילו עכשיו" },
     hero: {
       badge: "DayDay",
-      title1: "AI שמוציא תשובות",
-      title2: "מה-",
-      titleBrand: "Monday · Sheets · Excel",
-      title3: " שלכם.",
-      sub: "חברו את הטבלאות, הבורדים והאקסלים שלכם. DayDay יודע לנתח הכי טוב.",
-      desc: "תתחילו לדבר על הנתונים שלכם מהיום! דוחות להנהלה בלחיצה, התראות חכמות, אוטומציות שעובדות. Monday, Google Sheets או Excel - הכל מתחבר.",
+      title1: "הפכו את הטבלאות, האקסלים והמאנדיי שלכם",
+      title2: "",
+      titleBrand: "למערכת AI חכמה",
+      title3: " בלחיצה.",
+      sub: "Monday · Google Sheets · Excel",
+      desc: "חברו את מקורות הנתונים שלכם ותתחילו לקבל תשובות, דוחות להנהלה, התראות חכמות ואוטומציות - הכל בעברית, הכל אוטומטי.",
       cta: "התחילו עכשיו",
     },
     features: {
@@ -273,6 +273,28 @@ export default function Home() {
       setItems(data.items);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "שגיאה בטעינת הבורד");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleLoadSheets() {
+    const url = sheetsUrl.trim();
+    if (!url) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/sheets", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sheetsUrl: url }),
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      setBoard(data.board);
+      setItems(data.items);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "שגיאה בטעינת הגיליון");
     } finally {
       setLoading(false);
     }
@@ -552,7 +574,7 @@ export default function Home() {
             display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))",
             gap: 20, alignItems: "stretch",
           }}>
-            {t.pricing.plans.map((plan, idx) => ({ ...plan, price: ["79", "149", "299", "699"][idx], popular: idx === 2 })).map((plan, i) => (
+            {t.pricing.plans.map((plan, idx) => ({ ...plan, price: ["250", "450", "750", "1,200"][idx], popular: idx === 2 })).map((plan, i) => (
               <div key={i} style={{
                 background: plan.popular ? "linear-gradient(135deg, #6C5CE7, #A29BFE)" : "#FFFFFF",
                 borderRadius: 22, padding: plan.popular ? "4px" : "0",
@@ -676,7 +698,7 @@ export default function Home() {
                     fontSize: 42, fontWeight: 900,
                     background: "linear-gradient(135deg, #6C5CE7, #FD79A8)",
                     WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-                  }}>+119</span>
+                  }}>+199</span>
                   <span style={{ fontSize: 15, color: "#7C6FD0", fontWeight: 600 }}> {t.pricing.month}</span>
                 </div>
                 <button onClick={scrollToForm} style={{
@@ -1002,17 +1024,26 @@ export default function Home() {
               </div>
 
               <button
-                disabled={true}
+                onClick={handleLoadSheets}
+                disabled={!sheetsUrl.trim() || loading}
                 style={{
                   width: "100%", marginTop: 8,
-                  background: "linear-gradient(135deg, #34A853, #0F9D58)",
+                  background: (!sheetsUrl.trim() || loading)
+                    ? "rgba(52,168,83,0.3)"
+                    : "linear-gradient(135deg, #34A853, #0F9D58)",
                   color: "#FFF", border: "none", borderRadius: 12,
                   padding: "15px", fontSize: 16, fontWeight: 700,
-                  cursor: "not-allowed", opacity: 0.5,
+                  cursor: (!sheetsUrl.trim() || loading) ? "not-allowed" : "pointer",
                   display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                  boxShadow: (!sheetsUrl.trim() || loading) ? "none" : "0 6px 20px rgba(52,168,83,0.25)",
+                  transition: "all 0.3s",
                 }}
               >
-                {lang === "he" ? "בקרוב - חיבור Google Sheets" : "Coming Soon - Google Sheets"}
+                {loading ? (
+                  <><Spinner size={16} color="#FFF" /> {lang === "he" ? "טוען גיליון..." : "Loading sheet..."}</>
+                ) : (
+                  lang === "he" ? "התחילו - ניתוח הגיליון" : "Start - Analyze Sheet"
+                )}
               </button>
             </>}
 
