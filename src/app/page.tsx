@@ -95,25 +95,25 @@ const T = {
     },
     steps: {
       title: "איך זה עובד?",
-      sub: "שלושה צעדים ואתם בפנים",
+      sub: "בחרו את המקור שלכם - שלושה צעדים ואתם בפנים",
       items: [
-        { title: "הדביקו API Token", desc: "מהפרופיל שלכם במאנדיי" },
-        { title: "הזינו מספר בורד", desc: "מה-URL של הבורד" },
-        { title: "קבלו תשובות", desc: "ותתחילו לדבר עם הנתונים שלכם" },
+        { title: "בחרו מקור נתונים", desc: "Monday, Google Sheets או Excel" },
+        { title: "חברו בלחיצה", desc: "API Token, לינק לשיט או העלאת קובץ" },
+        { title: "קבלו תשובות", desc: "AI שמנתח, מתריע ומייצר דוחות" },
       ],
     },
     pricing: {
       title: "תוכניות ומחירים",
       sub: "בחרו את התוכנית שמתאימה לכם",
       plans: [
-        { name: "בקטנה", desc: "נתחיל עם בורד אחד, נראה מה זה יכול לעשות", boards: "1" },
-        { name: "יאללה שניים", desc: "שני בורדים, מה יכול להיות", boards: "2" },
-        { name: "השלישייה שלי", desc: "שלושה בורדים, עכשיו זה כבר רציני", boards: "3" },
-        { name: "הכל שלי", desc: "כל הבורדים שלכם, תצליחו אותנו", boards: "ללא הגבלה" },
+        { name: "בקטנה", desc: "בורד אחד או גיליון אחד, נראה מה זה יכול לעשות", boards: "1" },
+        { name: "יאללה", desc: "3 בורדים/גיליונות, דוחות PDF, התראות", boards: "3" },
+        { name: "פרו", desc: "5 בורדים/גיליונות, אוטומציות, דוחות להנהלה", boards: "5" },
+        { name: "הכל שלי", desc: "ללא הגבלה + White Label + API", boards: "ללא הגבלה" },
       ],
       popular: "הכי פופולרי",
       month: "₪/חודש",
-      boardLabel: (b: string) => b === "ללא הגבלה" ? "ללא הגבלת בורדים" : `${b} ${Number(b) === 1 ? "בורד" : "בורדים"}`,
+      boardLabel: (b: string) => b === "ללא הגבלה" ? "ללא הגבלה" : `${b} ${Number(b) === 1 ? "בורד / גיליון" : "בורדים / גיליונות"}`,
       cta: "התחילו עכשיו",
       addon: { badge: "PREMIUM ADD-ON", title: "המערכת שלכם. המותג שלכם.", desc: "לוגו, צבעים, עיצוב מלא. הלקוחות שלכם יחשבו שבניתם את זה לבד. מערכת AI ממותגת שנראית מיליון דולר.", cta: "הוסיפו מיתוג" },
     },
@@ -148,8 +148,8 @@ const T = {
       ],
     },
     contact: {
-      title: "רוצים יותר מה-DayDay שלכם?",
-      sub: "טענות, מחמאות, קומפלימנטים?",
+      title: "רוצים מערכת ואוטומציות רק בשבילכם?",
+      sub: "התלהבתם? בואו נדבר על התאמה אישית לארגון שלכם",
       cta: "צרו קשר",
     },
     footer: "כל הזכויות שמורות.",
@@ -255,6 +255,8 @@ export default function Home() {
   const [mobileMenu, setMobileMenu] = useState(false);
   const [showTokenHelp, setShowTokenHelp] = useState(false);
   const [showBoardHelp, setShowBoardHelp] = useState(false);
+  const [dataSource, setDataSource] = useState<"monday" | "sheets" | "excel">("monday");
+  const [sheetsUrl, setSheetsUrl] = useState("");
   const [lang, setLang] = useState<Lang>("he");
   const t = T[lang];
   const formRef = useRef<HTMLDivElement>(null);
@@ -550,7 +552,7 @@ export default function Home() {
             display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))",
             gap: 20, alignItems: "stretch",
           }}>
-            {t.pricing.plans.map((plan, idx) => ({ ...plan, price: ["19.90", "29.90", "59.90", "399"][idx], popular: idx === 2 })).map((plan, i) => (
+            {t.pricing.plans.map((plan, idx) => ({ ...plan, price: ["49", "99", "199", "499"][idx], popular: idx === 2 })).map((plan, i) => (
               <div key={i} style={{
                 background: plan.popular ? "linear-gradient(135deg, #6C5CE7, #A29BFE)" : "#FFFFFF",
                 borderRadius: 22, padding: plan.popular ? "4px" : "0",
@@ -695,30 +697,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Coming Soon ── */}
-      <section style={{
-        padding: "48px 24px", background: "#FFFFFF", textAlign: "center",
-      }}>
-        <div className="fade-up" style={{ maxWidth: 600, margin: "0 auto" }}>
-          <div style={{
-            display: "inline-flex", alignItems: "center", gap: 8,
-            background: "rgba(108,92,231,0.06)", borderRadius: 16,
-            padding: "14px 28px",
-            border: "1px dashed rgba(108,92,231,0.2)",
-          }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6C5CE7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
-            </svg>
-            <span style={{ fontSize: 14, fontWeight: 700, color: "#6C5CE7" }}>
-              {t.comingSoon.title}:
-            </span>
-            {t.comingSoon.items.map((item, i) => (
-              <span key={i} style={{ fontSize: 14, color: "#2D2252", fontWeight: 600 }}>{item}</span>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ── Get Started Form ── */}
       <section ref={formRef} id="start" style={{
         padding: "80px 24px", background: "#FFFFFF", textAlign: "center",
@@ -737,6 +715,33 @@ export default function Home() {
             boxShadow: "0 8px 40px rgba(108,92,231,0.08)",
             textAlign: "right",
           }}>
+            {/* Data Source Tabs */}
+            <div style={{ display: "flex", gap: 6, marginBottom: 24, background: "rgba(108,92,231,0.04)", borderRadius: 14, padding: 4 }}>
+              {([
+                { id: "monday" as const, label: "Monday.com", icon: "M" },
+                { id: "sheets" as const, label: "Google Sheets", icon: "S" },
+                { id: "excel" as const, label: "Excel", icon: "X" },
+              ]).map(src => (
+                <button key={src.id} onClick={() => setDataSource(src.id)} style={{
+                  flex: 1, padding: "10px 8px", borderRadius: 10, border: "none", cursor: "pointer",
+                  background: dataSource === src.id ? "#6C5CE7" : "transparent",
+                  color: dataSource === src.id ? "#FFF" : "#7C6FD0",
+                  fontSize: 13, fontWeight: 700, transition: "all 0.2s",
+                  display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
+                }}>
+                  <span style={{
+                    width: 22, height: 22, borderRadius: 6,
+                    background: dataSource === src.id ? "rgba(255,255,255,0.2)" : "rgba(108,92,231,0.08)",
+                    display: "inline-flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 11, fontWeight: 800,
+                  }}>{src.icon}</span>
+                  {src.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Monday Form */}
+            {dataSource === "monday" && <>
             {/* API Token */}
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
               <label style={{ fontWeight: 700, fontSize: 14, color: "#2D2252" }}>
@@ -926,6 +931,141 @@ export default function Home() {
                 t.form.loadBtn
               )}
             </button>
+            </>}
+
+            {/* Google Sheets Form */}
+            {dataSource === "sheets" && <>
+              <div style={{ textAlign: "center", padding: "20px 0" }}>
+                <div style={{
+                  width: 64, height: 64, borderRadius: 16, margin: "0 auto 16px",
+                  background: "linear-gradient(135deg, #34A853, #0F9D58)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 28, color: "#FFF", fontWeight: 800,
+                }}>S</div>
+                <h3 style={{ fontSize: 18, fontWeight: 700, color: "#2D2252", marginBottom: 8 }}>
+                  {lang === "he" ? "חברו את Google Sheets שלכם" : "Connect your Google Sheets"}
+                </h3>
+                <p style={{ fontSize: 13, color: "#7C6FD0", marginBottom: 20, lineHeight: 1.6 }}>
+                  {lang === "he" ? "הדביקו את הלינק של הגיליון שלכם ו-DayDay ינתח אותו" : "Paste your sheet link and DayDay will analyze it"}
+                </p>
+              </div>
+
+              <label style={{ fontWeight: 700, fontSize: 14, color: "#2D2252", marginBottom: 6, display: "block" }}>
+                {lang === "he" ? "לינק לגיליון" : "Sheet URL"}
+              </label>
+              <p style={{ color: "#A29BFE", fontSize: 12, margin: "0 0 10px" }}>
+                {lang === "he" ? "docs.google.com/spreadsheets/d/..." : "docs.google.com/spreadsheets/d/..."}
+              </p>
+              <input
+                type="url"
+                value={sheetsUrl}
+                onChange={(e) => setSheetsUrl(e.target.value)}
+                placeholder="https://docs.google.com/spreadsheets/d/..."
+                style={{
+                  width: "100%", background: "#F9F7FF",
+                  border: "1.5px solid rgba(108,92,231,0.15)",
+                  color: "#2D2252", borderRadius: 12,
+                  padding: "13px 16px", fontSize: 14,
+                  outline: "none", direction: "ltr",
+                  transition: "border-color 0.2s",
+                  marginBottom: 12,
+                }}
+                onFocus={e => e.target.style.borderColor = "#34A853"}
+                onBlur={e => e.target.style.borderColor = "rgba(108,92,231,0.15)"}
+              />
+
+              <div style={{
+                background: "rgba(52,168,83,0.06)", borderRadius: 12, padding: "14px 16px",
+                border: "1px solid rgba(52,168,83,0.15)", marginBottom: 16,
+              }}>
+                <p style={{ fontSize: 12, fontWeight: 700, color: "#2D2252", margin: "0 0 8px" }}>
+                  {lang === "he" ? "איך זה עובד?" : "How it works?"}
+                </p>
+                {(lang === "he" ? [
+                  "פתחו את הגיליון ב-Google Sheets",
+                  "לחצו Share ותוודאו שזה \"Anyone with link can view\"",
+                  "העתיקו את הלינק והדביקו כאן",
+                ] : [
+                  "Open your spreadsheet in Google Sheets",
+                  "Click Share and set to \"Anyone with link can view\"",
+                  "Copy the link and paste here",
+                ]).map((step, i) => (
+                  <div key={i} style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 4, fontSize: 12, color: "#2D2252" }}>
+                    <div style={{
+                      width: 20, height: 20, borderRadius: 6, background: "#34A853",
+                      color: "#FFF", fontSize: 11, fontWeight: 800,
+                      display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+                    }}>{i + 1}</div>
+                    <span>{step}</span>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                disabled={true}
+                style={{
+                  width: "100%", marginTop: 8,
+                  background: "linear-gradient(135deg, #34A853, #0F9D58)",
+                  color: "#FFF", border: "none", borderRadius: 12,
+                  padding: "15px", fontSize: 16, fontWeight: 700,
+                  cursor: "not-allowed", opacity: 0.5,
+                  display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                }}
+              >
+                {lang === "he" ? "בקרוב - חיבור Google Sheets" : "Coming Soon - Google Sheets"}
+              </button>
+            </>}
+
+            {/* Excel Form */}
+            {dataSource === "excel" && <>
+              <div style={{ textAlign: "center", padding: "20px 0" }}>
+                <div style={{
+                  width: 64, height: 64, borderRadius: 16, margin: "0 auto 16px",
+                  background: "linear-gradient(135deg, #217346, #185C37)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 28, color: "#FFF", fontWeight: 800,
+                }}>X</div>
+                <h3 style={{ fontSize: 18, fontWeight: 700, color: "#2D2252", marginBottom: 8 }}>
+                  {lang === "he" ? "העלו קובץ Excel" : "Upload Excel File"}
+                </h3>
+                <p style={{ fontSize: 13, color: "#7C6FD0", marginBottom: 20, lineHeight: 1.6 }}>
+                  {lang === "he" ? "גררו קובץ .xlsx או .csv ו-DayDay ינתח אותו" : "Drag an .xlsx or .csv file and DayDay will analyze it"}
+                </p>
+              </div>
+
+              <div style={{
+                border: "2px dashed rgba(33,115,70,0.3)",
+                borderRadius: 16, padding: "40px 20px",
+                textAlign: "center", marginBottom: 16,
+                background: "rgba(33,115,70,0.03)",
+              }}>
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#217346" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: 12 }}>
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="17 8 12 3 7 8" />
+                  <line x1="12" y1="3" x2="12" y2="15" />
+                </svg>
+                <p style={{ fontSize: 14, fontWeight: 600, color: "#217346", marginBottom: 4 }}>
+                  {lang === "he" ? "גררו קובץ לכאן" : "Drag file here"}
+                </p>
+                <p style={{ fontSize: 12, color: "#7C6FD0" }}>
+                  .xlsx, .xls, .csv
+                </p>
+              </div>
+
+              <button
+                disabled={true}
+                style={{
+                  width: "100%",
+                  background: "linear-gradient(135deg, #217346, #185C37)",
+                  color: "#FFF", border: "none", borderRadius: 12,
+                  padding: "15px", fontSize: 16, fontWeight: 700,
+                  cursor: "not-allowed", opacity: 0.5,
+                  display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                }}
+              >
+                {lang === "he" ? "בקרוב - ניתוח Excel" : "Coming Soon - Excel Analysis"}
+              </button>
+            </>}
           </div>
         </div>
       </section>
