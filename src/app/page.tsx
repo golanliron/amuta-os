@@ -552,7 +552,7 @@ export default function Home() {
             display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))",
             gap: 20, alignItems: "stretch",
           }}>
-            {t.pricing.plans.map((plan, idx) => ({ ...plan, price: ["49", "99", "199", "499"][idx], popular: idx === 2 })).map((plan, i) => (
+            {t.pricing.plans.map((plan, idx) => ({ ...plan, price: ["79", "149", "299", "699"][idx], popular: idx === 2 })).map((plan, i) => (
               <div key={i} style={{
                 background: plan.popular ? "linear-gradient(135deg, #6C5CE7, #A29BFE)" : "#FFFFFF",
                 borderRadius: 22, padding: plan.popular ? "4px" : "0",
@@ -676,7 +676,7 @@ export default function Home() {
                     fontSize: 42, fontWeight: 900,
                     background: "linear-gradient(135deg, #6C5CE7, #FD79A8)",
                     WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-                  }}>+79.90</span>
+                  }}>+119</span>
                   <span style={{ fontSize: 15, color: "#7C6FD0", fontWeight: 600 }}> {t.pricing.month}</span>
                 </div>
                 <button onClick={scrollToForm} style={{
