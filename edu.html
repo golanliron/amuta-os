@@ -1479,14 +1479,11 @@ footer {
 <nav class="nav-tabs">
   <div class="nav-tabs-inner">
     <a class="nav-tab active" onclick="filterCategory('all', this)">הכל</a>
-    <a class="nav-tab" onclick="filterCategory('agents', this)">סוכנים חכמים</a>
-    <a class="nav-tab" onclick="filterCategory('management', this)">ניהול בית ספר</a>
+    <a class="nav-tab" onclick="filterCategory('management', this)">כלי ניהול</a>
     <a class="nav-tab" onclick="filterCategory('pedagogy', this)">פדגוגיה</a>
-
-    <a class="nav-tab" onclick="filterCategory('communication', this)">תקשורת</a>
-    <a class="nav-tab" onclick="filterCategory('assessment', this)">הערכה ומדידה</a>
-    <a class="nav-tab" onclick="filterCategory('welfare', this)">רווחה ורגש</a>
-    <a class="nav-tab" onclick="filterCategory('special', this)">חינוך מיוחד</a>
+    <a class="nav-tab" onclick="filterCategory('counseling', this)">ייעוצי</a>
+    <a class="nav-tab" onclick="filterCategory('social', this)">חברתי</a>
+    <a class="nav-tab" onclick="filterCategory('learning', this)">מערכות למידה</a>
   </div>
 </nav>
 
@@ -1557,408 +1554,49 @@ footer {
     <a href="#" class="section-link">הצג הכל <span class="material-icons-round">arrow_back</span></a>
   </div>
   <div class="category-grid">
-    <a class="category-card" onclick="filterCategory('agents')">
-      <div class="category-icon" style="background: linear-gradient(135deg, #7c4dff, #536dfe);">
-        <span class="material-icons-round" style="color:white;">smart_toy</span>
-      </div>
-      <h3>סוכנים חכמים</h3>
-      <p>AI לכיתה</p>
-    </a>
     <a class="category-card" onclick="filterCategory('management')">
       <div class="category-icon" style="background: linear-gradient(135deg, #1a73e8, #4285f4);">
         <span class="material-icons-round" style="color:white;">business</span>
       </div>
-      <h3>ניהול בי"ס</h3>
-      <p>מערכות ניהול</p>
+      <h3>כלי ניהול</h3>
+      <p>23 מערכות</p>
     </a>
     <a class="category-card" onclick="filterCategory('pedagogy')">
       <div class="category-icon" style="background: linear-gradient(135deg, #00c853, #69f0ae);">
         <span class="material-icons-round" style="color:white;">menu_book</span>
       </div>
       <h3>פדגוגיה</h3>
-      <p>למידה והוראה</p>
+      <p>10 מערכות</p>
     </a>
-    <a class="category-card" onclick="filterCategory('communication')">
+    <a class="category-card" onclick="filterCategory('counseling')">
       <div class="category-icon" style="background: linear-gradient(135deg, #e91e63, #f48fb1);">
-        <span class="material-icons-round" style="color:white;">forum</span>
-      </div>
-      <h3>תקשורת</h3>
-      <p>הורים וצוות</p>
-    </a>
-    <a class="category-card" onclick="filterCategory('assessment')">
-      <div class="category-icon" style="background: linear-gradient(135deg, #00bfa5, #64ffda);">
-        <span class="material-icons-round" style="color:white;">assessment</span>
-      </div>
-      <h3>הערכה ומדידה</h3>
-      <p>מבחנים ודוחות</p>
-    </a>
-    <a class="category-card" onclick="filterCategory('welfare')">
-      <div class="category-icon" style="background: linear-gradient(135deg, #f44336, #ef9a9a);">
         <span class="material-icons-round" style="color:white;">favorite</span>
       </div>
-      <h3>רווחה ורגש</h3>
-      <p>אקלים בי"ס</p>
+      <h3>ייעוצי</h3>
+      <p>8 מערכות</p>
     </a>
-    <a class="category-card" onclick="filterCategory('special')">
-      <div class="category-icon" style="background: linear-gradient(135deg, #ffab00, #ffe082);">
-        <span class="material-icons-round" style="color:white;">accessibility_new</span>
+    <a class="category-card" onclick="filterCategory('social')">
+      <div class="category-icon" style="background: linear-gradient(135deg, #ffab00, #ffd54f);">
+        <span class="material-icons-round" style="color:white;">people</span>
       </div>
-      <h3>חינוך מיוחד</h3>
-      <p>הנגשה והתאמות</p>
+      <h3>חברתי</h3>
+      <p>9 מערכות</p>
+    </a>
+    <a class="category-card" onclick="filterCategory('learning')">
+      <div class="category-icon" style="background: linear-gradient(135deg, #7c4dff, #536dfe);">
+        <span class="material-icons-round" style="color:white;">auto_awesome</span>
+      </div>
+      <h3>מערכות למידה</h3>
+      <p>25 מערכות</p>
     </a>
   </div>
 </section>
 
-<!-- ===== TOP AGENTS ===== -->
-<section class="section fade-up" id="products">
-  <div class="section-header">
-    <h2 class="section-title">סוכנים חכמים מובילים</h2>
-    <a href="#" class="section-link">הצג הכל <span class="material-icons-round">arrow_back</span></a>
-  </div>
-  <div class="products-scroll">
-
-    <div class="product-card" onclick="openModal('agent-lesson')">
-      <div class="product-thumb" style="background: linear-gradient(135deg, #7c4dff, #536dfe);">
-        <div class="pattern"></div>
-        <span class="material-icons-round">auto_awesome</span>
-      </div>
-      <div class="product-info">
-        <div class="product-name">סוכן מערכי שיעור</div>
-        <div class="product-dev">EduPlay AI</div>
-        <div class="product-meta">
-          <span class="product-rating">4.9 <span class="material-icons-round">star</span></span>
-          <span class="product-price">149 ש"ח/חודש</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="product-card" onclick="openModal('agent-parent')">
-      <div class="product-thumb" style="background: linear-gradient(135deg, #e91e63, #f06292);">
-        <div class="pattern"></div>
-        <span class="material-icons-round">family_restroom</span>
-      </div>
-      <div class="product-info">
-        <div class="product-name">סוכן תקשורת הורים</div>
-        <div class="product-dev">ParentConnect</div>
-        <div class="product-meta">
-          <span class="product-rating">4.8 <span class="material-icons-round">star</span></span>
-          <span class="product-price">99 ש"ח/חודש</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="product-card" onclick="openModal('agent-assessment')">
-      <div class="product-thumb" style="background: linear-gradient(135deg, #00bfa5, #1de9b6);">
-        <div class="pattern"></div>
-        <span class="material-icons-round">quiz</span>
-      </div>
-      <div class="product-info">
-        <div class="product-name">סוכן הערכה חכם</div>
-        <div class="product-dev">AssessAI</div>
-        <div class="product-meta">
-          <span class="product-rating">4.7 <span class="material-icons-round">star</span></span>
-          <span class="product-price">179 ש"ח/חודש</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="product-card" onclick="openModal('agent-behavior')">
-      <div class="product-thumb" style="background: linear-gradient(135deg, #ff6d00, #ffa726);">
-        <div class="pattern"></div>
-        <span class="material-icons-round">psychology</span>
-      </div>
-      <div class="product-info">
-        <div class="product-name">סוכן ניהול התנהגות</div>
-        <div class="product-dev">BehaviorPro</div>
-        <div class="product-meta">
-          <span class="product-rating">4.6 <span class="material-icons-round">star</span></span>
-          <span class="product-price">129 ש"ח/חודש</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="product-card" onclick="openModal('agent-schedule')">
-      <div class="product-thumb" style="background: linear-gradient(135deg, #1a73e8, #42a5f5);">
-        <div class="pattern"></div>
-        <span class="material-icons-round">calendar_month</span>
-      </div>
-      <div class="product-info">
-        <div class="product-name">סוכן מערכת שעות</div>
-        <div class="product-dev">ScheduleBot</div>
-        <div class="product-meta">
-          <span class="product-rating">4.8 <span class="material-icons-round">star</span></span>
-          <span class="product-price">199 ש"ח/חודש</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="product-card" onclick="openModal('agent-sped')">
-      <div class="product-thumb" style="background: linear-gradient(135deg, #ffab00, #ffd54f);">
-        <div class="pattern"></div>
-        <span class="material-icons-round">accessibility_new</span>
-      </div>
-      <div class="product-info">
-        <div class="product-name">סוכן חינוך מיוחד</div>
-        <div class="product-dev">IncludeAI</div>
-        <div class="product-meta">
-          <span class="product-rating">4.9 <span class="material-icons-round">star</span></span>
-          <span class="product-price">159 ש"ח/חודש</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== SCHOOL MANAGEMENT ===== -->
-<section class="section fade-up">
-  <div class="section-header">
-    <h2 class="section-title">ניהול בית ספר</h2>
-    <a href="#" class="section-link">הצג הכל <span class="material-icons-round">arrow_back</span></a>
-  </div>
-  <div class="products-grid">
-
-    <div class="product-wide" onclick="openModal('mgmt-erp')">
-      <div class="product-wide-icon" style="background: linear-gradient(135deg, #1a73e8, #4285f4);">
-        <span class="material-icons-round">dashboard</span>
-      </div>
-      <div class="product-wide-info">
-        <h3>EduERP - מערכת ניהול מלאה</h3>
-        <p>ניהול תלמידים, צוות, תקציב, נוכחות, ציונים, דוחות ולוחות זמנים - הכל במערכת אחת מבוססת ענן</p>
-        <div class="product-wide-footer">
-          <div class="product-meta">
-            <span class="product-rating">4.9 <span class="material-icons-round">star</span></span>
-            <span style="color:var(--text-secondary)">2,340 בתי ספר</span>
-          </div>
-          <button class="btn-install" onclick="event.stopPropagation(); addToCart('EduERP', 499, '#1a73e8')">499 ש"ח/חודש</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="product-wide" onclick="openModal('mgmt-attendance')">
-      <div class="product-wide-icon" style="background: linear-gradient(135deg, #00c853, #69f0ae);">
-        <span class="material-icons-round">fact_check</span>
-      </div>
-      <div class="product-wide-info">
-        <h3>AttendEase - נוכחות חכמה</h3>
-        <p>מערכת נוכחות דיגיטלית עם זיהוי פנים, התראות הורים אוטומטיות ודוחות סיכום שבועיים</p>
-        <div class="product-wide-footer">
-          <div class="product-meta">
-            <span class="product-rating">4.7 <span class="material-icons-round">star</span></span>
-            <span style="color:var(--text-secondary)">1,890 בתי ספר</span>
-          </div>
-          <button class="btn-install" onclick="event.stopPropagation(); addToCart('AttendEase', 89, '#00c853')">89 ש"ח/חודש</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="product-wide" onclick="openModal('mgmt-budget')">
-      <div class="product-wide-icon" style="background: linear-gradient(135deg, #ff6d00, #ffab40);">
-        <span class="material-icons-round">account_balance_wallet</span>
-      </div>
-      <div class="product-wide-info">
-        <h3>BudgetSchool - ניהול תקציב</h3>
-        <p>ניהול תקציב בית ספר, מעקב הוצאות, הפקת דוחות לרשות ובקרת תקציבים בזמן אמת</p>
-        <div class="product-wide-footer">
-          <div class="product-meta">
-            <span class="product-rating">4.6 <span class="material-icons-round">star</span></span>
-            <span style="color:var(--text-secondary)">980 בתי ספר</span>
-          </div>
-          <button class="btn-install" onclick="event.stopPropagation(); addToCart('BudgetSchool', 149, '#ff6d00')">149 ש"ח/חודש</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="product-wide" onclick="openModal('mgmt-safety')">
-      <div class="product-wide-icon" style="background: linear-gradient(135deg, #f44336, #ef5350);">
-        <span class="material-icons-round">security</span>
-      </div>
-      <div class="product-wide-info">
-        <h3>SafeSchool - בטיחות וחירום</h3>
-        <p>ניהול תרגילי חירום, מערכת התרעה בזמן אמת, מיפוי סיכונים ודיווח תקריות</p>
-        <div class="product-wide-footer">
-          <div class="product-meta">
-            <span class="product-rating">4.8 <span class="material-icons-round">star</span></span>
-            <span style="color:var(--text-secondary)">1,450 בתי ספר</span>
-          </div>
-          <button class="btn-install" onclick="event.stopPropagation(); addToCart('SafeSchool', 199, '#f44336')">199 ש"ח/חודש</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== PEDAGOGY ===== -->
-<section class="section fade-up">
-  <div class="section-header">
-    <h2 class="section-title">פדגוגיה ולמידה</h2>
-    <a href="#" class="section-link">הצג הכל <span class="material-icons-round">arrow_back</span></a>
-  </div>
-  <div class="products-scroll">
-
-    <div class="product-card" onclick="openModal('ped-lms')">
-      <div class="product-thumb" style="background: linear-gradient(135deg, #00c853, #2e7d32);">
-        <div class="pattern"></div>
-        <span class="material-icons-round">laptop_chromebook</span>
-      </div>
-      <div class="product-info">
-        <div class="product-name">LMS Pro - פלטפורמת למידה</div>
-        <div class="product-dev">EduTech IL</div>
-        <div class="product-meta">
-          <span class="product-rating">4.8 <span class="material-icons-round">star</span></span>
-          <span class="product-price">249 ש"ח/חודש</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="product-card">
-      <div class="product-thumb" style="background: linear-gradient(135deg, #9c27b0, #ba68c8);">
-        <div class="pattern"></div>
-        <span class="material-icons-round">videocam</span>
-      </div>
-      <div class="product-info">
-        <div class="product-name">VideoClass - שיעורים מוקלטים</div>
-        <div class="product-dev">MediaLearn</div>
-        <div class="product-meta">
-          <span class="product-rating">4.5 <span class="material-icons-round">star</span></span>
-          <span class="product-price">79 ש"ח/חודש</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="product-card">
-      <div class="product-thumb" style="background: linear-gradient(135deg, #3f51b5, #7986cb);">
-        <div class="pattern"></div>
-        <span class="material-icons-round">extension</span>
-      </div>
-      <div class="product-info">
-        <div class="product-name">GameLearn - למידה מבוססת משחק</div>
-        <div class="product-dev">PlayEdu</div>
-        <div class="product-meta">
-          <span class="product-rating">4.9 <span class="material-icons-round">star</span></span>
-          <span class="product-price">129 ש"ח/חודש</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="product-card">
-      <div class="product-thumb" style="background: linear-gradient(135deg, #009688, #4db6ac);">
-        <div class="pattern"></div>
-        <span class="material-icons-round">translate</span>
-      </div>
-      <div class="product-info">
-        <div class="product-name">LangBot - סוכן שפות</div>
-        <div class="product-dev">LinguaAI</div>
-        <div class="product-meta">
-          <span class="product-rating">4.7 <span class="material-icons-round">star</span></span>
-          <span class="product-price">89 ש"ח/חודש</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="product-card">
-      <div class="product-thumb" style="background: linear-gradient(135deg, #795548, #a1887f);">
-        <div class="pattern"></div>
-        <span class="material-icons-round">calculate</span>
-      </div>
-      <div class="product-info">
-        <div class="product-name">MathMentor - מתמטיקה אישית</div>
-        <div class="product-dev">NumAI</div>
-        <div class="product-meta">
-          <span class="product-rating">4.8 <span class="material-icons-round">star</span></span>
-          <span class="product-price">99 ש"ח/חודש</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== REMINDERS & COMMUNICATION ===== -->
-<section class="section fade-up">
-  <div class="section-header">
-    <h2 class="section-title">תזכורות ותקשורת</h2>
-    <a href="#" class="section-link">הצג הכל <span class="material-icons-round">arrow_back</span></a>
-  </div>
-  <div class="products-grid">
-
-    <div class="product-wide">
-      <div class="product-wide-icon" style="background: linear-gradient(135deg, #e91e63, #f48fb1);">
-        <span class="material-icons-round">notifications_active</span>
-      </div>
-      <div class="product-wide-info">
-        <h3>RemindEdu - תזכורות אוטומטיות</h3>
-        <p>תזכורות SMS, וואטסאפ ומייל למורים, הורים ותלמידים. אוטומציה מלאה לאירועים, מבחנים ופגישות</p>
-        <div class="product-wide-footer">
-          <div class="product-meta">
-            <span class="product-rating">4.8 <span class="material-icons-round">star</span></span>
-          </div>
-          <button class="btn-install free" onclick="event.stopPropagation(); addToCart('RemindEdu', 0, '#e91e63')">חינם</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="product-wide">
-      <div class="product-wide-icon" style="background: linear-gradient(135deg, #00bcd4, #4dd0e1);">
-        <span class="material-icons-round">chat</span>
-      </div>
-      <div class="product-wide-info">
-        <h3>ParentChat - תקשורת הורים</h3>
-        <p>פלטפורמת תקשורת מאובטחת בין הצוות החינוכי להורים, עם תרגום אוטומטי, תבניות וקבוצות</p>
-        <div class="product-wide-footer">
-          <div class="product-meta">
-            <span class="product-rating">4.6 <span class="material-icons-round">star</span></span>
-          </div>
-          <button class="btn-install" onclick="event.stopPropagation(); addToCart('ParentChat', 69, '#00bcd4')">69 ש"ח/חודש</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="product-wide">
-      <div class="product-wide-icon" style="background: linear-gradient(135deg, #673ab7, #9575cd);">
-        <span class="material-icons-round">campaign</span>
-      </div>
-      <div class="product-wide-info">
-        <h3>SchoolNews - עיתון בי"ס דיגיטלי</h3>
-        <p>יצירת ניוזלטר אוטומטי, עיתון בית ספר דיגיטלי ודפי מידע מעוצבים בקליק אחד</p>
-        <div class="product-wide-footer">
-          <div class="product-meta">
-            <span class="product-rating">4.5 <span class="material-icons-round">star</span></span>
-          </div>
-          <button class="btn-install" onclick="event.stopPropagation(); addToCart('SchoolNews', 49, '#673ab7')">49 ש"ח/חודש</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="product-wide">
-      <div class="product-wide-icon" style="background: linear-gradient(135deg, #ff9800, #ffb74d);">
-        <span class="material-icons-round">event</span>
-      </div>
-      <div class="product-wide-info">
-        <h3>EventSchool - ניהול אירועים</h3>
-        <p>תכנון וניהול טקסים, ימי הורים, טיולים ואירועי בית ספר. כולל RSVP, לוגיסטיקה ותיעוד</p>
-        <div class="product-wide-footer">
-          <div class="product-meta">
-            <span class="product-rating">4.7 <span class="material-icons-round">star</span></span>
-          </div>
-          <button class="btn-install" onclick="event.stopPropagation(); addToCart('EventSchool', 89, '#ff9800')">89 ש"ח/חודש</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== QUARTET COLLECTION BANNER ===== -->
-<section class="section fade-up">
-  <div style="background:linear-gradient(135deg,#7c4dff,#536dfe);border-radius:20px;padding:32px 40px;color:white;display:flex;align-items:center;gap:24px;flex-wrap:wrap;max-width:1400px;margin:0 auto">
-    <div style="flex:0 0 64px;width:64px;height:64px;background:rgba(255,255,255,0.2);border-radius:16px;display:flex;align-items:center;justify-content:center"><span class="material-icons-round" style="font-size:32px">apps</span></div>
-    <div style="flex:1;min-width:240px"><h2 style="font-size:22px;font-weight:800;margin-bottom:4px">Quartet Collection - 73 מערכות שנבנו בשטח</h2><p style="opacity:0.9;font-size:15px">מערכות שפותחו ונוסו בבית ספר אמיתי. ניהול, פדגוגיה, ייעוץ, חברתי ומחוללי למידה.</p></div>
-    <div style="background:rgba(255,255,255,0.15);border-radius:12px;padding:12px 20px;text-align:center"><div style="font-size:28px;font-weight:800">73</div><div style="font-size:12px;opacity:0.8">מערכות פעילות</div></div>
-  </div>
-</section>
 
 <!-- ===== QUARTET: MANAGEMENT (25) ===== -->
 <section class="section fade-up">
   <div class="section-header">
-    <h2 class="section-title">ניהול בית ספר - Quartet</h2>
+    <h2 class="section-title">ניהול בית ספר</h2>
     <a href="#" class="section-link">25 מערכות <span class="material-icons-round">arrow_back</span></a>
   </div>
   <div class="products-scroll">
@@ -2007,7 +1645,7 @@ footer {
 <!-- ===== QUARTET: PEDAGOGY (10) ===== -->
 <section class="section fade-up">
   <div class="section-header">
-    <h2 class="section-title">פדגוגיה - Quartet</h2>
+    <h2 class="section-title">פדגוגיה</h2>
     <a href="#" class="section-link">10 מערכות <span class="material-icons-round">arrow_back</span></a>
   </div>
   <div class="products-scroll">
@@ -2027,7 +1665,7 @@ footer {
 <!-- ===== QUARTET: COUNSELING (8) ===== -->
 <section class="section fade-up">
   <div class="section-header">
-    <h2 class="section-title">ייעוץ ורווחה - Quartet</h2>
+    <h2 class="section-title">ייעוץ ורווחה</h2>
     <a href="#" class="section-link">8 מערכות <span class="material-icons-round">arrow_back</span></a>
   </div>
   <div class="products-grid">
@@ -2050,7 +1688,7 @@ footer {
 <!-- ===== QUARTET: SOCIAL (8) ===== -->
 <section class="section fade-up">
   <div class="section-header">
-    <h2 class="section-title">חברתי ותלמידים - Quartet</h2>
+    <h2 class="section-title">חברתי ותלמידים</h2>
     <a href="#" class="section-link">8 מערכות <span class="material-icons-round">arrow_back</span></a>
   </div>
   <div class="products-scroll">
@@ -2069,7 +1707,7 @@ footer {
 <!-- ===== QUARTET: GENERATORS (10) ===== -->
 <section class="section fade-up">
   <div class="section-header">
-    <h2 class="section-title">מחוללי למידה - Quartet</h2>
+    <h2 class="section-title">מחוללי למידה</h2>
     <a href="#" class="section-link">10 מחוללים <span class="material-icons-round">arrow_back</span></a>
   </div>
   <div class="products-grid">
@@ -2094,7 +1732,7 @@ footer {
 <!-- ===== QUARTET: PLAYERS & LIBRARIES (6) ===== -->
 <section class="section fade-up">
   <div class="section-header">
-    <h2 class="section-title">נגנים וספריות - Quartet</h2>
+    <h2 class="section-title">נגנים וספריות</h2>
     <a href="#" class="section-link">6 מערכות <span class="material-icons-round">arrow_back</span></a>
   </div>
   <div class="products-scroll">
@@ -2110,7 +1748,7 @@ footer {
 <!-- ===== QUARTET: STANDALONE (7) ===== -->
 <section class="section fade-up">
   <div class="section-header">
-    <h2 class="section-title">מערכות עצמאיות - Quartet</h2>
+    <h2 class="section-title">מערכות עצמאיות</h2>
     <a href="#" class="section-link">7 מערכות <span class="material-icons-round">arrow_back</span></a>
   </div>
   <div class="products-scroll">
@@ -2124,168 +1762,8 @@ footer {
   </div>
 </section>
 
-<!-- ===== STATS ===== -->
-<div class="stats-bar fade-up">
-  <div class="stats-inner">
-    <div class="stat-item">
-      <div class="stat-number">1,270+</div>
-      <div class="stat-label">מוצרים וסוכנים</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-number">4,500+</div>
-      <div class="stat-label">בתי ספר משתמשים</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-number">98%</div>
-      <div class="stat-label">שביעות רצון</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-number">24/7</div>
-      <div class="stat-label">תמיכה טכנית</div>
-    </div>
-  </div>
-</div>
 
 
-<!-- ===== PRICING ===== -->
-<section class="section fade-up" id="pricing">
-  <div class="section-header">
-    <h2 class="section-title">חבילות לבתי ספר</h2>
-  </div>
-  <div class="pricing-grid">
-
-    <div class="pricing-card">
-      <div class="pricing-icon" style="background: linear-gradient(135deg, #90caf9, #42a5f5);">
-        <span class="material-icons-round">rocket_launch</span>
-      </div>
-      <h3>סטארטר</h3>
-      <div class="price">0 ש"ח <span>/ לנצח</span></div>
-      <div class="price-desc">לבתי ספר שרק מתחילים</div>
-      <ul class="pricing-features">
-        <li><span class="material-icons-round">check_circle</span> עד 3 סוכנים חינמיים</li>
-        <li><span class="material-icons-round">check_circle</span> ניהול כיתה בסיסי</li>
-        <li><span class="material-icons-round">check_circle</span> תזכורות SMS (100/חודש)</li>
-        <li><span class="material-icons-round">check_circle</span> דוחות בסיסיים</li>
-      </ul>
-      <button class="btn-pricing">התחילו בחינם</button>
-    </div>
-
-    <div class="pricing-card popular">
-      <div class="pricing-icon" style="background: linear-gradient(135deg, #1a73e8, #4285f4);">
-        <span class="material-icons-round">school</span>
-      </div>
-      <h3>בית ספר</h3>
-      <div class="price">799 ש"ח <span>/ חודש</span></div>
-      <div class="price-desc">לבית ספר בודד, עד 1,000 תלמידים</div>
-      <ul class="pricing-features">
-        <li><span class="material-icons-round">check_circle</span> כל הסוכנים ללא הגבלה</li>
-        <li><span class="material-icons-round">check_circle</span> מערכת ניהול מלאה</li>
-        <li><span class="material-icons-round">check_circle</span> תקשורת הורים אוטומטית</li>
-        <li><span class="material-icons-round">check_circle</span> הערכה ומדידה מתקדמת</li>
-        <li><span class="material-icons-round">check_circle</span> תמיכה 24/7</li>
-      </ul>
-      <button class="btn-pricing filled">התחילו עכשיו</button>
-    </div>
-
-    <div class="pricing-card">
-      <div class="pricing-icon" style="background: linear-gradient(135deg, #7c4dff, #536dfe);">
-        <span class="material-icons-round">apartment</span>
-      </div>
-      <h3>רשות / רשת</h3>
-      <div class="price">צרו קשר</div>
-      <div class="price-desc">לרשויות ורשתות חינוך</div>
-      <ul class="pricing-features">
-        <li><span class="material-icons-round">check_circle</span> הכל בחבילת בי"ס +</li>
-        <li><span class="material-icons-round">check_circle</span> דשבורד ניהולי מרכזי</li>
-        <li><span class="material-icons-round">check_circle</span> API ואינטגרציות</li>
-        <li><span class="material-icons-round">check_circle</span> SLA מובטח</li>
-        <li><span class="material-icons-round">check_circle</span> הדרכות צוות ייעודיות</li>
-      </ul>
-      <button class="btn-pricing">דברו איתנו</button>
-    </div>
-  </div>
-</section>
-
-<!-- ===== TESTIMONIALS ===== -->
-<section class="section fade-up">
-  <div class="section-header">
-    <h2 class="section-title">מה אומרים מנהלי בתי ספר</h2>
-  </div>
-  <div class="testimonials-scroll">
-
-    <div class="testimonial-card">
-      <div class="testimonial-stars">
-        <span class="material-icons-round">star</span>
-        <span class="material-icons-round">star</span>
-        <span class="material-icons-round">star</span>
-        <span class="material-icons-round">star</span>
-        <span class="material-icons-round">star</span>
-      </div>
-      <p class="testimonial-text">"מאז שהתחלנו להשתמש ב-EduPlay, חסכנו 15 שעות שבועיות של עבודה אדמיניסטרטיבית. הסוכנים החכמים הם מהפכה אמיתית."</p>
-      <div class="testimonial-author">
-        <div class="testimonial-avatar" style="background: linear-gradient(135deg, #1a73e8, #4285f4);">ר</div>
-        <div>
-          <div class="testimonial-name">רונית כהן</div>
-          <div class="testimonial-role">מנהלת בי"ס עירוני ג', תל אביב</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="testimonial-card">
-      <div class="testimonial-stars">
-        <span class="material-icons-round">star</span>
-        <span class="material-icons-round">star</span>
-        <span class="material-icons-round">star</span>
-        <span class="material-icons-round">star</span>
-        <span class="material-icons-round">star</span>
-      </div>
-      <p class="testimonial-text">"סוכן התקשורת עם ההורים שינה לנו את החיים. ההורים מרגישים מחוברים, ואנחנו מצליחים לתת מענה מהיר לכל פנייה."</p>
-      <div class="testimonial-author">
-        <div class="testimonial-avatar" style="background: linear-gradient(135deg, #e91e63, #f06292);">מ</div>
-        <div>
-          <div class="testimonial-name">מוחמד עבאסי</div>
-          <div class="testimonial-role">מנהל חט"ב, נצרת</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="testimonial-card">
-      <div class="testimonial-stars">
-        <span class="material-icons-round">star</span>
-        <span class="material-icons-round">star</span>
-        <span class="material-icons-round">star</span>
-        <span class="material-icons-round">star</span>
-        <span class="material-icons-round">star</span>
-      </div>
-      <p class="testimonial-text">"החבילה המוסדית חסכה לנו עשרות אלפי שקלים בשנה. במקום 8 מערכות שונות, הכל מרוכז ב-EduPlay."</p>
-      <div class="testimonial-author">
-        <div class="testimonial-avatar" style="background: linear-gradient(135deg, #00c853, #69f0ae);">ש</div>
-        <div>
-          <div class="testimonial-name">שרה לוי</div>
-          <div class="testimonial-role">מפקחת מחוז מרכז, משרד החינוך</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="testimonial-card">
-      <div class="testimonial-stars">
-        <span class="material-icons-round">star</span>
-        <span class="material-icons-round">star</span>
-        <span class="material-icons-round">star</span>
-        <span class="material-icons-round">star</span>
-        <span class="material-icons-round">star</span>
-      </div>
-      <p class="testimonial-text">"סוכן החינוך המיוחד עזר לנו להפיק תוכניות אישיות ב-10 דקות במקום שעתיים. התלמידים מקבלים מענה מדויק יותר."</p>
-      <div class="testimonial-author">
-        <div class="testimonial-avatar" style="background: linear-gradient(135deg, #ffab00, #ffd54f);">ד</div>
-        <div>
-          <div class="testimonial-name">דנה ברק</div>
-          <div class="testimonial-role">רכזת שילוב, בי"ס ממלכתי, באר שבע</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- ===== FOOTER ===== -->
 <footer>
@@ -2299,10 +1777,10 @@ footer {
     </div>
     <div class="footer-col">
       <h4>מוצרים</h4>
-      <a href="#">סוכנים חכמים</a>
-      <a href="#">ניהול בי"ס</a>
+      <a href="#">כלי ניהול</a>
       <a href="#">פדגוגיה</a>
-      <a href="#">הערכה ומדידה</a>
+      <a href="#">ייעוצי</a>
+      <a href="#">מערכות למידה</a>
     </div>
     <div class="footer-col">
       <h4>תמיכה</h4>
@@ -2394,184 +1872,7 @@ footer {
 
 <script>
 // ===== DATA =====
-const products = {
-  'agent-lesson': {
-    title: 'סוכן מערכי שיעור',
-    dev: 'EduPlay AI',
-    icon: 'auto_awesome',
-    color: '#7c4dff',
-    price: 149,
-    desc: 'סוכן AI שמייצר מערכי שיעור מותאמים אישית לכל מקצוע, שכבת גיל ורמת כיתה. מבוסס על תכנית הלימודים של משרד החינוך, כולל בידול ודיפרנציאציה אוטומטית.',
-    features: [
-      'יצירת מערך שיעור מלא ב-30 שניות',
-      'התאמה לתכנית הלימודים הישראלית',
-      'בידול אוטומטי ל-3 רמות',
-      'חומרי עזר ודפי עבודה מובנים',
-      'שיתוף עם צוות המקצוע',
-      'ארכיון מערכי שיעור חכם'
-    ]
-  },
-  'agent-parent': {
-    title: 'סוכן תקשורת הורים',
-    dev: 'ParentConnect',
-    icon: 'family_restroom',
-    color: '#e91e63',
-    price: 99,
-    desc: 'סוכן AI שמנהל את כל התקשורת עם ההורים: הודעות, עדכונים, זימון פגישות ומענה אוטומטי לשאלות נפוצות. תומך בעברית, ערבית ואנגלית.',
-    features: [
-      'מענה אוטומטי 24/7 לשאלות הורים',
-      'תרגום אוטומטי לערבית ואנגלית',
-      'זימון פגישות הורים חכם',
-      'הודעות מותאמות לכל הורה',
-      'דוח תקשורת שבועי למנהל/ת',
-      'אינטגרציה עם וואטסאפ וSMS'
-    ]
-  },
-  'agent-assessment': {
-    title: 'סוכן הערכה חכם',
-    dev: 'AssessAI',
-    icon: 'quiz',
-    color: '#00bfa5',
-    price: 179,
-    desc: 'מערכת הערכה מבוססת AI שיוצרת מבחנים, בודקת תשובות אוטומטית ומפיקה דוחות מפורטים על התקדמות תלמידים.',
-    features: [
-      'יצירת מבחנים אוטומטית לפי נושא',
-      'בדיקת תשובות פתוחות ב-AI',
-      'ניתוח פערים ומיפוי ידע',
-      'דוחות הורים אוטומטיים',
-      'בנק שאלות עם 50,000+ שאלות',
-      'התאמה לתלמידי חינוך מיוחד'
-    ]
-  },
-  'agent-behavior': {
-    title: 'סוכן ניהול התנהגות',
-    dev: 'BehaviorPro',
-    icon: 'psychology',
-    color: '#ff6d00',
-    price: 129,
-    desc: 'מערכת ניהול התנהגות חיובית שעוזרת למורים לתעד, לנתח ולשפר את האקלים הכיתתי והבית ספרי.',
-    features: [
-      'תיעוד התנהגות בקליק אחד',
-      'ניתוח דפוסים ומגמות',
-      'תוכניות התערבות מותאמות',
-      'דיווח אוטומטי ליועצת ומנהל/ת',
-      'מערכת תגמולים דיגיטלית',
-      'קשר עם הורים בזמן אמת'
-    ]
-  },
-  'agent-schedule': {
-    title: 'סוכן מערכת שעות',
-    dev: 'ScheduleBot',
-    icon: 'calendar_month',
-    color: '#1a73e8',
-    price: 199,
-    desc: 'AI שבונה מערכת שעות אופטימלית לבית הספר תוך התחשבות בכל האילוצים: חדרים, מורים, העדפות ותקנות.',
-    features: [
-      'בניית מערכת שעות ב-5 דקות',
-      'ניהול אילוצים מורכבים',
-      'חלופות במקרה היעדרות מורה',
-      'סנכרון עם Google/Outlook',
-      'התראות שינויים בזמן אמת',
-      'אופטימיזציה של ניצול חדרים'
-    ]
-  },
-  'agent-sped': {
-    title: 'סוכן חינוך מיוחד',
-    dev: 'IncludeAI',
-    icon: 'accessibility_new',
-    color: '#ffab00',
-    price: 159,
-    desc: 'סוכן AI שמסייע בהפקת תוכניות אישיות (תל"א), התאמות מבחנים, ומעקב אחר יעדים של תלמידים עם צרכים מיוחדים.',
-    features: [
-      'הפקת תוכנית אישית (תל"א) אוטומטית',
-      'התאמות מבחנים בקליק',
-      'מעקב יעדים רבעוני',
-      'דוחות לוועדות שילוב',
-      'בנק אסטרטגיות הוראה מותאמות',
-      'קשר עם גורמי טיפול חיצוניים'
-    ]
-  },
-  'mgmt-erp': {
-    title: 'EduERP - מערכת ניהול מלאה',
-    dev: 'EduPlay Enterprise',
-    icon: 'dashboard',
-    color: '#1a73e8',
-    price: 499,
-    desc: 'מערכת ERP מלאה לבית ספר הכוללת ניהול תלמידים, צוות, תקציב, נוכחות, ציונים, דוחות ולוחות זמנים.',
-    features: [
-      'ניהול 1,000+ תלמידים',
-      'מודול כח אדם ומשכורות',
-      'ניהול תקציב ורכש',
-      'מערכת ציונים ותעודות',
-      'דוחות BI למנהל/ת',
-      'אינטגרציה עם משב"ס'
-    ]
-  },
-  'mgmt-attendance': {
-    title: 'AttendEase - נוכחות חכמה',
-    dev: 'AttendTech',
-    icon: 'fact_check',
-    color: '#00c853',
-    price: 89,
-    desc: 'מערכת נוכחות דיגיטלית עם זיהוי פנים, התראות הורים אוטומטיות ודוחות סיכום.',
-    features: [
-      'רישום נוכחות בקליק / זיהוי פנים',
-      'התראה אוטומטית להורים על היעדרות',
-      'דוחות נוכחות שבועיים ותקופתיים',
-      'זיהוי דפוסי היעדרות',
-      'אינטגרציה עם מערכת השעות',
-      'דיווח למשרד החינוך'
-    ]
-  },
-  'mgmt-budget': {
-    title: 'BudgetSchool - ניהול תקציב',
-    dev: 'FinEdu',
-    icon: 'account_balance_wallet',
-    color: '#ff6d00',
-    price: 149,
-    desc: 'ניהול תקציב בית ספר מקצה לקצה: תקבולים, הוצאות, דוחות ובקרה.',
-    features: [
-      'ניהול תקציב שנתי',
-      'מעקב הוצאות בזמן אמת',
-      'הפקת דוחות לרשות',
-      'ניהול הזמנות ורכש',
-      'התראות חריגה',
-      'ממשק רואה חשבון'
-    ]
-  },
-  'mgmt-safety': {
-    title: 'SafeSchool - בטיחות וחירום',
-    dev: 'SafeEdu',
-    icon: 'security',
-    color: '#f44336',
-    price: 199,
-    desc: 'מערכת ניהול בטיחות וחירום לבית הספר: תרגילים, התרעות, מיפוי סיכונים ודיווח.',
-    features: [
-      'ניהול תרגילי חירום שנתיים',
-      'מערכת התרעה בזמן אמת',
-      'מיפוי סיכונים ותיקון',
-      'דיווח תקריות דיגיטלי',
-      'קשר ישיר עם גורמי חירום',
-      'הדרכות בטיחות מובנות'
-    ]
-  },
-  'ped-lms': {
-    title: 'LMS Pro - פלטפורמת למידה',
-    dev: 'EduTech IL',
-    icon: 'laptop_chromebook',
-    color: '#00c853',
-    price: 249,
-    desc: 'פלטפורמת למידה מתקדמת עם שיעורים אינטראקטיביים, מעקב התקדמות ולמידה אדפטיבית.',
-    features: [
-      'קורסים אינטראקטיביים',
-      'למידה אדפטיבית מבוססת AI',
-      'מעקב התקדמות בזמן אמת',
-      'ספריית תכנים ישראלית',
-      'כלי יצירת תוכן למורים',
-      'גיימיפיקציה ותגמולים'
-    ]
-  }
-};
+const products = {};
 
 let cart = [];
 let currentModalProduct = null;
