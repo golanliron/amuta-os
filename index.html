@@ -409,47 +409,68 @@ body {
 .carousel-item {
   flex-shrink: 0;
   width: 240px;
-  background: var(--surface);
-  border: 1px solid rgba(0,0,0,0.06);
   border-radius: 20px;
   padding: 28px 22px;
   text-align: center;
-  transition: transform 0.3s, box-shadow 0.3s;
+  transition: transform 0.4s, box-shadow 0.4s;
   position: relative;
   overflow: hidden;
+  color: white;
 }
+
+.carousel-item:nth-child(12n+1) { background: linear-gradient(145deg, #1a1a2e, #16213e); }
+.carousel-item:nth-child(12n+2) { background: linear-gradient(145deg, #0f3460, #1a1a6e); }
+.carousel-item:nth-child(12n+3) { background: linear-gradient(145deg, #1b4332, #2d6a4f); }
+.carousel-item:nth-child(12n+4) { background: linear-gradient(145deg, #3c1642, #6a1b4d); }
+.carousel-item:nth-child(12n+5) { background: linear-gradient(145deg, #e63946, #a4133c); }
+.carousel-item:nth-child(12n+6) { background: linear-gradient(145deg, #14213d, #023e8a); }
+.carousel-item:nth-child(12n+7) { background: linear-gradient(145deg, #ff6d00, #e65100); }
+.carousel-item:nth-child(12n+8) { background: linear-gradient(145deg, #004e64, #007ea7); }
+.carousel-item:nth-child(12n+9) { background: linear-gradient(145deg, #540b0e, #9b2226); }
+.carousel-item:nth-child(12n+10) { background: linear-gradient(145deg, #2b2d42, #3d405b); }
+.carousel-item:nth-child(12n+11) { background: linear-gradient(145deg, #003049, #264653); }
+.carousel-item:nth-child(12n+12) { background: linear-gradient(145deg, #191970, #4a148c); }
 
 .carousel-item::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--edu-primary), var(--social-primary));
-  opacity: 0;
-  transition: opacity 0.3s;
+  top: -30%;
+  right: -30%;
+  width: 120px;
+  height: 120px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 50%;
+}
+
+.carousel-item::after {
+  content: '';
+  position: absolute;
+  bottom: -20%;
+  left: -20%;
+  width: 80px;
+  height: 80px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 50%;
 }
 
 .carousel-item:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 32px rgba(0,0,0,0.12);
-}
-
-.carousel-item:hover::before {
-  opacity: 1;
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
 }
 
 .carousel-item .material-icons-round {
-  font-size: 40px;
+  font-size: 36px;
   margin-bottom: 14px;
-  width: 64px;
-  height: 64px;
-  line-height: 64px;
-  border-radius: 16px;
+  width: 68px;
+  height: 68px;
+  line-height: 68px;
+  border-radius: 18px;
   display: inline-block;
-  background: linear-gradient(135deg, rgba(79,106,247,0.1), rgba(13,148,136,0.1));
-  color: var(--edu-primary);
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: white;
   -webkit-text-fill-color: initial;
 }
 
@@ -458,11 +479,12 @@ body {
   font-weight: 800;
   margin-bottom: 6px;
   letter-spacing: -0.3px;
+  color: white;
 }
 
 .carousel-item p {
   font-size: 13px;
-  color: var(--text-secondary);
+  color: rgba(255,255,255,0.7);
   line-height: 1.5;
 }
 
@@ -760,8 +782,8 @@ body {
 
 <section class="hero">
   <div class="hero-badge">
-    <span class="material-icons-round">auto_awesome</span>
-    מונע על ידי AI
+    <div style="width:28px;height:28px;background:linear-gradient(135deg,var(--edu-primary),var(--social-primary));border-radius:8px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden"><span style="color:white;font-size:16px;font-weight:900;z-index:1">I</span><div style="position:absolute;top:-50%;right:-50%;width:100%;height:100%;background:rgba(255,255,255,0.15);border-radius:50%"></div></div>
+    ImpactPlay
   </div>
   <h1>כל הכלים ליצירת<br><span class="grad">אימפקט חברתי</span></h1>
   <p class="vision-text">מערכות קלות לתפעול, בוטים חכמים וכלי AI שמייעלים את הארגון שלכם. בלי מערכות כבדות שיעלו אבק, רק מה שבאמת עובד.</p>
