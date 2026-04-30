@@ -3,1018 +3,557 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ImpactOS - כל הכלים ליצירת אימפקט</title>
-<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+<title>Friday - מחולל תוכן ועיצוב לבתי ספר</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg: #f8f9fb;
-  --surface: #ffffff;
-  --surface-2: #f1f3f8;
-  --text: #1a1a2e;
-  --text-secondary: #64748b;
-  --edu-primary: #4F6AF7;
-  --edu-secondary: #7c4dff;
-  --social-primary: #0d9488;
-  --social-secondary: #059669;
-  --radius: 16px;
-  --radius-lg: 24px;
+  --bg: #ffffff; --bg-soft: #f8f9fb; --bg-card: #ffffff;
+  --accent: #6c5ce7; --accent-light: #a29bfe; --accent-bg: #f0eeff;
+  --accent2: #00b894; --text: #1a1a2e; --text-secondary: #64648b;
+  --text-muted: #a0a0b8; --border: #e8e8f0;
+  --shadow: 0 2px 20px rgba(0,0,0,0.06); --shadow-lg: 0 8px 40px rgba(0,0,0,0.08);
+  --radius: 16px; --radius-sm: 10px;
+}
+body { font-family:'Heebo',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; line-height:1.6; }
+.container { max-width:860px; margin:0 auto; padding:0 20px; }
+
+nav { display:flex; justify-content:space-between; align-items:center; padding:18px 0; border-bottom:1px solid var(--border); }
+.nav-brand { display:flex; align-items:center; gap:10px; font-weight:800; font-size:1.15rem; color:var(--accent); }
+.nav-brand svg { width:28px; height:28px; }
+.nav-right { display:flex; align-items:center; gap:12px; }
+.nav-badge { font-size:0.7rem; background:var(--accent-bg); color:var(--accent); padding:4px 12px; border-radius:20px; font-weight:600; }
+.btn-settings { background:none; border:1px solid var(--border); border-radius:8px; padding:6px 10px; cursor:pointer; color:var(--text-muted); font-size:0.8rem; font-family:'Heebo',sans-serif; transition:all 0.2s; }
+.btn-settings:hover { border-color:var(--accent); color:var(--accent); }
+.api-connected { color:var(--accent2); font-size:0.78rem; font-weight:500; }
+
+.settings-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.3); backdrop-filter:blur(4px); z-index:200; justify-content:center; align-items:center; padding:20px; }
+.settings-overlay.visible { display:flex; }
+.settings-panel { background:#fff; border:1px solid var(--border); border-radius:var(--radius); padding:28px; width:100%; max-width:440px; box-shadow:var(--shadow-lg); animation:fadeUp 0.3s ease; }
+.settings-panel h3 { font-size:1.1rem; font-weight:700; margin-bottom:6px; }
+.settings-panel .hint { font-size:0.82rem; color:var(--text-muted); margin-bottom:16px; }
+.settings-panel input { width:100%; background:var(--bg-soft); border:1.5px solid var(--border); border-radius:8px; padding:10px 14px; color:var(--text); font-family:'Heebo',sans-serif; font-size:0.92rem; direction:ltr; margin-bottom:14px; }
+.settings-panel input:focus { outline:none; border-color:var(--accent); }
+.settings-actions { display:flex; gap:10px; }
+.settings-actions button { flex:1; padding:11px; border-radius:8px; font-family:'Heebo',sans-serif; font-size:0.92rem; font-weight:600; cursor:pointer; border:none; }
+.btn-save-key { background:var(--accent); color:#fff; }
+.btn-cancel-key { background:var(--bg-soft); color:var(--text-secondary); border:1px solid var(--border) !important; }
+.api-error { color:#d63031; font-size:0.8rem; margin-top:-8px; margin-bottom:10px; display:none; }
+
+.hero { text-align:center; padding:50px 0 36px; }
+.hero-icon { width:72px; height:72px; background:var(--accent-bg); border-radius:20px; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-size:32px; }
+.hero h1 { font-size:clamp(1.8rem,4.5vw,2.6rem); font-weight:900; line-height:1.2; margin-bottom:14px; }
+.hero h1 span { color:var(--accent); }
+.hero .subtitle { font-size:clamp(0.95rem,2vw,1.1rem); color:var(--text-secondary); max-width:540px; margin:0 auto 12px; font-weight:400; }
+.hero .value-props { display:flex; flex-wrap:wrap; gap:8px 20px; justify-content:center; margin-bottom:28px; }
+.hero .value-prop { font-size:0.88rem; color:var(--accent); font-weight:600; display:flex; align-items:center; gap:5px; }
+.hero .value-prop::before { content:''; width:6px; height:6px; background:var(--accent); border-radius:50%; }
+
+.rotating-examples { height:36px; overflow:hidden; margin-bottom:30px; }
+.rotating-inner { animation:rotateText 15s ease-in-out infinite; }
+.rotating-item { height:36px; display:flex; align-items:center; justify-content:center; font-size:1rem; color:var(--accent); font-weight:600; background:var(--accent-bg); width:fit-content; margin:0 auto; padding:0 20px; border-radius:20px; }
+@keyframes rotateText { 0%,12%{transform:translateY(0)} 14%,26%{transform:translateY(-36px)} 28%,40%{transform:translateY(-72px)} 42%,54%{transform:translateY(-108px)} 56%,68%{transform:translateY(-144px)} 70%,82%{transform:translateY(-180px)} 84%,96%{transform:translateY(-216px)} 100%{transform:translateY(-252px)} }
+
+.btn-primary { display:inline-flex; align-items:center; gap:10px; background:var(--accent); color:#fff; border:none; padding:14px 36px; border-radius:50px; font-size:1.05rem; font-weight:700; font-family:'Heebo',sans-serif; cursor:pointer; transition:all 0.3s ease; box-shadow:0 4px 20px rgba(108,92,231,0.25); }
+.btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(108,92,231,0.35); }
+
+.creation-section { padding:30px 0; display:none; }
+.creation-section.visible { display:block; animation:fadeUp 0.4s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+.section-title { font-size:1.4rem; font-weight:800; margin-bottom:6px; text-align:center; }
+.section-subtitle { font-size:0.9rem; color:var(--text-muted); text-align:center; margin-bottom:24px; }
+
+.card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:24px; margin-bottom:18px; box-shadow:var(--shadow); }
+.card-label { font-size:0.85rem; color:var(--text-secondary); margin-bottom:10px; font-weight:600; display:flex; align-items:center; gap:6px; }
+.card-label svg { width:16px; height:16px; opacity:0.5; }
+
+.text-input { width:100%; min-height:90px; background:var(--bg-soft); border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:14px 16px; color:var(--text); font-family:'Heebo',sans-serif; font-size:1rem; resize:vertical; transition:all 0.3s; direction:rtl; }
+.text-input:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(108,92,231,0.1); }
+.text-input::placeholder { color:var(--text-muted); }
+
+.chips { display:flex; flex-wrap:wrap; gap:8px; }
+.chip { padding:8px 16px; border-radius:30px; border:1.5px solid var(--border); background:#fff; color:var(--text-secondary); font-family:'Heebo',sans-serif; font-size:0.85rem; font-weight:500; cursor:pointer; transition:all 0.2s; }
+.chip:hover { background:var(--bg-soft); color:var(--text); border-color:#d0d0e0; }
+.chip.active { background:var(--accent-bg); border-color:var(--accent); color:var(--accent); font-weight:600; }
+
+.mode-toggle { display:flex; background:var(--bg-soft); border-radius:12px; padding:4px; margin-bottom:20px; border:1px solid var(--border); }
+.mode-btn { flex:1; padding:12px; border:none; background:none; border-radius:10px; font-family:'Heebo',sans-serif; font-size:0.95rem; font-weight:600; color:var(--text-muted); cursor:pointer; transition:all 0.25s; text-align:center; }
+.mode-btn.active { background:#fff; color:var(--accent); box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+
+.btn-generate { display:flex; align-items:center; justify-content:center; gap:10px; width:100%; padding:16px; background:var(--accent); color:#fff; border:none; border-radius:var(--radius-sm); font-size:1.05rem; font-weight:700; font-family:'Heebo',sans-serif; cursor:pointer; transition:all 0.3s; box-shadow:0 4px 20px rgba(108,92,231,0.25); }
+.btn-generate:hover { box-shadow:0 8px 30px rgba(108,92,231,0.35); transform:translateY(-1px); }
+.btn-generate:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+
+.loading-overlay { display:none; text-align:center; padding:50px 0; }
+.loading-overlay.visible { display:block; animation:fadeUp 0.3s ease; }
+.loader-ring { width:48px; height:48px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; margin:0 auto 16px; animation:spin 0.8s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.loading-text { color:var(--text-secondary); font-size:1rem; }
+.loading-sub { color:var(--text-muted); font-size:0.82rem; margin-top:6px; }
+
+.result-section { display:none; padding:20px 0 50px; }
+.result-section.visible { display:block; animation:fadeUp 0.4s ease; }
+.result-header { text-align:center; margin-bottom:20px; }
+.result-header h2 { font-size:1.3rem; font-weight:700; }
+.result-header p { color:var(--text-secondary); font-size:0.9rem; }
+
+.content-result { background:var(--bg-soft); border:1px solid var(--border); border-radius:var(--radius); padding:28px; margin-bottom:20px; box-shadow:var(--shadow); display:none; }
+.content-result.visible { display:block; }
+.content-result h3 { font-size:1.15rem; font-weight:700; margin-bottom:12px; color:var(--accent); }
+.content-result .content-text { font-size:1rem; line-height:1.8; color:var(--text); white-space:pre-wrap; background:#fff; border-radius:10px; padding:20px; border:1px solid var(--border); }
+
+.poster-frame { border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow-lg); margin-bottom:20px; display:none; }
+.poster-frame.visible { display:block; }
+
+.hybrid-poster { position:relative; width:100%; aspect-ratio:1/1; overflow:hidden; background:#1a1a2e; }
+.hybrid-poster img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.hybrid-poster .text-overlay { position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:40px; z-index:2; font-family:'Heebo',sans-serif; direction:rtl; }
+.hybrid-poster .text-overlay.with-scrim::before { content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.5) 100%); z-index:-1; }
+.hybrid-poster .poster-title { font-size:clamp(1.8rem,5vw,2.8rem); font-weight:900; color:#fff; line-height:1.15; margin-bottom:12px; text-shadow:0 2px 20px rgba(0,0,0,0.5), 0 1px 4px rgba(0,0,0,0.3); }
+.hybrid-poster .poster-desc { font-size:clamp(0.9rem,2.5vw,1.15rem); color:rgba(255,255,255,0.92); line-height:1.6; max-width:85%; margin-bottom:16px; text-shadow:0 1px 8px rgba(0,0,0,0.4); }
+.hybrid-poster .poster-details { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-bottom:14px; }
+.hybrid-poster .poster-badge { background:rgba(255,255,255,0.2); backdrop-filter:blur(8px); color:#fff; padding:6px 18px; border-radius:20px; font-size:0.9rem; font-weight:600; border:1px solid rgba(255,255,255,0.15); }
+.hybrid-poster .poster-footer { font-size:0.85rem; color:rgba(255,255,255,0.75); font-weight:500; text-shadow:0 1px 6px rgba(0,0,0,0.3); }
+.hybrid-poster .poster-label { position:absolute; top:20px; right:20px; background:rgba(255,255,255,0.2); backdrop-filter:blur(8px); color:#fff; padding:6px 16px; border-radius:14px; font-size:0.82rem; font-weight:600; border:1px solid rgba(255,255,255,0.15); z-index:3; }
+
+.action-bar { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-bottom:16px; }
+.btn-action { padding:9px 18px; border-radius:30px; border:1.5px solid var(--border); background:#fff; color:var(--text-secondary); font-family:'Heebo',sans-serif; font-size:0.82rem; font-weight:500; cursor:pointer; transition:all 0.2s; }
+.btn-action:hover { background:var(--bg-soft); color:var(--text); }
+.btn-action.highlight { background:var(--accent-bg); border-color:var(--accent); color:var(--accent); }
+.btn-back { display:block; margin:16px auto 0; background:none; border:none; color:var(--text-muted); font-family:'Heebo',sans-serif; font-size:0.85rem; cursor:pointer; text-decoration:underline; }
+
+.edit-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.3); backdrop-filter:blur(4px); z-index:100; justify-content:center; align-items:center; padding:20px; }
+.edit-overlay.visible { display:flex; }
+.edit-panel { background:#fff; border:1px solid var(--border); border-radius:var(--radius); padding:28px; width:100%; max-width:480px; box-shadow:var(--shadow-lg); animation:fadeUp 0.3s ease; }
+.edit-panel h3 { font-size:1.1rem; font-weight:700; margin-bottom:16px; }
+.edit-field { margin-bottom:12px; }
+.edit-field label { display:block; font-size:0.82rem; color:var(--text-secondary); margin-bottom:4px; font-weight:500; }
+.edit-field input, .edit-field textarea { width:100%; background:var(--bg-soft); border:1.5px solid var(--border); border-radius:8px; padding:10px 14px; color:var(--text); font-family:'Heebo',sans-serif; font-size:0.92rem; direction:rtl; }
+.edit-field input:focus, .edit-field textarea:focus { outline:none; border-color:var(--accent); }
+.edit-actions { display:flex; gap:10px; margin-top:18px; }
+.edit-actions button { flex:1; padding:11px; border-radius:8px; font-family:'Heebo',sans-serif; font-size:0.92rem; font-weight:600; cursor:pointer; border:none; }
+.btn-save { background:var(--accent); color:#fff; }
+.btn-cancel { background:var(--bg-soft); color:var(--text-secondary); border:1px solid var(--border) !important; }
+
+.no-key-banner { background:#fff8e1; border:1px solid #ffe082; border-radius:10px; padding:12px 18px; margin-bottom:18px; display:flex; align-items:center; gap:10px; font-size:0.88rem; color:#f57f17; }
+.no-key-banner button { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:6px 14px; font-family:'Heebo',sans-serif; font-size:0.82rem; font-weight:600; cursor:pointer; white-space:nowrap; }
+
+.app-footer { text-align:center; padding:30px 0 24px; color:var(--text-muted); font-size:0.78rem; border-top:1px solid var(--border); margin-top:30px; }
+
+@media (max-width:600px) {
+  .hero { padding:36px 0 24px; } .hero h1 { font-size:1.7rem; }
+  .card { padding:18px; } .action-bar { gap:6px; }
+  .btn-action { padding:7px 12px; font-size:0.78rem; }
+  .hybrid-poster .text-overlay { padding:24px; }
+  .hybrid-poster .poster-title { font-size:1.5rem; }
+  .hero .value-props { flex-direction:column; align-items:center; gap:4px; }
 }
-
-body {
-  font-family: 'Rubik', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-.bg-grid {
-  position: fixed;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px);
-  background-size: 60px 60px;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.bg-glow {
-  position: fixed;
-  width: 600px;
-  height: 600px;
-  border-radius: 50%;
-  filter: blur(150px);
-  opacity: 0.08;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.bg-glow.edu { background: var(--edu-primary); top: -200px; right: -200px; }
-.bg-glow.social { background: var(--social-primary); bottom: -200px; left: -200px; }
-
-.header {
-  position: relative;
-  z-index: 10;
-  padding: 24px 40px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  text-decoration: none;
-}
-
-.logo-icon {
-  width: 48px;
-  height: 48px;
-  background: linear-gradient(135deg, var(--edu-primary), var(--social-primary));
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.logo-icon::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -50%;
-  width: 100%;
-  height: 100%;
-  background: rgba(255,255,255,0.15);
-  border-radius: 50%;
-}
-
-.logo-icon .material-icons-round { font-size: 26px; color: white; }
-
-.logo-text {
-  font-size: 26px;
-  font-weight: 800;
-  color: var(--text);
-  letter-spacing: -0.5px;
-}
-
-.logo-text span {
-  background: linear-gradient(135deg, var(--edu-primary), var(--social-primary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.header-links {
-  display: flex;
-  gap: 24px;
-  align-items: center;
-}
-
-.header-links a {
-  color: var(--text-secondary);
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  transition: color 0.3s;
-}
-
-.header-links a:hover { color: white; }
-
-.hero {
-  position: relative;
-  z-index: 10;
-  text-align: center;
-  padding: 60px 24px 40px;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.hero-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(79,106,247,0.08);
-  border: 1px solid rgba(79,106,247,0.15);
-  border-radius: 100px;
-  padding: 8px 20px;
-  font-size: 13px;
-  color: var(--edu-primary);
-  margin-bottom: 24px;
-}
-
-.hero-badge .material-icons-round { font-size: 16px; color: var(--social-primary); }
-
-.hero h1 {
-  font-size: 56px;
-  font-weight: 900;
-  line-height: 1.1;
-  margin-bottom: 20px;
-  letter-spacing: -1.5px;
-  color: var(--text);
-}
-
-.vision-text {
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--text);
-  line-height: 1.7;
-  max-width: 620px;
-  margin: 0 auto 12px;
-}
-
-.hero h1 .grad {
-  background: linear-gradient(135deg, var(--edu-primary), var(--social-primary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.hero p {
-  font-size: 19px;
-  color: var(--text-secondary);
-  line-height: 1.7;
-  max-width: 620px;
-  margin: 0 auto 20px;
-}
-
-.hero-cta-line {
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--text);
-  margin-bottom: 40px;
-}
-
-.cards-container {
-  position: relative;
-  z-index: 10;
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 0 24px 60px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-}
-
-.entry-card {
-  position: relative;
-  background: var(--surface);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: var(--radius-lg);
-  padding: 40px 36px;
-  text-decoration: none;
-  color: var(--text);
-  overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  min-height: 380px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-}
-
-.entry-card:hover {
-  transform: translateY(-8px);
-}
-
-.entry-card.edu:hover {
-  box-shadow: 0 20px 60px rgba(79,106,247,0.15);
-  border-color: rgba(79,106,247,0.3);
-}
-
-.entry-card.social:hover {
-  box-shadow: 0 20px 60px rgba(13,148,136,0.15);
-  border-color: rgba(13,148,136,0.3);
-}
-
-.card-icon {
-  width: 72px;
-  height: 72px;
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 24px;
-  position: relative;
-}
-
-.card-icon::after {
-  content: '';
-  position: absolute;
-  inset: -20px;
-  border-radius: 50%;
-  filter: blur(30px);
-  opacity: 0.2;
-  z-index: -1;
-}
-
-.entry-card.edu .card-icon {
-  background: linear-gradient(135deg, var(--edu-primary), var(--edu-secondary));
-}
-
-.entry-card.edu .card-icon::after { background: var(--edu-primary); }
-
-.entry-card.social .card-icon {
-  background: linear-gradient(135deg, var(--social-primary), var(--social-secondary));
-}
-
-.entry-card.social .card-icon::after { background: var(--social-primary); }
-
-.card-icon .material-icons-round { font-size: 36px; color: white; }
-
-.card-title { font-size: 28px; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.3px; color: var(--text); }
-
-.card-desc {
-  font-size: 16px;
-  color: var(--text-secondary);
-  line-height: 1.7;
-  margin-bottom: 24px;
-  flex: 1;
-}
-
-.card-stats {
-  display: flex;
-  gap: 24px;
-  margin-bottom: 24px;
-}
-
-.card-stat-num { font-size: 22px; font-weight: 800; }
-.entry-card.edu .card-stat-num { color: var(--edu-primary); }
-.entry-card.social .card-stat-num { color: var(--social-primary); }
-.card-stat-label { font-size: 12px; color: var(--text-secondary); }
-
-.card-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 14px 28px;
-  border-radius: 14px;
-  font-size: 16px;
-  font-weight: 700;
-  font-family: 'Rubik', sans-serif;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s;
-  color: white;
-  text-decoration: none;
-  align-self: flex-start;
-}
-
-.entry-card.edu .card-cta {
-  background: linear-gradient(135deg, var(--edu-primary), var(--edu-secondary));
-}
-
-.entry-card.edu .card-cta:hover {
-  box-shadow: 0 8px 24px rgba(79,140,247,0.4);
-}
-
-.entry-card.social .card-cta {
-  background: linear-gradient(135deg, var(--social-primary), var(--social-secondary));
-}
-
-.entry-card.social .card-cta:hover {
-  box-shadow: 0 8px 24px rgba(16,185,129,0.4);
-}
-
-.card-cta .material-icons-round { font-size: 20px; }
-
-.features-row {
-  position: relative;
-  z-index: 10;
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 0 24px 60px;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-}
-
-.feature-item {
-  background: var(--surface);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: var(--radius);
-  padding: 24px 20px;
-  text-align: center;
-}
-
-.feature-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  background: rgba(255,255,255,0.05);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 12px;
-}
-
-.feature-icon .material-icons-round {
-  font-size: 24px;
-  background: linear-gradient(135deg, var(--edu-primary), var(--social-primary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.feature-item h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; color: var(--text); }
-.feature-item p { font-size: 12px; color: var(--text-secondary); }
-
-.cta-section {
-  position: relative;
-  z-index: 10;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 0 24px 60px;
-  text-align: center;
-}
-
-.cta-box {
-  background: linear-gradient(135deg, var(--edu-primary), var(--social-primary));
-  border-radius: var(--radius-lg);
-  padding: 48px 40px;
-  color: white;
-}
-
-.cta-box h2 { font-size: 28px; font-weight: 900; margin-bottom: 12px; }
-.cta-box p { font-size: 17px; opacity: 0.9; margin-bottom: 8px; line-height: 1.7; }
-.cta-box .cta-bold { font-size: 22px; font-weight: 800; margin-top: 16px; }
-
-.carousel-section {
-  position: relative;
-  z-index: 10;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 24px 40px;
-  overflow: hidden;
-}
-
-.carousel-title {
-  font-size: 28px;
-  font-weight: 900;
-  text-align: center;
-  margin-bottom: 24px;
-  letter-spacing: -0.5px;
-}
-
-.carousel-track {
-  display: flex;
-  gap: 16px;
-  animation: scroll-carousel 30s linear infinite;
-  width: max-content;
-}
-
-.carousel-item {
-  flex-shrink: 0;
-  width: 240px;
-  border-radius: 20px;
-  padding: 28px 22px;
-  text-align: center;
-  transition: transform 0.4s, box-shadow 0.4s;
-  position: relative;
-  overflow: hidden;
-  color: white;
-}
-
-.carousel-item:nth-child(12n+1) { background: linear-gradient(145deg, #1a1a2e, #16213e); }
-.carousel-item:nth-child(12n+2) { background: linear-gradient(145deg, #0f3460, #1a1a6e); }
-.carousel-item:nth-child(12n+3) { background: linear-gradient(145deg, #1b4332, #2d6a4f); }
-.carousel-item:nth-child(12n+4) { background: linear-gradient(145deg, #3c1642, #6a1b4d); }
-.carousel-item:nth-child(12n+5) { background: linear-gradient(145deg, #e63946, #a4133c); }
-.carousel-item:nth-child(12n+6) { background: linear-gradient(145deg, #14213d, #023e8a); }
-.carousel-item:nth-child(12n+7) { background: linear-gradient(145deg, #ff6d00, #e65100); }
-.carousel-item:nth-child(12n+8) { background: linear-gradient(145deg, #004e64, #007ea7); }
-.carousel-item:nth-child(12n+9) { background: linear-gradient(145deg, #540b0e, #9b2226); }
-.carousel-item:nth-child(12n+10) { background: linear-gradient(145deg, #2b2d42, #3d405b); }
-.carousel-item:nth-child(12n+11) { background: linear-gradient(145deg, #003049, #264653); }
-.carousel-item:nth-child(12n+12) { background: linear-gradient(145deg, #191970, #4a148c); }
-
-.carousel-item::before {
-  content: '';
-  position: absolute;
-  top: -30%;
-  right: -30%;
-  width: 120px;
-  height: 120px;
-  background: rgba(255,255,255,0.05);
-  border-radius: 50%;
-}
-
-.carousel-item::after {
-  content: '';
-  position: absolute;
-  bottom: -20%;
-  left: -20%;
-  width: 80px;
-  height: 80px;
-  background: rgba(255,255,255,0.04);
-  border-radius: 50%;
-}
-
-.carousel-item:hover {
-  transform: translateY(-8px) scale(1.03);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-}
-
-.carousel-item .material-icons-round {
-  font-size: 36px;
-  margin-bottom: 14px;
-  width: 68px;
-  height: 68px;
-  line-height: 68px;
-  border-radius: 18px;
-  display: inline-block;
-  background: rgba(255,255,255,0.12);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255,255,255,0.15);
-  color: white;
-  -webkit-text-fill-color: initial;
-}
-
-.carousel-item h3 {
-  font-size: 16px;
-  font-weight: 800;
-  margin-bottom: 6px;
-  letter-spacing: -0.3px;
-  color: white;
-}
-
-.carousel-item p {
-  font-size: 13px;
-  color: rgba(255,255,255,0.7);
-  line-height: 1.5;
-}
-
-@keyframes scroll-carousel {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-.carousel-section:hover .carousel-track {
-  animation-play-state: paused;
-}
-
-.section-block {
-  position: relative;
-  z-index: 10;
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 0 24px 60px;
-}
-
-.section-block h2 {
-  font-size: 32px;
-  font-weight: 900;
-  text-align: center;
-  margin-bottom: 12px;
-  letter-spacing: -0.5px;
-}
-
-.section-block .section-sub {
-  font-size: 17px;
-  color: var(--text-secondary);
-  text-align: center;
-  margin-bottom: 32px;
-  line-height: 1.7;
-}
-
-.impact-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-
-.impact-card {
-  background: var(--surface);
-  border: 1px solid rgba(0,0,0,0.06);
-  border-radius: var(--radius-lg);
-  padding: 32px 24px;
-  text-align: center;
-}
-
-.impact-num {
-  font-size: 42px;
-  font-weight: 900;
-  background: linear-gradient(135deg, var(--edu-primary), var(--social-primary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: 4px;
-}
-
-.impact-label {
-  font-size: 15px;
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
-.impact-desc {
-  font-size: 13px;
-  color: var(--text-secondary);
-  line-height: 1.5;
-}
-
-.pricing-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-
-.price-card {
-  background: var(--surface);
-  border: 1px solid rgba(0,0,0,0.06);
-  border-radius: var(--radius-lg);
-  padding: 36px 28px;
-  text-align: center;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.price-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 32px rgba(0,0,0,0.1);
-}
-
-.price-card.featured {
-  border: 2px solid var(--social-primary);
-  position: relative;
-}
-
-.price-card.featured::before {
-  content: 'הכי פופולרי';
-  position: absolute;
-  top: -12px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: linear-gradient(135deg, var(--edu-primary), var(--social-primary));
-  color: white;
-  padding: 4px 16px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.price-card h3 {
-  font-size: 22px;
-  font-weight: 800;
-  margin-bottom: 8px;
-}
-
-.price-amount {
-  font-size: 36px;
-  font-weight: 900;
-  color: var(--text);
-  margin-bottom: 4px;
-}
-
-.price-amount span {
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-secondary);
-}
-
-.price-desc {
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin-bottom: 20px;
-}
-
-.price-features {
-  list-style: none;
-  text-align: right;
-  margin-bottom: 24px;
-}
-
-.price-features li {
-  padding: 6px 0;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.price-features li .material-icons-round {
-  font-size: 18px;
-  color: var(--social-primary);
-}
-
-.price-btn {
-  display: inline-block;
-  padding: 12px 28px;
-  border-radius: 12px;
-  font-size: 15px;
-  font-weight: 700;
-  font-family: 'Rubik', sans-serif;
-  border: 2px solid var(--text);
-  background: transparent;
-  color: var(--text);
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.price-btn:hover {
-  background: var(--text);
-  color: white;
-}
-
-.price-btn.filled {
-  background: linear-gradient(135deg, var(--edu-primary), var(--social-primary));
-  color: white;
-  border: none;
-}
-
-.price-btn.filled:hover {
-  box-shadow: 0 8px 24px rgba(79,106,247,0.3);
-}
-
-.about-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
-  align-items: center;
-}
-
-.about-text h3 {
-  font-size: 24px;
-  font-weight: 800;
-  margin-bottom: 16px;
-}
-
-.about-text p {
-  font-size: 15px;
-  color: var(--text-secondary);
-  line-height: 1.8;
-  margin-bottom: 12px;
-}
-
-.about-values {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-.about-value {
-  background: var(--surface);
-  border: 1px solid rgba(0,0,0,0.06);
-  border-radius: var(--radius);
-  padding: 20px 16px;
-  text-align: center;
-}
-
-.about-value .material-icons-round {
-  font-size: 32px;
-  color: var(--social-primary);
-  margin-bottom: 8px;
-}
-
-.about-value h4 {
-  font-size: 14px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.about-value p {
-  font-size: 12px;
-  color: var(--text-secondary);
-}
-
-@media (max-width: 768px) {
-  .impact-grid, .pricing-row { grid-template-columns: 1fr; }
-  .about-content { grid-template-columns: 1fr; }
-}
-
-.footer {
-  position: relative;
-  z-index: 10;
-  text-align: center;
-  padding: 40px 24px;
-  border-top: 1px solid rgba(0,0,0,0.06);
-}
-
-.footer p { font-size: 13px; color: var(--text-secondary); }
-.footer a { color: var(--text-secondary); text-decoration: none; margin: 0 12px; }
-.footer a:hover { color: var(--edu-primary); }
-
-@media (max-width: 768px) {
-  .header { padding: 16px 16px; }
-  .header-links { display: none; }
-  .hero { padding: 32px 16px 20px; }
-  .hero h1 { font-size: 30px; letter-spacing: -1px; }
-  .hero p { font-size: 15px; }
-  .vision-text { font-size: 16px; }
-  .hero-cta-line { font-size: 14px; }
-  .hero-badge { font-size: 12px; padding: 6px 14px; }
-  .cards-container { grid-template-columns: 1fr; padding: 0 16px 32px; gap: 16px; }
-  .entry-card { min-height: auto; padding: 24px 20px; }
-  .card-title { font-size: 20px; }
-  .card-desc { font-size: 13px; }
-  .card-stats { gap: 16px; }
-  .card-stat-num { font-size: 24px; }
-  .features-row { grid-template-columns: repeat(2, 1fr); padding: 0 16px 32px; gap: 12px; }
-  .feature-item { padding: 16px 12px; }
-  .logo-text { font-size: 20px; }
-  .carousel-section { padding: 0 16px 32px; }
-  .carousel-title { font-size: 22px; }
-  .carousel-item { width: 200px; padding: 22px 16px; }
-  .carousel-item .material-icons-round { width: 56px; height: 56px; line-height: 56px; font-size: 28px; }
-  .carousel-item h3 { font-size: 14px; }
-  .carousel-item p { font-size: 12px; }
-  .section-block { padding: 0 16px 40px; }
-  .section-block h2 { font-size: 24px; }
-  .section-sub { font-size: 14px; }
-  .impact-num { font-size: 32px; }
-  .impact-label { font-size: 13px; }
-  .impact-desc { font-size: 12px; }
-  .price-card { padding: 28px 20px; }
-  .price-card h3 { font-size: 18px; }
-  .price-amount { font-size: 28px; }
-  .about-text h3 { font-size: 20px; }
-  .about-text p { font-size: 14px; }
-  .about-values { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-}
-
-@keyframes float-in {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.hero { animation: float-in 0.8s ease; }
-.entry-card.edu { animation: float-in 0.8s ease 0.2s both; }
-.entry-card.social { animation: float-in 0.8s ease 0.4s both; }
-.features-row { animation: float-in 0.8s ease 0.6s both; }
 </style>
 </head>
 <body>
-
-<div class="bg-grid"></div>
-<div class="bg-glow edu"></div>
-<div class="bg-glow social"></div>
-
-<header class="header">
-  <a href="#" class="logo">
-    <div class="logo-icon"><span class="material-icons-round">play_circle</span></div>
-    <div class="logo-text">Impact<span>OS</span></div>
-  </a>
-  <div class="header-links">
-    <a href="#products">כלים</a>
-    <a href="#impact">האימפקט שלנו</a>
-    <a href="#pricing">מחירים</a>
-    <a href="edu.html">חינוך</a>
-    <a href="social.html">עמותות</a>
-  </div>
-</header>
-
-<section class="hero">
-  <div class="hero-badge">
-    <div style="width:28px;height:28px;background:linear-gradient(135deg,var(--edu-primary),var(--social-primary));border-radius:8px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden"><span style="color:white;font-size:16px;font-weight:900;z-index:1">I</span><div style="position:absolute;top:-50%;right:-50%;width:100%;height:100%;background:rgba(255,255,255,0.15);border-radius:50%"></div></div>
-    ImpactOS
-  </div>
-  <h1>כל הכלים ליצירת<br><span class="grad">אימפקט חברתי</span></h1>
-  <p class="vision-text">מערכות קלות לתפעול, בוטים חכמים וכלי AI שמייעלים את הארגון שלכם. בלי מערכות כבדות שיעלו אבק, רק מה שבאמת עובד.</p>
-  <p>אוטומציות שחוסכות שעות של עבודה, מהוואטסאפ ועד גיוס המשאבים. והכל במקום אחד.</p>
-  <div class="hero-cta-line">אתם תעשו את האימפקט. אנחנו אחראים על הטכנולוגיה.</div>
-</section>
-
-<div class="cards-container">
-  <a class="entry-card edu" href="edu.html">
-    <div class="card-icon"><span class="material-icons-round">school</span></div>
-    <div class="card-title">EduOS</div>
-    <div class="card-desc">ניהול בית ספר, פדגוגיה, מחוללי תוכן, ייעוץ ורווחה, חברתי ומערכות למידה. 75 מערכות Quartet מוכנות ולחיצות.</div>
-    <div class="card-stats">
-      <div class="card-stat"><div class="card-stat-num">75</div><div class="card-stat-label">מערכות Quartet</div></div>
-      <div class="card-stat"><div class="card-stat-num">5</div><div class="card-stat-label">קטגוריות</div></div>
+<div class="container">
+  <nav>
+    <div class="nav-brand">
+      <svg viewBox="0 0 28 28" fill="none"><rect x="2" y="2" width="24" height="24" rx="6" fill="#6c5ce7" opacity="0.12"/><path d="M9 14l3 3 7-7" stroke="#6c5ce7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Friday</span>
     </div>
-    <div class="card-cta"><span class="material-icons-round">arrow_back</span> כניסה לחנות החינוך</div>
-  </a>
-
-  <a class="entry-card social" href="social.html">
-    <div class="card-icon"><span class="material-icons-round">volunteer_activism</span></div>
-    <div class="card-title">SocialOS</div>
-    <div class="card-desc">סוכנים חכמים, גיוס משאבים, דוחות אימפקט, רשתות חברתיות ושיווק, מערכות AI לניהול, ומערכת תקציב. הכל עובד, הכל אמיתי.</div>
-    <div class="card-stats">
-      <div class="card-stat"><div class="card-stat-num">30+</div><div class="card-stat-label">כלים אמיתיים</div></div>
-      <div class="card-stat"><div class="card-stat-num">6</div><div class="card-stat-label">קטגוריות</div></div>
+    <div class="nav-right">
+      <span class="api-connected" id="apiIndicator" style="display:none">AI מחובר</span>
+      <button class="btn-settings" onclick="openSettings()">הגדרות</button>
+      <span class="nav-badge">MVP</span>
     </div>
-    <div class="card-cta"><span class="material-icons-round">arrow_back</span> כניסה לחנות החברתית</div>
-  </a>
+  </nav>
+
+  <section class="hero" id="hero">
+    <div class="hero-icon">&#9889;</div>
+    <h1>מחולל <span>תוכן ועיצוב</span><br>לבתי ספר ב-Friday</h1>
+    <p class="subtitle">כותבים רעיון במשפט אחד, מקבלים תוכן מקצועי ופוסטר מעוצב תוך שניות. בלי קנבה, בלי מעצב, בלי לבזבז זמן.</p>
+    <div class="value-props">
+      <span class="value-prop">מנהלת? יותר זמן לישיבות אסטרטגיות</span>
+      <span class="value-prop">מורה? יותר זמן לתלמידים שלך</span>
+      <span class="value-prop">רכזת? יותר זמן לנס קפה עלית בחדר מורים</span>
+    </div>
+    <div class="rotating-examples">
+      <div class="rotating-inner">
+        <div class="rotating-item">סיכום שבועי להורים כיתה ד׳</div>
+        <div class="rotating-item">הודעה על אסיפת הורים</div>
+        <div class="rotating-item">פוסטר למסיבת פורים</div>
+        <div class="rotating-item">תזכורת טיול שנתי</div>
+        <div class="rotating-item">הזמנה ליום הורים</div>
+        <div class="rotating-item">טקס יום הזיכרון</div>
+        <div class="rotating-item">הודעה על שינוי מערכת</div>
+        <div class="rotating-item">סיכום שבועי להורים כיתה ד׳</div>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="showCreation()">
+      <span>בואו נתחיל</span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    </button>
+  </section>
+
+  <section class="creation-section" id="creation">
+    <h2 class="section-title">מה צריך להכין?</h2>
+    <p class="section-subtitle">בוחרים תפקיד, כותבים רעיון, ומקבלים תוכן ועיצוב מוכנים</p>
+    <div class="no-key-banner" id="noKeyBanner" style="display:none">
+      <span>כדי לקבל תוכן ועיצוב ברמה הכי גבוהה צריך מפתח OpenAI</span>
+      <button onclick="openSettings()">הוסף מפתח</button>
+    </div>
+    <div class="mode-toggle">
+      <button class="mode-btn active" data-mode="both" onclick="setMode('both')">תוכן + עיצוב</button>
+      <button class="mode-btn" data-mode="content" onclick="setMode('content')">תוכן בלבד</button>
+      <button class="mode-btn" data-mode="design" onclick="setMode('design')">עיצוב בלבד</button>
+    </div>
+    <div class="card">
+      <div class="card-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> מי את/ה?</div>
+      <div class="chips" id="roleChips">
+        <button class="chip active" data-value="principal">מנהל/ת</button>
+        <button class="chip" data-value="educator">מחנכ/ת</button>
+        <button class="chip" data-value="coordinator">רכז/ת חברתי/ת</button>
+        <button class="chip" data-value="vice">סגנ/ית</button>
+        <button class="chip" data-value="teacher">מורה מקצועי/ת</button>
+        <button class="chip" data-value="counselor">יועצ/ת</button>
+        <button class="chip" data-value="education">איש/ת חינוך</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> מה להכין?</div>
+      <div class="chips" id="typeChips">
+        <button class="chip active" data-value="poster">פוסטר</button>
+        <button class="chip" data-value="weekly_summary">סיכום שבועי להורים</button>
+        <button class="chip" data-value="notice">הודעה</button>
+        <button class="chip" data-value="reminder">תזכורת</button>
+        <button class="chip" data-value="parents_day">יום הורים</button>
+        <button class="chip" data-value="parents_meeting">אסיפת הורים</button>
+        <button class="chip" data-value="trip">טיול שנתי</button>
+        <button class="chip" data-value="story">סטורי</button>
+        <button class="chip" data-value="ceremony">טקס</button>
+        <button class="chip" data-value="flyer">פלייר</button>
+        <button class="chip" data-value="event">אירוע</button>
+        <button class="chip" data-value="fb_post">פוסט לפייסבוק</button>
+        <button class="chip" data-value="ig_post">פוסט לאינסטגרם</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> תכתבו מה צריך (במשפט או שניים)</div>
+      <textarea class="text-input" id="userInput" placeholder="לדוגמה: אסיפת הורים כיתה ג׳ ביום שלישי 19:00 באולם. נושאים: הישגים, טיול, תרומות"></textarea>
+    </div>
+    <div class="card" id="styleCard">
+      <div class="card-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg> סגנון</div>
+      <div class="chips" id="styleChips">
+        <button class="chip active" data-value="clean">נקי</button>
+        <button class="chip" data-value="happy">שמח</button>
+        <button class="chip" data-value="formal">רשמי</button>
+        <button class="chip" data-value="emotional">מרגש</button>
+        <button class="chip" data-value="young">צעיר</button>
+      </div>
+    </div>
+    <button class="btn-generate" id="generateBtn" onclick="generate()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      <span>Friday - יוצר!</span>
+    </button>
+  </section>
+
+  <div class="loading-overlay" id="loading">
+    <div class="loader-ring"></div>
+    <div class="loading-text" id="loadingText">מייצר תוכן ועיצוב...</div>
+    <div class="loading-sub" id="loadingSub"></div>
+  </div>
+
+  <section class="result-section" id="result">
+    <div class="result-header"><h2>מוכן!</h2><p>אפשר לערוך, לשנות סגנון או ליצור וריאציה חדשה</p></div>
+    <div class="content-result" id="contentResult">
+      <h3 id="contentResultTitle">התוכן שלך</h3>
+      <div class="content-text" id="contentText"></div>
+    </div>
+    <div class="poster-frame" id="posterFrame"></div>
+    <div class="action-bar">
+      <button class="btn-action highlight" onclick="regenerate()">צור עוד גרסה</button>
+      <button class="btn-action" onclick="openEdit()">ערוך טקסט</button>
+      <button class="btn-action" onclick="adjustTone('shorter')">קצר יותר</button>
+      <button class="btn-action" onclick="adjustTone('emotional')">יותר מרגש</button>
+      <button class="btn-action" onclick="adjustTone('formal')">יותר רשמי</button>
+      <button class="btn-action" onclick="copyContent()">העתק טקסט</button>
+      <button class="btn-action" onclick="downloadPoster()">הורד תמונה</button>
+      <button class="btn-action" onclick="shareWhatsApp()">שתף לוואטסאפ</button>
+    </div>
+    <button class="btn-back" onclick="backToCreate()">חזרה ליצירה חדשה</button>
+  </section>
+  <footer class="app-footer">Friday &middot; מחולל תוכן ועיצוב לבתי ספר &middot; גרסת MVP</footer>
 </div>
 
-<!-- PRODUCT CAROUSEL -->
-<section class="carousel-section" id="products">
-  <h2 class="carousel-title">מה תמצאו בפנים?</h2>
-  <div class="carousel-track">
-    <div class="carousel-item"><span class="material-icons-round">smart_toy</span><h3>סוכנים חכמים</h3><p>בוטים, אוטומציות ו-AI שעובדים בשבילכם 24/7</p></div>
-    <div class="carousel-item"><span class="material-icons-round">auto_awesome</span><h3>מחולל הגשות לקרנות</h3><p>AI שכותב בקשות מענק מלאות עם תקציב ולו"ז</p></div>
-    <div class="carousel-item"><span class="material-icons-round">forum</span><h3>בוט וואטסאפ</h3><p>3 נתיבים בנתב אחד: ניהול, הגשה, חיפוש</p></div>
-    <div class="carousel-item"><span class="material-icons-round">monitoring</span><h3>דוחות אימפקט</h3><p>ספר דיגיטלי מרהיב עם אנימציות ודפדוף</p></div>
-    <div class="carousel-item"><span class="material-icons-round">campaign</span><h3>אוטומציית רשתות</h3><p>פוסטים, תזמון, פרסום לפייסבוק ואינסטגרם</p></div>
-    <div class="carousel-item"><span class="material-icons-round">account_balance_wallet</span><h3>ניהול תקציב</h3><p>דשבורד גרפי, התראות חריגה, תכנון מול ביצוע</p></div>
-    <div class="carousel-item"><span class="material-icons-round">summarize</span><h3>דוח בוקר יומי</h3><p>נתוני GA4, קמפיינים ופניות חדשות כל בוקר</p></div>
-    <div class="carousel-item"><span class="material-icons-round">school</span><h3>ניהול בית ספר</h3><p>מערכת שעות, נוכחות, תקציב, מבחנים ועוד</p></div>
-    <div class="carousel-item"><span class="material-icons-round">slideshow</span><h3>מחוללי תוכן</h3><p>מצגות, שאלונים, משחקים, אינפוגרפיקות</p></div>
-    <div class="carousel-item"><span class="material-icons-round">psychology</span><h3>Brain - מוח AI</h3><p>שולט בכל התוכן: מסמכים, CSV, PDF, מענים</p></div>
-    <div class="carousel-item"><span class="material-icons-round">ads_click</span><h3>Google Ad Grants</h3><p>$10,000 לחודש בפרסום חינם לעמותות</p></div>
-    <div class="carousel-item"><span class="material-icons-round">edit_note</span><h3>כתבות CEO</h3><p>2 כתבות שבועיות עם SEO אוטומטי</p></div>
-  </div>
-</section>
-
-<div class="features-row">
-  <div class="feature-item">
-    <div class="feature-icon"><span class="material-icons-round">smart_toy</span></div>
-    <h3>סוכנים חכמים</h3>
-    <p>AI שעובד בשבילך</p>
-  </div>
-  <div class="feature-item">
-    <div class="feature-icon"><span class="material-icons-round">security</span></div>
-    <h3>אבטחה מלאה</h3>
-    <p>מידע מוגן ומאובטח</p>
-  </div>
-  <div class="feature-item">
-    <div class="feature-icon"><span class="material-icons-round">speed</span></div>
-    <h3>התקנה מהירה</h3>
-    <p>עובד תוך דקות</p>
-  </div>
-  <div class="feature-item">
-    <div class="feature-icon"><span class="material-icons-round">support_agent</span></div>
-    <h3>תמיכה 24/7</h3>
-    <p>צוות מומחים זמין</p>
-  </div>
-</div>
-
-<!-- IMPACT SECTION -->
-<section class="section-block" id="impact" style="animation:float-in 0.8s ease 0.7s both">
-  <h2>האימפקט שלנו</h2>
-  <p class="section-sub">הטכנולוגיה שבנינו כבר עובדת. הנה מה שקורה כשנותנים לארגונים את הכלים הנכונים.</p>
-  <div class="impact-grid">
-    <div class="impact-card">
-      <div class="impact-num">75+</div>
-      <div class="impact-label">מערכות חינוך פעילות</div>
-      <div class="impact-desc">ניהול, פדגוגיה, ייעוץ, מחוללים ונגנים - הכל עובד ולחיץ</div>
+<div class="settings-overlay" id="settingsOverlay" onclick="if(event.target===this)closeSettings()">
+  <div class="settings-panel">
+    <h3>הגדרות AI</h3>
+    <p class="hint">הזינו מפתח OpenAI פעם אחת בלבד. הוא נשמר בדפדפן ולא צריך להזין שוב.</p>
+    <input type="password" id="apiKeyInput" placeholder="sk-..." dir="ltr">
+    <div class="api-error" id="apiError"></div>
+    <div class="settings-actions">
+      <button class="btn-save-key" onclick="saveApiKey()">שמור</button>
+      <button class="btn-cancel-key" onclick="closeSettings()">סגור</button>
     </div>
-    <div class="impact-card">
-      <div class="impact-num">30+</div>
-      <div class="impact-label">כלים למגזר החברתי</div>
-      <div class="impact-desc">סוכנים חכמים, גיוס משאבים, דוחות, שיווק ותקציב</div>
-    </div>
-    <div class="impact-card">
-      <div class="impact-num">24/7</div>
-      <div class="impact-label">אוטומציות פעילות</div>
-      <div class="impact-desc">בוט וואטסאפ, דוח בוקר, פוסטים, כתבות - עובד גם כשאתם ישנים</div>
-    </div>
-    <div class="impact-card">
-      <div class="impact-num">3</div>
-      <div class="impact-label">בוטים בנתב אחד</div>
-      <div class="impact-desc">ניהול, הגשת מענים וחיפוש שירותים - הכל דרך וואטסאפ</div>
-    </div>
-    <div class="impact-card">
-      <div class="impact-num">AI</div>
-      <div class="impact-label">שכותב הגשות לקרנות</div>
-      <div class="impact-desc">מנתח קול קורא, מתאים שפה, מייצר תקציב ולו"ז אוטומטית</div>
-    </div>
-  </div>
-</section>
-
-<!-- PRICING SECTION -->
-<section class="section-block" id="pricing" style="animation:float-in 0.8s ease 0.75s both">
-  <h2>מחירים</h2>
-  <p class="section-sub">הטכנולוגיה הזו נבנתה כדי להנגיש, לא כדי להרוויח. רוב הכלים חינמיים לחלוטין.</p>
-  <div class="pricing-row">
-    <div class="price-card">
-      <h3>חינם לנצח</h3>
-      <div class="price-amount">0 <span>ש"ח</span></div>
-      <div class="price-desc">לארגונים שרק מתחילים</div>
-      <ul class="price-features">
-        <li><span class="material-icons-round">check_circle</span> כל 75 מערכות החינוך</li>
-        <li><span class="material-icons-round">check_circle</span> בוט וואטסאפ</li>
-        <li><span class="material-icons-round">check_circle</span> דוח בוקר יומי</li>
-        <li><span class="material-icons-round">check_circle</span> מחולל הגשות בסיסי</li>
-      </ul>
-      <button class="price-btn">התחילו בחינם</button>
-    </div>
-    <div class="price-card featured">
-      <h3>ארגון</h3>
-      <div class="price-amount">499 <span>ש"ח / חודש</span></div>
-      <div class="price-desc">לעמותה או ארגון פעיל</div>
-      <ul class="price-features">
-        <li><span class="material-icons-round">check_circle</span> הכל בחינם +</li>
-        <li><span class="material-icons-round">check_circle</span> כל הסוכנים החכמים</li>
-        <li><span class="material-icons-round">check_circle</span> גיוס משאבים מלא</li>
-        <li><span class="material-icons-round">check_circle</span> דוחות אימפקט</li>
-        <li><span class="material-icons-round">check_circle</span> אוטומציית רשתות</li>
-        <li><span class="material-icons-round">check_circle</span> תמיכה ישירה</li>
-      </ul>
-      <button class="price-btn filled">התחילו עכשיו</button>
-    </div>
-    <div class="price-card">
-      <h3>רשת / קרן</h3>
-      <div class="price-amount">צרו קשר</div>
-      <div class="price-desc">לקרנות ורשתות ארגונים</div>
-      <ul class="price-features">
-        <li><span class="material-icons-round">check_circle</span> הכל בארגון +</li>
-        <li><span class="material-icons-round">check_circle</span> דשבורד מרכזי</li>
-        <li><span class="material-icons-round">check_circle</span> API ואינטגרציות</li>
-        <li><span class="material-icons-round">check_circle</span> הדרכות ייעודיות</li>
-        <li><span class="material-icons-round">check_circle</span> SLA מובטח</li>
-      </ul>
-      <button class="price-btn">דברו איתנו</button>
-    </div>
-  </div>
-</section>
-
-<!-- ABOUT / WHO WE ARE -->
-<section class="section-block" id="about" style="animation:float-in 0.8s ease 0.8s both">
-  <h2>מי אנחנו</h2>
-  <div class="about-content">
-    <div class="about-text">
-      <h3>הטכנולוגיה שלכם. האימפקט שלכם.</h3>
-      <p>לא חברת סטארטאפ. לא חברת תוכנה. אנחנו אנשי חינוך, עמותות ומגזר חברתי שפשוט הבינו שהטכנולוגיה כבר כאן - רק צריך מישהו שידבר את השפה שלכם ויבנה את הכלים שאתם באמת צריכים.</p>
-      <p>במקום מערכות כבדות שעולות מאות אלפי שקלים ולוקח חודשים להטמיע, בנינו דברים פשוטים שעובדים עם מה שכבר יש לכם: וואטסאפ, דפדפן ומייל. בלי התקנות, בלי הדרכות, בלי כאבי ראש.</p>
-      <p>הכל נבנה מתוך עבודה אמיתית בשטח - עם מנהלי בתי ספר, מנכ"לים של עמותות וצוותים חברתיים שרצו פתרונות ולא הבטחות.</p>
-      <p>אנחנו גם כותבים קוד וגם מבינים מה זה לעמוד מול כיתה, לגייס תרומה או להגיש דוח לקרן. זה בדיוק מה שעושה את ההבדל.</p>
-    </div>
-    <div class="about-values">
-      <div class="about-value">
-        <span class="material-icons-round">lightbulb</span>
-        <h4>פשטות</h4>
-        <p>כלים שעובדים מהיום הראשון</p>
-      </div>
-      <div class="about-value">
-        <span class="material-icons-round">favorite</span>
-        <h4>שליחות</h4>
-        <p>נבנה מתוך אמונה באימפקט</p>
-      </div>
-      <div class="about-value">
-        <span class="material-icons-round">bolt</span>
-        <h4>מהירות</h4>
-        <p>אוטומציות שחוסכות שעות</p>
-      </div>
-      <div class="about-value">
-        <span class="material-icons-round">lock_open</span>
-        <h4>נגישות</h4>
-        <p>חינם או בעלות מינימלית</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="cta-section" style="animation:float-in 0.8s ease 0.85s both">
-  <div class="cta-box">
-    <h2>לא צריכים לשלם מאות אלפי שקלים</h2>
-    <p>על תוכנות, מערכות וסוכנים. הטכנולוגיה כבר כאן, חינם או בעלות מינימלית.</p>
-    <p>זהו. העולם השתנה.</p>
-    <div class="cta-bold">ועכשיו תורכם!</div>
   </div>
 </div>
 
-<footer class="footer">
-  <p>&copy; 2026 ImpactOS. כל הזכויות שמורות.</p>
-  <div style="margin-top:12px">
-    <a href="#">תנאי שימוש</a>
-    <a href="#">פרטיות</a>
-    <a href="#">נגישות</a>
+<div class="edit-overlay" id="editOverlay" onclick="if(event.target===this)closeEdit()">
+  <div class="edit-panel">
+    <h3>עריכת טקסט על הפוסטר</h3>
+    <div class="edit-field"><label>כותרת</label><input type="text" id="editTitle"></div>
+    <div class="edit-field"><label>תיאור</label><textarea id="editDesc" rows="3"></textarea></div>
+    <div class="edit-field"><label>שורה תחתונה</label><input type="text" id="editFooter"></div>
+    <div class="edit-actions">
+      <button class="btn-save" onclick="saveEdit()">שמור</button>
+      <button class="btn-cancel" onclick="closeEdit()">ביטול</button>
+    </div>
   </div>
-</footer>
+</div>
 
+<script>
+let currentContent = null, currentMode = 'both', generatedText = '', currentImageUrl = '', isGenerating = false;
+
+// ===== API KEY =====
+function getApiKey() { return localStorage.getItem('chikchak_api_key') || ''; }
+function saveApiKey() {
+  const key = document.getElementById('apiKeyInput').value.trim();
+  if (key && key.startsWith('sk-')) { localStorage.setItem('chikchak_api_key', key); updateApiIndicator(); closeSettings(); }
+  else if (key) { const e = document.getElementById('apiError'); e.textContent = 'מפתח לא תקין (צריך להתחיל ב-sk-)'; e.style.display = 'block'; }
+}
+function updateApiIndicator() {
+  const has = !!getApiKey();
+  document.getElementById('apiIndicator').style.display = has ? '' : 'none';
+  const b = document.getElementById('noKeyBanner'); if (b) b.style.display = has ? 'none' : '';
+}
+function openSettings() { const s = getApiKey(); if (s) document.getElementById('apiKeyInput').value = s; document.getElementById('apiError').style.display = 'none'; document.getElementById('settingsOverlay').classList.add('visible'); }
+function closeSettings() { document.getElementById('settingsOverlay').classList.remove('visible'); }
+document.addEventListener('DOMContentLoaded', updateApiIndicator);
+
+// ===== OPENAI API =====
+async function callGPT(prompt) {
+  const key = getApiKey(); if (!key) return null;
+  try {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+      body: JSON.stringify({ model: 'gpt-4o-mini', messages: [{ role: 'system', content: SYSTEM_PROMPT }, { role: 'user', content: prompt }], max_tokens: 1200, temperature: 0.85 })
+    });
+    if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.error?.message || `API error ${res.status}`); }
+    return (await res.json()).choices[0].message.content;
+  } catch(e) { console.error('GPT:', e); return null; }
+}
+
+async function callDALLE(prompt) {
+  const key = getApiKey(); if (!key) return null;
+  try {
+    const res = await fetch('https://api.openai.com/v1/images/generations', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+      body: JSON.stringify({ model: 'dall-e-3', prompt, n: 1, size: '1024x1024', quality: 'standard' })
+    });
+    if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.error?.message || `API error ${res.status}`); }
+    return (await res.json()).data[0].url;
+  } catch(e) { console.error('DALL-E:', e); return null; }
+}
+
+// ===== SYSTEM PROMPT - MICRO COPYWRITING ENGINE =====
+const SYSTEM_PROMPT = `אתה קופירייטר מהשורה הראשונה. מתמחה בכתיבה לבתי ספר בישראל. אתה מכיר את המערכת מבפנים.
+
+DNA שלך:
+- מיקרו קופירייטינג ברמה הכי גבוהה. כל מילה שוקלת טון.
+- שפה חמה, אנושית, עם הומור עדין של מי שחי את חדר המורים
+- את יודעת שהמנהלת שותה נס קפה עלית בין שיעורים ומעבירה ישיבה פדגוגית תוך כדי
+- את יודעת שהמורה עוזרת לתלמיד לשרוך שרוכים בהפסקה ואז רצה לכיתה
+- את יודעת שיש לה עיניים בגב
+- את יודעת שהצלצול הוא בשבילה. בזמן שהיא חושבת.
+- את כותבת כמו מישהי שחיה את בית הספר, לא מישהי שכותבת על בית הספר מבחוץ
+
+כללי ברזל:
+1. קצר וחד. לא מלל מיותר. כל משפט עומד בפני עצמו.
+2. פתיחה שתופסת - לא "שלום הורים יקרים". פתיחה שגורמת להמשיך לקרוא.
+3. CTA ברור - מה צריך לעשות, מתי, ואיפה. נקודה.
+4. אסור קלישאות. לא "בשורה טובה", לא "שמחים לבשר", לא "ברצוננו ליידע", לא "הננו מתכבדים".
+5. כתיבה כאילו את מדברת עם הורה בשער בית הספר, לא כותבת מכתב רשמי מפקידה במשרד.
+6. לרשתות חברתיות - סלנג, סוגריים, שאלות מעורבות.
+7. שורות קצרות. רווח אוויר בין פסקאות. קל לקריאה בנייד.
+
+דוגמאות לטון הנכון:
+- במקום "שלום הורים יקרים, אנו שמחים להזמינכם" -> "יום שלישי, 19:00, באולם. אתם שם?"
+- במקום "נודה לכם על שיתוף הפעולה" -> "זה הרגע שלכם. תגיעו."
+- במקום "הננו מתכבדים להודיע" -> "חדשות (ויש גם טובות):"
+- במקום "בברכה, צוות בית הספר" -> "נתראה בשער, ענת"
+- במקום "השבוע למדנו על..." -> "יעל מכיתה ד2 אמרה השבוע משהו שעצר אותי באמצע המשפט..."
+- במקום "נא לוודא שהילדים מגיעים עם ציוד" -> "בקשה קטנה: מים + כובע + חיוך. זהו."
+
+סיכום שבועי: לא רשימה יבשה. סיפור קצר של השבוע. רגע אחד שבלט. משפט שילד אמר. דבר שקרה בהפסקה. ואז 2-3 נקודות טכניות.
+
+הודעה: ישר לעניין. מה. מתי. איפה. מה צריך. בלי הקדמות.
+
+פוסט לרשתות: כאילו את מספרת לחברה. קצר. תמונתי. סוגריים. שאלות רטוריות. האשטגים בעברית.`;
+
+// ===== CHIPS & MODE =====
+document.querySelectorAll('.chips').forEach(g => { g.querySelectorAll('.chip').forEach(c => { c.addEventListener('click', () => { g.querySelectorAll('.chip').forEach(x => x.classList.remove('active')); c.classList.add('active'); }); }); });
+function getSelected(id) { const e = document.querySelector(`#${id} .chip.active`); return e ? e.dataset.value : null; }
+function setMode(m) { currentMode = m; document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === m)); document.getElementById('styleCard').style.display = m === 'content' ? 'none' : ''; }
+
+function showCreation() { document.getElementById('creation').classList.add('visible'); updateApiIndicator(); setTimeout(() => document.getElementById('userInput').focus(), 400); document.getElementById('creation').scrollIntoView({ behavior: 'smooth' }); }
+function backToCreate() { document.getElementById('result').classList.remove('visible'); document.getElementById('creation').classList.add('visible'); document.getElementById('creation').scrollIntoView({ behavior: 'smooth' }); }
+
+const roleLabels = { principal:'מנהל/ת בית הספר', educator:'מחנכ/ת כיתה', coordinator:'רכז/ת חברתי/ת', vice:'סגנ/ית מנהל/ת', teacher:'מורה מקצועי/ת', counselor:'יועצ/ת חינוכי/ת', education:'איש/ת חינוך' };
+const typeLabels = { poster:'פוסטר', weekly_summary:'סיכום שבועי', notice:'הודעה', reminder:'תזכורת', parents_day:'יום הורים', parents_meeting:'אסיפת הורים', trip:'טיול שנתי', story:'סטורי', ceremony:'טקס', flyer:'פלייר', event:'אירוע', fb_post:'פוסט לפייסבוק', ig_post:'פוסט לאינסטגרם' };
+
+// ===== CONTENT PROMPT =====
+function buildContentPrompt(input, role, type) {
+  const roleName = roleLabels[role] || 'צוות בית הספר';
+  const typeName = typeLabels[type] || 'תוכן';
+  const ti = {
+    weekly_summary: `כתוב סיכום שבועי קצר ומעניין להורים.\n- פתח עם רגע אחד שבלט השבוע (המצא רגע אותנטי שמתאים לנושא)\n- 3-4 נקודות על מה שלמדו\n- "לתשומת ליבכם" קצר\n- חתום בשם התפקיד\n- עד 150 מילים`,
+    notice: `כתוב הודעה קצרה וברורה.\n- פתיחה שתופסת\n- ישר לעניין: מה, מתי, איפה\n- CTA ברור\n- עד 80 מילים`,
+    reminder: `כתוב תזכורת חדה.\n- משפט פתיחה שמושך תשומת לב\n- הפרטים: מה, מתי, מה צריך\n- עד 60 מילים`,
+    parents_day: `כתוב הזמנה ליום הורים.\n- פתיחה חמה\n- תאריך, שעה, מיקום\n- למה כדאי להגיע\n- עד 100 מילים`,
+    parents_meeting: `כתוב הזמנה לאסיפת הורים.\n- פתיחה שלא נשמעת כמו כל אסיפה\n- סדר יום (3-4 נקודות)\n- תאריך, שעה, מיקום\n- עד 100 מילים`,
+    trip: `כתוב הודעה על טיול.\n- פתיחה מלהיבה\n- רשימת ציוד (4-5 פריטים)\n- כללים\n- עד 120 מילים`,
+    poster: `כתוב טקסט לפוסטר.\n- כותרת (3-5 מילים)\n- תת-כותרת (משפט אחד)\n- פרטים אם יש\n- CTA`,
+    fb_post: `כתוב פוסט לפייסבוק.\n- פתיחה שעוצרת גלילה\n- שפה שיחתית, סוגריים, שאלות\n- 3-5 האשטגים בעברית\n- עד 120 מילים`,
+    ig_post: `כתוב פוסט לאינסטגרם.\n- פתיחה תמונתית\n- 2-3 משפטים שיחתיים\n- נקודות ריקות + 5-8 האשטגים\n- עד 80 מילים`,
+    story: `כתוב טקסט לסטורי.\n- כותרת (2-3 מילים)\n- משפט אחד-שניים\n- עד 25 מילים`,
+    ceremony: `כתוב הזמנה לטקס.\n- פתיחה מרגשת\n- מה, מתי, איפה\n- עד 100 מילים`,
+    flyer: `כתוב טקסט לפלייר.\n- כותרת בולטת\n- 3-4 נקודות\n- עד 80 מילים`,
+    event: `כתוב הזמנה לאירוע.\n- פתיחה מלהיבה\n- מה, מתי, איפה, למי\n- CTA\n- עד 100 מילים`
+  };
+  return `התפקיד: ${roleName}\nסוג: ${typeName}\nהבקשה: "${input}"\n\n${ti[type] || ti.notice}\n\nכתוב רק את התוכן. בלי הסברים.`;
+}
+
+// ===== IMAGE PROMPT (BACKGROUND ONLY) =====
+function buildImagePrompt(input, type, style) {
+  const sd = { clean:'Clean, minimal, modern, soft gradients, geometric shapes, pastel accents', happy:'Bright, colorful, cheerful, confetti, balloons, celebration, warm saturated', formal:'Elegant, deep navy, gold accents, classical patterns, premium', emotional:'Warm, soft, golden lighting, bokeh, sunset palette', young:'Trendy, bold, neon on dark, holographic, Gen-Z' }[style] || 'Modern, clean, professional';
+  let tv = 'education, school, abstract learning';
+  if (/פורים|תחפוש/.test(input)) tv = 'carnival, colorful masks, confetti explosion, party';
+  else if (/זיכרון/.test(input)) tv = 'memorial flame, solemn candles, soft light, blue white';
+  else if (/עצמאות/.test(input)) tv = 'celebration, blue white, fireworks, joy';
+  else if (/טיול|טבע/.test(input)) tv = 'nature hiking, green mountains, sunlight, adventure';
+  else if (/ספורט/.test(input)) tv = 'sports, athletic, energy, dynamic';
+  else if (/מוזיקה|שיר/.test(input)) tv = 'music, abstract notes, instruments, rhythm';
+  else if (/מדע|ניסוי/.test(input)) tv = 'science, chemistry, molecules, discovery';
+  else if (/אסיפ|הורים/.test(input)) tv = 'warm gathering, welcoming, community, abstract circles';
+  else if (/סיום|סוף שנה/.test(input)) tv = 'graduation, achievement, golden light, balloons';
+  return `Create a stunning visual background for a school poster. ${sd}\nTheme: ${tv}\n\nCRITICAL: This is a BACKGROUND IMAGE ONLY. DO NOT include ANY text, letters, words, numbers or typography in ANY language. No Hebrew, no English, no Arabic, no text whatsoever. No logos. Center should be slightly darker for text readability. Square 1:1. Professional design studio quality.`;
+}
+
+// ===== POSTER CONTENT =====
+function extractPosterContent(input, role, type) {
+  const rn = roleLabels[role] || 'צוות ביה"ס';
+  let theme = 'general';
+  if (/פורים|תחפוש/.test(input)) theme = 'purim';
+  else if (/זיכרון/.test(input)) theme = 'memorial';
+  else if (/עצמאות/.test(input)) theme = 'independence';
+  else if (/parents_meeting/.test(type)) theme = 'meeting';
+  else if (/parents_day/.test(type)) theme = 'meeting';
+  else if (type === 'trip') theme = 'trip';
+  else if (type === 'weekly_summary') theme = 'summary';
+  else if (type === 'reminder') theme = 'reminder';
+  else if (type === 'ceremony') theme = 'ceremony';
+  const tm = input.match(/(\d{1,2}:\d{2})/), dm = input.match(/(יום\s*[א-ש]\S*)/), lm = input.match(/(באולם|בכיתה|במגרש|בחצר|באודיטוריום|בספרייה)(\s*[\u0590-\u05FF]*)?/);
+  const titles = { purim:'מסיבת פורים!', memorial:'יום הזיכרון', independence:'חג העצמאות!', meeting:type==='parents_day'?'יום הורים':'אסיפת הורים', trip:'יוצאים לדרך!', summary:'סיכום שבועי', reminder:'לא לשכוח!', ceremony:'טקס מיוחד', general:input.trim().split(/\s+/).length<=6?input.trim():input.trim().split(/\s+/).slice(0,5).join(' ') };
+  const descs = { purim:'תחפושות, מוזיקה, שמחה. אתם שם?', memorial:'נעמוד יחד. נזכור.', independence:'חוגגים יחד!', meeting:'אתם שם?', trip:'כל הפרטים בפנים.', summary:'מה קרה השבוע.', reminder:input, ceremony:'בואו להיות חלק.', general:'אתם מוזמנים!' };
+  return { title:titles[theme]||titles.general, description:descs[theme]||descs.general, details:{date:dm?.[1],time:tm?.[1],location:lm?.[0]}, footer:rn, theme, role, type };
+}
+
+// ===== RENDER =====
+function renderHybridPoster(url, c) {
+  const f = document.getElementById('posterFrame');
+  const b = []; if (c.details.date) b.push(c.details.date); if (c.details.time) b.push(c.details.time); if (c.details.location) b.push(c.details.location);
+  const tl = typeLabels[c.type] || '';
+  f.innerHTML = `<div class="hybrid-poster"><img src="${url}" alt="רקע" onerror="this.style.display='none'">${tl?`<div class="poster-label">${tl}</div>`:''}<div class="text-overlay with-scrim"><h2 class="poster-title">${c.title}</h2><p class="poster-desc">${c.description}</p>${b.length?`<div class="poster-details">${b.map(x=>`<span class="poster-badge">${x}</span>`).join('')}</div>`:''}<p class="poster-footer">${c.footer}</p></div></div>`;
+  f.classList.add('visible');
+}
+
+function renderLocalPoster(c) {
+  const f = document.getElementById('posterFrame');
+  const gs = ['linear-gradient(135deg,#667eea,#764ba2)','linear-gradient(135deg,#f093fb,#f5576c)','linear-gradient(135deg,#4facfe,#00f2fe)','linear-gradient(135deg,#43e97b,#38f9d7)','linear-gradient(135deg,#fa709a,#fee140)','linear-gradient(135deg,#a18cd1,#fbc2eb)','linear-gradient(135deg,#fccb90,#d57eeb)','linear-gradient(135deg,#89f7fe,#66a6ff)','linear-gradient(135deg,#c471f5,#fa71cd)','linear-gradient(135deg,#48c6ef,#6f86d6)','linear-gradient(135deg,#0c3483,#a2b6df)','linear-gradient(135deg,#fc5c7d,#6a82fb)'];
+  const g = gs[Math.floor(Math.random()*gs.length)];
+  const b = []; if (c.details.date) b.push(c.details.date); if (c.details.time) b.push(c.details.time); if (c.details.location) b.push(c.details.location);
+  f.innerHTML = `<div class="hybrid-poster" style="background:${g}"><div class="text-overlay"><h2 class="poster-title">${c.title}</h2><p class="poster-desc">${c.description}</p>${b.length?`<div class="poster-details">${b.map(x=>`<span class="poster-badge">${x}</span>`).join('')}</div>`:''}<p class="poster-footer">${c.footer}</p></div></div>`;
+  f.classList.add('visible');
+}
+
+function generateLocalContent(input, role, type) {
+  const rn = roleLabels[role] || 'צוות ביה"ס';
+  const t = { weekly_summary:()=>`רגע מהשבוע:\n${input||'שבוע מלא הפתעות.'}\n\nלשבוע הבא: ציוד מלא, להגיע בזמן.\n${rn}`, notice:()=>`${input||'עדכון חשוב.'}\n\nלפרטים פנו אלינו.\n${rn}`, reminder:()=>`לא לשכוח!\n${input||'תזכורת.'}\n${rn}`, parents_day:()=>`יום הורים.\n${input||'נפגשים, מדברים.'}\nתאמו מראש.\n${rn}`, parents_meeting:()=>`אסיפת הורים.\n${input||'הנוכחות שלכם משנה.'}\n${rn}`, trip:()=>`יוצאים!\n${input||'מים, כובע, חיוך.'}\n${rn}`, fb_post:()=>`${input||'רגע מבית הספר'}\n\n(כן, גם אנחנו מתרגשים)\n#בית_ספר #חינוך #רגעים`, ig_post:()=>`${input||'רגע.'}\n.\n.\n.\n#בית_ספר #חינוך #קהילה`, story:()=>input||'רגע מהכיתה.', ceremony:()=>`${input||'טקס.'}\nבואו.\n${rn}`, flyer:()=>`${input||'אירוע מיוחד'}\n${rn}`, event:()=>`${input||'אירוע'}\nמוזמנים!\n${rn}`, poster:()=>`${input||'אירוע בבית הספר'}\n${rn}` };
+  return (t[type]||t.notice)();
+}
+
+// ===== MAIN =====
+async function generate() {
+  if (isGenerating) return;
+  const input = document.getElementById('userInput').value.trim();
+  if (!input) { document.getElementById('userInput').focus(); return; }
+  isGenerating = true;
+  document.getElementById('generateBtn').disabled = true;
+  const role = getSelected('roleChips'), type = getSelected('typeChips'), style = getSelected('styleChips'), hasKey = !!getApiKey();
+  document.getElementById('creation').classList.remove('visible');
+  document.getElementById('loading').classList.add('visible');
+  document.getElementById('loadingSub').textContent = '';
+
+  try {
+    const cp = (currentMode!=='design') && hasKey ? callGPT(buildContentPrompt(input, role, type)) : Promise.resolve(null);
+    const dp = (currentMode!=='content') && hasKey ? (document.getElementById('loadingText').textContent='AI מייצר תוכן ומעצב במקביל...', document.getElementById('loadingSub').textContent='קופירייטר כותב + DALL-E 3 מעצב רקע', callDALLE(buildImagePrompt(input, type, style))) : Promise.resolve(null);
+    if (!hasKey) document.getElementById('loadingText').textContent = 'מייצר...';
+    const [aiText, imgUrl] = await Promise.all([cp, dp]);
+
+    if (currentMode!=='design') {
+      generatedText = aiText || generateLocalContent(input, role, type);
+      document.getElementById('contentText').textContent = generatedText;
+      document.getElementById('contentResultTitle').textContent = typeLabels[type] || 'התוכן שלך';
+      document.getElementById('contentResult').classList.add('visible');
+    } else { document.getElementById('contentResult').classList.remove('visible'); }
+
+    if (currentMode!=='content') {
+      currentContent = extractPosterContent(input, role, type);
+      if (imgUrl) { currentImageUrl = imgUrl; renderHybridPoster(imgUrl, currentContent); }
+      else { currentImageUrl = ''; renderLocalPoster(currentContent); }
+    } else { document.getElementById('posterFrame').classList.remove('visible'); }
+  } catch(e) {
+    console.error(e);
+    if (currentMode!=='content') { currentContent = extractPosterContent(input, role, type); renderLocalPoster(currentContent); }
+    if (currentMode!=='design') { generatedText = generateLocalContent(input, role, type); document.getElementById('contentText').textContent = generatedText; document.getElementById('contentResult').classList.add('visible'); }
+  }
+  document.getElementById('loading').classList.remove('visible');
+  document.getElementById('result').classList.add('visible');
+  document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+  isGenerating = false; document.getElementById('generateBtn').disabled = false;
+}
+
+async function regenerate() {
+  if (isGenerating) return; isGenerating = true;
+  const input = document.getElementById('userInput').value.trim(), role = getSelected('roleChips'), type = getSelected('typeChips'), style = getSelected('styleChips'), hasKey = !!getApiKey();
+  const ps = [];
+  if (currentMode!=='content') {
+    const f = document.getElementById('posterFrame'); f.style.opacity='0.3'; f.style.transition='opacity 0.2s';
+    if (hasKey) { ps.push(callDALLE(buildImagePrompt(input,type,style)).then(u=>{if(u){currentImageUrl=u;renderHybridPoster(u,currentContent);}else renderLocalPoster(currentContent);f.style.opacity='1';})); }
+    else { renderLocalPoster(currentContent); f.style.opacity='1'; }
+  }
+  if (currentMode!=='design') {
+    if (hasKey) { ps.push(callGPT(buildContentPrompt(input,role,type)).then(t=>{if(t){generatedText=t;document.getElementById('contentText').textContent=generatedText;}})); }
+    else { generatedText=generateLocalContent(input,role,type); document.getElementById('contentText').textContent=generatedText; }
+  }
+  await Promise.all(ps); isGenerating = false;
+}
+
+function adjustTone(adj) {
+  if (!currentContent) return;
+  if (adj==='shorter'){currentContent.description=currentContent.description.split('.')[0]+'.';currentContent.footer='';}
+  else if(adj==='emotional'){currentContent.title=currentContent.title.replace(/[.!]?$/,'!');currentContent.footer='הרגע הזה לא חוזר. תגיעו.';}
+  else if(adj==='formal'){currentContent.footer='בברכה, הנהלת בית הספר';}
+  if(currentMode!=='content'){if(currentImageUrl)renderHybridPoster(currentImageUrl,currentContent);else renderLocalPoster(currentContent);}
+}
+
+function openEdit() { if(!currentContent)return; document.getElementById('editTitle').value=currentContent.title; document.getElementById('editDesc').value=currentContent.description; document.getElementById('editFooter').value=currentContent.footer; document.getElementById('editOverlay').classList.add('visible'); }
+function closeEdit() { document.getElementById('editOverlay').classList.remove('visible'); }
+function saveEdit() { currentContent.title=document.getElementById('editTitle').value; currentContent.description=document.getElementById('editDesc').value; currentContent.footer=document.getElementById('editFooter').value; if(currentMode!=='content'){if(currentImageUrl)renderHybridPoster(currentImageUrl,currentContent);else renderLocalPoster(currentContent);} closeEdit(); }
+
+function copyContent() {
+  const t = generatedText||(currentContent?`${currentContent.title}\n${currentContent.description}\n${currentContent.footer}`:'');
+  navigator.clipboard.writeText(t).then(()=>{const b=event.target;b.textContent='הועתק!';setTimeout(()=>b.textContent='העתק טקסט',1500);});
+}
+function downloadPoster() { if(currentImageUrl) window.open(currentImageUrl,'_blank'); else alert('בגרסה המלאה: הורדה כ-PNG / PDF'); }
+function shareWhatsApp() { const t=generatedText||(currentContent?`${currentContent.title}\n${currentContent.description}`:''); window.open(`https://wa.me/?text=${encodeURIComponent(t)}`,'_blank'); }
+</script>
 </body>
 </html>
