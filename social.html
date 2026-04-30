@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AmutaPlay - כל מה שהמגזר החברתי צריך במקום אחד</title>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -33,7 +33,7 @@
 }
 
 body {
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Rubik', sans-serif;
   background: var(--bg);
   color: var(--text);
   line-height: 1.6;
@@ -116,7 +116,7 @@ body {
   border: 2px solid var(--border);
   border-radius: 24px;
   padding: 0 48px 0 20px;
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Rubik', sans-serif;
   font-size: 15px;
   background: var(--bg);
   transition: all 0.3s;
@@ -237,40 +237,6 @@ body {
   border-bottom-color: var(--primary);
   font-weight: 600;
 }
-
-/* ===== DEVICE FILTER ===== */
-.device-filter {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 16px 24px 0;
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.device-chip {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 18px;
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  background: var(--surface);
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.device-chip:hover,
-.device-chip.active {
-  border-color: var(--primary);
-  background: var(--primary-light);
-  color: var(--primary);
-}
-
-.device-chip .material-icons-round { font-size: 18px; }
 
 /* ===== HERO BANNER ===== */
 .hero-section {
@@ -415,7 +381,7 @@ body {
   color: white;
   border: none;
   border-radius: 24px;
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Rubik', sans-serif;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
@@ -438,7 +404,7 @@ body {
   color: white;
   border: 1px solid rgba(255,255,255,0.3);
   border-radius: 24px;
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Rubik', sans-serif;
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
@@ -637,7 +603,7 @@ body {
   color: white;
   border: none;
   border-radius: 20px;
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Rubik', sans-serif;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -731,7 +697,7 @@ body {
   border-radius: 24px;
   background: transparent;
   color: var(--primary);
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Rubik', sans-serif;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
@@ -837,7 +803,7 @@ footer {
 .cart-footer { padding: 20px 24px; border-top: 1px solid var(--border); }
 .cart-total { display: flex; justify-content: space-between; font-size: 18px; font-weight: 700; margin-bottom: 16px; }
 .cart-total .amount { color: var(--primary); }
-.btn-checkout { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 24px; font-family: 'Heebo'; font-size: 16px; font-weight: 700; cursor: pointer; }
+.btn-checkout { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 24px; font-family: 'Rubik'; font-size: 16px; font-weight: 700; cursor: pointer; }
 .btn-checkout:hover { background: var(--primary-dark); }
 .empty-cart { text-align: center; padding: 40px 0; color: var(--text-secondary); }
 .empty-cart .material-icons-round { font-size: 64px; color: var(--border); margin-bottom: 12px; }
@@ -883,8 +849,7 @@ footer {
   .stat-number { font-size: 28px; }
   .products-grid { grid-template-columns: 1fr; }
   .pricing-grid { grid-template-columns: 1fr; }
-  .device-filter { gap: 8px; }
-  .device-chip { padding: 6px 12px; font-size: 12px; }
+
   .cart-panel { width: 100%; }
 }
 
@@ -923,23 +888,12 @@ footer {
     <a class="nav-tab active" onclick="filterCat('all',this)">הכל</a>
     <a class="nav-tab" onclick="filterCat('agents',this)">סוכנים חכמים</a>
     <a class="nav-tab" onclick="filterCat('grants',this)">גיוס משאבים</a>
-    <a class="nav-tab" onclick="filterCat('crm',this)">CRM ומתנדבים</a>
-    <a class="nav-tab" onclick="filterCat('impact',this)">מדידת אימפקט</a>
-    <a class="nav-tab" onclick="filterCat('finance',this)">כספים וגיוס</a>
-    <a class="nav-tab" onclick="filterCat('comm',this)">תקשורת ושיווק</a>
-    <a class="nav-tab" onclick="filterCat('hr',this)">כח אדם</a>
-    <a class="nav-tab" onclick="filterCat('social',this)">רשתות חברתיות</a>
+    <a class="nav-tab" onclick="filterCat('impact',this)">דוחות אימפקט</a>
+    <a class="nav-tab" onclick="filterCat('social',this)">רשתות ושיווק</a>
+    <a class="nav-tab" onclick="filterCat('management',this)">מערכות ניהול</a>
+    <a class="nav-tab" onclick="filterCat('budget',this)">תקציב</a>
   </div>
 </nav>
-
-<!-- FILTER CHIPS -->
-<div class="device-filter">
-  <a class="device-chip active"><span class="material-icons-round">foundation</span> עמותות</a>
-  <a class="device-chip"><span class="material-icons-round">groups</span> ארגונים חברתיים</a>
-  <a class="device-chip"><span class="material-icons-round">account_balance</span> קרנות</a>
-  <a class="device-chip"><span class="material-icons-round">public</span> מגזר ציבורי</a>
-  <a class="device-chip"><span class="material-icons-round">handshake</span> עסקים חברתיים</a>
-</div>
 
 <!-- HERO -->
 <section class="hero-section">
@@ -959,10 +913,9 @@ footer {
     <div class="hero-content">
       <div class="hero-badge"><span class="material-icons-round">verified</span> חדש ב-AmutaPlay</div>
       <h1 class="hero-title"><span class="highlight">AmutaPlay</span><br>המגזר החברתי של המחר</h1>
-      <p class="hero-subtitle">כל מה שעמותות וארגונים חברתיים צריכים: גיוס משאבים, סוכנים חכמים, עיצובים, רשתות חברתיות ועוד - במקום אחד</p>
+      <p class="hero-subtitle">לא להכביד עליכם בעוד מערכות שיעלו אבק. כלים קלים שעובדים יחד עם הוואטסאפ, חוסכים פרסום, שיווק ועוד. אתם תעשו את האימפקט, אנחנו אחראים על הטכנולוגיה.</p>
       <div class="hero-actions">
-        <a href="#products" class="btn-primary"><span class="material-icons-round">explore</span> גלו את החנות</a>
-        <a href="#pricing" class="btn-secondary-hero"><span class="material-icons-round">play_circle</span> צפו בהדגמה</a>
+        <a href="#products" class="btn-primary"><span class="material-icons-round">explore</span> גלו את הכלים</a>
       </div>
     </div>
   </div>
@@ -975,233 +928,104 @@ footer {
     <a href="#" class="section-link">הצג הכל <span class="material-icons-round">arrow_back</span></a>
   </div>
   <div class="category-grid">
-    <a class="category-card"><div class="category-icon" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)"><span class="material-icons-round" style="color:white">smart_toy</span></div><h3>סוכנים חכמים</h3><p>AI לעמותות</p></a>
+    <a class="category-card"><div class="category-icon" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)"><span class="material-icons-round" style="color:white">smart_toy</span></div><h3>סוכנים חכמים</h3><p>אוטומציות מטורפות</p></a>
     <a class="category-card"><div class="category-icon" style="background:linear-gradient(135deg,#0d9488,#2dd4bf)"><span class="material-icons-round" style="color:white">savings</span></div><h3>גיוס משאבים</h3><p>מענקים ותרומות</p></a>
-    <a class="category-card"><div class="category-icon" style="background:linear-gradient(135deg,#ea580c,#fb923c)"><span class="material-icons-round" style="color:white">people</span></div><h3>CRM ומתנדבים</h3><p>ניהול קשרים</p></a>
-    <a class="category-card"><div class="category-icon" style="background:linear-gradient(135deg,#0891b2,#67e8f9)"><span class="material-icons-round" style="color:white">monitoring</span></div><h3>מדידת אימפקט</h3><p>תוצאות ומדדים</p></a>
-    <a class="category-card"><div class="category-icon" style="background:linear-gradient(135deg,#059669,#34d399)"><span class="material-icons-round" style="color:white">account_balance_wallet</span></div><h3>כספים וגיוס</h3><p>תקציב וגיוס משאבים</p></a>
-    <a class="category-card"><div class="category-icon" style="background:linear-gradient(135deg,#db2777,#f9a8d4)"><span class="material-icons-round" style="color:white">campaign</span></div><h3>תקשורת ושיווק</h3><p>דיגיטל ומדיה</p></a>
-    <a class="category-card"><div class="category-icon" style="background:linear-gradient(135deg,#f59e0b,#fcd34d)"><span class="material-icons-round" style="color:white">badge</span></div><h3>כח אדם</h3><p>גיוס וניהול</p></a>
-    <a class="category-card"><div class="category-icon" style="background:linear-gradient(135deg,#6366f1,#a5b4fc)"><span class="material-icons-round" style="color:white">share</span></div><h3>רשתות חברתיות</h3><p>תוכן ופרסום</p></a>
+    <a class="category-card"><div class="category-icon" style="background:linear-gradient(135deg,#0891b2,#67e8f9)"><span class="material-icons-round" style="color:white">monitoring</span></div><h3>דוחות אימפקט</h3><p>תוצאות ומדדים</p></a>
+    <a class="category-card"><div class="category-icon" style="background:linear-gradient(135deg,#db2777,#f9a8d4)"><span class="material-icons-round" style="color:white">campaign</span></div><h3>רשתות ושיווק</h3><p>אוטומציות מהממות</p></a>
+    <a class="category-card"><div class="category-icon" style="background:linear-gradient(135deg,#6366f1,#a5b4fc)"><span class="material-icons-round" style="color:white">admin_panel_settings</span></div><h3>מערכות ניהול</h3><p>AI חכם לניהול</p></a>
+    <a class="category-card"><div class="category-icon" style="background:linear-gradient(135deg,#059669,#34d399)"><span class="material-icons-round" style="color:white">account_balance_wallet</span></div><h3>תקציב</h3><p>ניהול כספי חכם</p></a>
   </div>
 </section>
 
-<!-- TOP AGENTS -->
+<!-- 1. סוכנים חכמים ואוטומציות -->
 <section class="section fade-up" id="products">
   <div class="section-header">
-    <h2 class="section-title">סוכנים חכמים למגזר החברתי</h2>
-    <a href="#" class="section-link">הצג הכל <span class="material-icons-round">arrow_back</span></a>
+    <h2 class="section-title">סוכנים חכמים ואוטומציות מטורפות</h2>
   </div>
   <div class="products-scroll">
-    <div class="product-card" onclick="openModal('agent-grant')"><div class="product-thumb" style="background:linear-gradient(135deg,#0d9488,#2dd4bf)"><div class="pattern"></div><span class="material-icons-round">auto_awesome</span></div><div class="product-info"><div class="product-name">סוכן כתיבת הגשות</div><div class="product-dev">AmutaPlay AI</div><div class="product-meta"><span class="product-rating">4.9 <span class="material-icons-round">star</span></span><span class="product-price">199 ש"ח/חודש</span></div></div></div>
-    <div class="product-card" onclick="openModal('agent-donor')"><div class="product-thumb" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)"><div class="pattern"></div><span class="material-icons-round">handshake</span></div><div class="product-info"><div class="product-name">סוכן ניהול תורמים</div><div class="product-dev">DonorAI</div><div class="product-meta"><span class="product-rating">4.8 <span class="material-icons-round">star</span></span><span class="product-price">149 ש"ח/חודש</span></div></div></div>
-    <div class="product-card" onclick="openModal('agent-impact')"><div class="product-thumb" style="background:linear-gradient(135deg,#0891b2,#67e8f9)"><div class="pattern"></div><span class="material-icons-round">monitoring</span></div><div class="product-info"><div class="product-name">סוכן מדידת אימפקט</div><div class="product-dev">ImpactMeter</div><div class="product-meta"><span class="product-rating">4.7 <span class="material-icons-round">star</span></span><span class="product-price">179 ש"ח/חודש</span></div></div></div>
-
-    <div class="product-card" onclick="openModal('agent-vol')"><div class="product-thumb" style="background:linear-gradient(135deg,#ea580c,#fb923c)"><div class="pattern"></div><span class="material-icons-round">diversity_3</span></div><div class="product-info"><div class="product-name">סוכן ניהול מתנדבים</div><div class="product-dev">VolunteerPro</div><div class="product-meta"><span class="product-rating">4.6 <span class="material-icons-round">star</span></span><span class="product-price">99 ש"ח/חודש</span></div></div></div>
-    <div class="product-card" onclick="openModal('agent-social')"><div class="product-thumb" style="background:linear-gradient(135deg,#db2777,#f9a8d4)"><div class="pattern"></div><span class="material-icons-round">share</span></div><div class="product-info"><div class="product-name">סוכן רשתות חברתיות</div><div class="product-dev">SocialNGO</div><div class="product-meta"><span class="product-rating">4.7 <span class="material-icons-round">star</span></span><span class="product-price">89 ש"ח/חודש</span></div></div></div>
-  </div>
-</section>
-
-
-<!-- HOPA AI AGENTS -->
-<section class="section fade-up">
-  <div class="section-header">
-    <h2 class="section-title">סוכנים חכמים - אוסף AmutaPlay</h2>
-    <a href="#" class="section-link">הצג הכל <span class="material-icons-round">arrow_back</span></a>
-  </div>
-  <div class="products-scroll">
-    <div class="product-card" onclick="openModal('hopa-brain')"><div class="product-thumb" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)"><div class="pattern"></div><span class="material-icons-round">psychology</span></div><div class="product-info"><div class="product-name">Hopa Brain - מוח תוכן</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">5.0 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#7c3aed">AI</span></div></div></div>
+    <div class="product-card" onclick="openModal('hopa-brain')"><div class="product-thumb" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)"><div class="pattern"></div><span class="material-icons-round">psychology</span></div><div class="product-info"><div class="product-name">Brain - מוח תוכן AI</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">5.0 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#7c3aed">AI</span></div></div></div>
     <div class="product-card" onclick="openModal('hopa-smart-input')"><div class="product-thumb" style="background:linear-gradient(135deg,#0891b2,#67e8f9)"><div class="pattern"></div><span class="material-icons-round">auto_fix_high</span></div><div class="product-info"><div class="product-name">Smart Agent - קליטה חכמה</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.9 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#0891b2">AI</span></div></div></div>
     <div class="product-card" onclick="openModal('hopa-wa-bot')"><div class="product-thumb" style="background:linear-gradient(135deg,#059669,#34d399)"><div class="pattern"></div><span class="material-icons-round">smart_toy</span></div><div class="product-info"><div class="product-name">WhatsApp Bot Router</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.9 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#059669">BOT</span></div></div></div>
-    <div class="product-card" onclick="openModal('hopa-radar')"><div class="product-thumb" style="background:linear-gradient(135deg,#db2777,#f9a8d4)"><div class="pattern"></div><span class="material-icons-round">radar</span></div><div class="product-info"><div class="product-name">Radar 360 - מודל ויזואלי</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">5.0 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#db2777">VIZ</span></div></div></div>
-    <div class="product-card" onclick="openModal('hopa-ceo-articles')"><div class="product-thumb" style="background:linear-gradient(135deg,#ea580c,#fb923c)"><div class="pattern"></div><span class="material-icons-round">edit_note</span></div><div class="product-info"><div class="product-name">CEO Article Generator</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.8 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#ea580c">AI</span></div></div></div>
     <div class="product-card" onclick="openModal('hopa-daily-report')"><div class="product-thumb" style="background:linear-gradient(135deg,#f59e0b,#fcd34d)"><div class="pattern"></div><span class="material-icons-round">summarize</span></div><div class="product-info"><div class="product-name">Daily Morning Report</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.8 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#f59e0b">AUTO</span></div></div></div>
+    <div class="product-card" onclick="openModal('hopa-ceo-articles')"><div class="product-thumb" style="background:linear-gradient(135deg,#ea580c,#fb923c)"><div class="pattern"></div><span class="material-icons-round">edit_note</span></div><div class="product-info"><div class="product-name">CEO Article Generator</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.8 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#ea580c">AI</span></div></div></div>
+    <div class="product-card" onclick="openModal('hopa-chatwoot')"><div class="product-thumb" style="background:linear-gradient(135deg,#059669,#34d399)"><div class="pattern"></div><span class="material-icons-round">forum</span></div><div class="product-info"><div class="product-name">Chatwoot x WhatsApp</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.9 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#059669">CHAT</span></div></div></div>
+    <div class="product-card" onclick="openModal('hopa-gmail')"><div class="product-thumb" style="background:linear-gradient(135deg,#ea580c,#fb923c)"><div class="pattern"></div><span class="material-icons-round">mail</span></div><div class="product-info"><div class="product-name">Gmail Agent - סוכן דואר</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.8 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#ea580c">MAIL</span></div></div></div>
     <div class="product-card" onclick="openModal('hopa-meeting-prep')"><div class="product-thumb" style="background:linear-gradient(135deg,#6366f1,#a5b4fc)"><div class="pattern"></div><span class="material-icons-round">co_present</span></div><div class="product-info"><div class="product-name">Meeting Prep - הכנה לפגישה</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.7 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#6366f1">AI</span></div></div></div>
   </div>
 </section>
 
-<!-- GRANT & FUNDRAISING -->
+
+<!-- 2. גיוס משאבים -->
 <section class="section fade-up">
   <div class="section-header">
-    <h2 class="section-title">גיוס משאבים ומענקים</h2>
-    <a href="#" class="section-link">הצג הכל <span class="material-icons-round">arrow_back</span></a>
+    <h2 class="section-title">גיוס משאבים</h2>
   </div>
   <div class="products-grid">
-    <div class="product-wide" onclick="openModal('grant-scanner')"><div class="product-wide-icon" style="background:linear-gradient(135deg,#0d9488,#2dd4bf)"><span class="material-icons-round">radar</span></div><div class="product-wide-info"><h3>GrantRadar - סורק קולות קוראים</h3><p>סריקה אוטומטית של קולות קוראים מקרנות, משרדי ממשלה ומוסדות. התראות מותאמות לתחום הפעילות שלכם</p><div class="product-wide-footer"><div class="product-meta"><span class="product-rating">4.9 <span class="material-icons-round">star</span></span><span style="color:var(--text-secondary)">1,840 עמותות</span></div><button class="btn-install" onclick="event.stopPropagation();addToCart('GrantRadar',249,'#0d9488')">249 ש"ח/חודש</button></div></div></div>
-    <div class="product-wide"><div class="product-wide-icon" style="background:linear-gradient(135deg,#f59e0b,#fcd34d)"><span class="material-icons-round">description</span></div><div class="product-wide-info"><h3>ProposalWriter - כתיבת הצעות</h3><p>AI שכותב בקשות מענק מקצועיות, מותאם לפורמט של כל קרן, כולל תקציב ולוח זמנים</p><div class="product-wide-footer"><div class="product-meta"><span class="product-rating">4.7 <span class="material-icons-round">star</span></span><span style="color:var(--text-secondary)">960 עמותות</span></div><button class="btn-install" onclick="event.stopPropagation();addToCart('ProposalWriter',179,'#f59e0b')">179 ש"ח/חודש</button></div></div></div>
-    <div class="product-wide"><div class="product-wide-icon" style="background:linear-gradient(135deg,#db2777,#f9a8d4)"><span class="material-icons-round">event</span></div><div class="product-wide-info"><h3>GalaManager - ניהול אירועי גיוס</h3><p>תכנון ערבי גאלה, מרתוני גיוס ואירועי תרומה. ניהול מוזמנים, תרומות באירוע ומעקב</p><div class="product-wide-footer"><div class="product-meta"><span class="product-rating">4.5 <span class="material-icons-round">star</span></span><span style="color:var(--text-secondary)">540 עמותות</span></div><button class="btn-install" onclick="event.stopPropagation();addToCart('GalaManager',129,'#db2777')">129 ש"ח/חודש</button></div></div></div>
+    <div class="product-wide" onclick="openModal('hopa-grant-engine')"><div class="product-wide-icon" style="background:linear-gradient(135deg,#0d9488,#2dd4bf)"><span class="material-icons-round">auto_awesome</span></div><div class="product-wide-info"><h3>Grant Engine - מנוע הגשות חכם</h3><p>AI שמנתח קולות קוראים, ממלא טפסים אוטומטית, מתאים שפה לכל קרן, ומייצר הגשה מלאה כולל תקציב</p><div class="product-wide-footer"><div class="product-meta"><span class="product-rating">5.0 <span class="material-icons-round">star</span></span><span style="color:var(--text-secondary)">AmutaPlay</span></div><button class="btn-install" style="background:var(--primary)">חינם</button></div></div></div>
+    <div class="product-wide" onclick="openModal('hopa-resource')"><div class="product-wide-icon" style="background:linear-gradient(135deg,#f59e0b,#fcd34d)"><span class="material-icons-round">savings</span></div><div class="product-wide-info"><h3>Resource Mobilization - גיוס משאבים</h3><p>סריקת קולות קוראים, כתיבת בקשות מענק, מעקב הגשות, דשבורד גיוס ודוחות תקופתיים</p><div class="product-wide-footer"><div class="product-meta"><span class="product-rating">4.9 <span class="material-icons-round">star</span></span><span style="color:var(--text-secondary)">AmutaPlay</span></div><button class="btn-install" style="background:var(--primary)">חינם</button></div></div></div>
+    <div class="product-wide" onclick="openModal('hopa-strategy')"><div class="product-wide-icon" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)"><span class="material-icons-round">architecture</span></div><div class="product-wide-info"><h3>Strategy Builder - תכנית 3 שנים</h3><p>סוכן שבונה תכנית אסטרטגית: SWOT, OKRs, גיוס, טכנולוגיה, שיווק, Action Plan ותקציב</p><div class="product-wide-footer"><div class="product-meta"><span class="product-rating">4.8 <span class="material-icons-round">star</span></span><span style="color:var(--text-secondary)">AmutaPlay</span></div><button class="btn-install" style="background:var(--primary)">חינם</button></div></div></div>
+    <div class="product-wide" onclick="openModal('hopa-partnership')"><div class="product-wide-icon" style="background:linear-gradient(135deg,#ea580c,#fb923c)"><span class="material-icons-round">handshake</span></div><div class="product-wide-info"><h3>Partnership Manager - שותפויות</h3><p>ניהול שיתופי פעולה: מעקב פגישות, התקדמות, מצגות מותאמות לכל שותף ודוחות</p><div class="product-wide-footer"><div class="product-meta"><span class="product-rating">4.7 <span class="material-icons-round">star</span></span><span style="color:var(--text-secondary)">AmutaPlay</span></div><button class="btn-install" style="background:var(--primary)">חינם</button></div></div></div>
   </div>
 </section>
 
-<!-- CRM & IMPACT -->
+<!-- 3. דוחות אימפקט -->
 <section class="section fade-up">
   <div class="section-header">
-    <h2 class="section-title">CRM, אימפקט וניהול</h2>
-    <a href="#" class="section-link">הצג הכל <span class="material-icons-round">arrow_back</span></a>
+    <h2 class="section-title">דוחות אימפקט</h2>
   </div>
   <div class="products-scroll">
-    <div class="product-card"><div class="product-thumb" style="background:linear-gradient(135deg,#ea580c,#fb923c)"><div class="pattern"></div><span class="material-icons-round">hub</span></div><div class="product-info"><div class="product-name">AmutaCRM - ניהול קשרים</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.8 <span class="material-icons-round">star</span></span><span class="product-price">199 ש"ח/חודש</span></div></div></div>
-    <div class="product-card"><div class="product-thumb" style="background:linear-gradient(135deg,#0891b2,#67e8f9)"><div class="pattern"></div><span class="material-icons-round">assessment</span></div><div class="product-info"><div class="product-name">ImpactDash - דשבורד אימפקט</div><div class="product-dev">ImpactTech</div><div class="product-meta"><span class="product-rating">4.9 <span class="material-icons-round">star</span></span><span class="product-price">249 ש"ח/חודש</span></div></div></div>
-    <div class="product-card"><div class="product-thumb" style="background:linear-gradient(135deg,#059669,#34d399)"><div class="pattern"></div><span class="material-icons-round">receipt_long</span></div><div class="product-info"><div class="product-name">AmutaBooks - הנהלת חשבונות</div><div class="product-dev">FinNGO</div><div class="product-meta"><span class="product-rating">4.6 <span class="material-icons-round">star</span></span><span class="product-price">149 ש"ח/חודש</span></div></div></div>
-    <div class="product-card"><div class="product-thumb" style="background:linear-gradient(135deg,#6366f1,#a5b4fc)"><div class="pattern"></div><span class="material-icons-round">fact_check</span></div><div class="product-info"><div class="product-name">ComplyEase - ניהול תקין</div><div class="product-dev">RegTech IL</div><div class="product-meta"><span class="product-rating">4.7 <span class="material-icons-round">star</span></span><span class="product-price">129 ש"ח/חודש</span></div></div></div>
-    <div class="product-card"><div class="product-thumb" style="background:linear-gradient(135deg,#f59e0b,#fcd34d)"><div class="pattern"></div><span class="material-icons-round">groups</span></div><div class="product-info"><div class="product-name">VolunteerHub - מתנדבים</div><div class="product-dev">VolTech</div><div class="product-meta"><span class="product-rating">4.5 <span class="material-icons-round">star</span></span><span class="product-price">79 ש"ח/חודש</span></div></div></div>
-  </div>
-</section>
-
-<!-- HOPA GRANTS & BUDGET -->
-<section class="section fade-up">
-  <div class="section-header">
-    <h2 class="section-title">גיוס, תקציב ואסטרטגיה - אוסף AmutaPlay</h2>
-    <a href="#" class="section-link">הצג הכל <span class="material-icons-round">arrow_back</span></a>
-  </div>
-  <div class="products-grid">
-    <div class="product-wide" onclick="openModal('hopa-grant-engine')"><div class="product-wide-icon" style="background:linear-gradient(135deg,#0d9488,#2dd4bf)"><span class="material-icons-round">auto_awesome</span></div><div class="product-wide-info"><h3>Grant Engine - מנוע הגשות חכם</h3><p>AI שמנתח קולות קוראים, ממלא טפסים אוטומטית, מתאים שפה לכל קרן, ומייצר הגשה מלאה כולל תקציב ולוח זמנים</p><div class="product-wide-footer"><div class="product-meta"><span class="product-rating">5.0 <span class="material-icons-round">star</span></span><span style="color:var(--text-secondary)">AmutaPlay</span></div><button class="btn-install" style="background:var(--primary)">רעיון</button></div></div></div>
-    <div class="product-wide" onclick="openModal('hopa-budget')"><div class="product-wide-icon" style="background:linear-gradient(135deg,#059669,#34d399)"><span class="material-icons-round">account_balance_wallet</span></div><div class="product-wide-info"><h3>Budget Buddy - ניהול תקציב</h3><p>מערכת תקציב מלאה: CRUD סעיפים, דשבורד גרפי, התראות חריגה, השוואת תכנון מול ביצוע, וייצוא לדוחות</p><div class="product-wide-footer"><div class="product-meta"><span class="product-rating">4.9 <span class="material-icons-round">star</span></span><span style="color:var(--text-secondary)">AmutaPlay</span></div><button class="btn-install" style="background:var(--primary)">רעיון</button></div></div></div>
-    <div class="product-wide" onclick="openModal('hopa-strategy')"><div class="product-wide-icon" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)"><span class="material-icons-round">architecture</span></div><div class="product-wide-info"><h3>Strategy Builder - תכנית 3 שנים</h3><p>סוכן שבונה תכנית אסטרטגית שלמה: SWOT, OKRs, גיוס, טכנולוגיה, שיווק, Action Plan ותקציב ל-3 שנים</p><div class="product-wide-footer"><div class="product-meta"><span class="product-rating">4.8 <span class="material-icons-round">star</span></span><span style="color:var(--text-secondary)">AmutaPlay</span></div><button class="btn-install" style="background:var(--primary)">רעיון</button></div></div></div>
-    <div class="product-wide" onclick="openModal('hopa-resource')"><div class="product-wide-icon" style="background:linear-gradient(135deg,#f59e0b,#fcd34d)"><span class="material-icons-round">savings</span></div><div class="product-wide-info"><h3>Resource Mobilization - גיוס משאבים</h3><p>ניתוח קולות קוראים, כתיבת בקשות מענק, מעקב הגשות, וניהול מערכת גיוס כוללת עם דשבורד</p><div class="product-wide-footer"><div class="product-meta"><span class="product-rating">4.9 <span class="material-icons-round">star</span></span><span style="color:var(--text-secondary)">AmutaPlay</span></div><button class="btn-install" style="background:var(--primary)">רעיון</button></div></div></div>
-  </div>
-</section>
-
-<!-- HOPA CRM & IMPACT -->
-<section class="section fade-up">
-  <div class="section-header">
-    <h2 class="section-title">CRM, בוגרים ואימפקט - אוסף AmutaPlay</h2>
-    <a href="#" class="section-link">הצג הכל <span class="material-icons-round">arrow_back</span></a>
-  </div>
-  <div class="products-scroll">
-    <div class="product-card" onclick="openModal('hopa-crm')"><div class="product-thumb" style="background:linear-gradient(135deg,#ea580c,#fb923c)"><div class="pattern"></div><span class="material-icons-round">contacts</span></div><div class="product-info"><div class="product-name">CRM תורמים ושותפים</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.8 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#ea580c">CRM</span></div></div></div>
-    <div class="product-card" onclick="openModal('hopa-bogrim')"><div class="product-thumb" style="background:linear-gradient(135deg,#0d9488,#2dd4bf)"><div class="pattern"></div><span class="material-icons-round">school</span></div><div class="product-info"><div class="product-name">Alumni Dashboard - בוגרים</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.9 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#0d9488">DASH</span></div></div></div>
     <div class="product-card" onclick="openModal('hopa-impact')"><div class="product-thumb" style="background:linear-gradient(135deg,#0891b2,#67e8f9)"><div class="pattern"></div><span class="material-icons-round">menu_book</span></div><div class="product-info"><div class="product-name">Impact Report - ספר דיגיטלי</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">5.0 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#0891b2">REPORT</span></div></div></div>
-    <div class="product-card" onclick="openModal('hopa-partnership')"><div class="product-thumb" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)"><div class="pattern"></div><span class="material-icons-round">handshake</span></div><div class="product-info"><div class="product-name">Partnership Manager</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.7 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#7c3aed">MGMT</span></div></div></div>
+    <div class="product-card" onclick="openModal('hopa-bogrim')"><div class="product-thumb" style="background:linear-gradient(135deg,#0d9488,#2dd4bf)"><div class="pattern"></div><span class="material-icons-round">school</span></div><div class="product-info"><div class="product-name">Alumni Dashboard - בוגרים</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.9 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#0d9488">DASH</span></div></div></div>
     <div class="product-card" onclick="openModal('hopa-survey')"><div class="product-thumb" style="background:linear-gradient(135deg,#f59e0b,#fcd34d)"><div class="pattern"></div><span class="material-icons-round">quiz</span></div><div class="product-info"><div class="product-name">Survey & Feedback</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.6 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#f59e0b">DATA</span></div></div></div>
-    <div class="product-card" onclick="openModal('hopa-taxonomy')"><div class="product-thumb" style="background:linear-gradient(135deg,#6366f1,#a5b4fc)"><div class="pattern"></div><span class="material-icons-round">account_tree</span></div><div class="product-info"><div class="product-name">Taxonomy Sync - טקסונומיה</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.8 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#6366f1">SYS</span></div></div></div>
+    <div class="product-card" onclick="openModal('hopa-radar')"><div class="product-thumb" style="background:linear-gradient(135deg,#db2777,#f9a8d4)"><div class="pattern"></div><span class="material-icons-round">radar</span></div><div class="product-info"><div class="product-name">Radar 360 - מודל ויזואלי</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">5.0 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#db2777">VIZ</span></div></div></div>
+    <div class="product-card" onclick="openModal('hopa-crm')"><div class="product-thumb" style="background:linear-gradient(135deg,#ea580c,#fb923c)"><div class="pattern"></div><span class="material-icons-round">contacts</span></div><div class="product-info"><div class="product-name">CRM תורמים ושותפים</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.8 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#ea580c">CRM</span></div></div></div>
   </div>
 </section>
 
-<!-- COMMUNICATION & MARKETING -->
+<!-- 4. רשתות חברתיות ושיווק -->
 <section class="section fade-up">
   <div class="section-header">
-    <h2 class="section-title">תקשורת, שיווק ודיגיטל</h2>
-    <a href="#" class="section-link">הצג הכל <span class="material-icons-round">arrow_back</span></a>
-  </div>
-  <div class="products-grid">
-    <div class="product-wide"><div class="product-wide-icon" style="background:linear-gradient(135deg,#db2777,#f9a8d4)"><span class="material-icons-round">campaign</span></div><div class="product-wide-info"><h3>NGO Social - ניהול רשתות חברתיות</h3><p>ניהול פוסטים, תזמון, ניתוח ביצועים וגיוס תומכים ברשתות חברתיות לעמותות</p><div class="product-wide-footer"><div class="product-meta"><span class="product-rating">4.7 <span class="material-icons-round">star</span></span></div><button class="btn-install" onclick="event.stopPropagation();addToCart('NGO Social',99,'#db2777')">99 ש"ח/חודש</button></div></div></div>
-    <div class="product-wide"><div class="product-wide-icon" style="background:linear-gradient(135deg,#0891b2,#67e8f9)"><span class="material-icons-round">mail</span></div><div class="product-wide-info"><h3>DonorMail - ניוזלטר לתורמים</h3><p>מערכת דיוור חכמה לתורמים ותומכים. תבניות מעוצבות, אוטומציות ומעקב פתיחות</p><div class="product-wide-footer"><div class="product-meta"><span class="product-rating">4.6 <span class="material-icons-round">star</span></span></div><button class="btn-install free" onclick="event.stopPropagation();addToCart('DonorMail',0,'#0891b2')">חינם</button></div></div></div>
-    <div class="product-wide"><div class="product-wide-icon" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)"><span class="material-icons-round">web</span></div><div class="product-wide-info"><h3>NGO Site Builder - בונה אתרים</h3><p>בניית אתר לעמותה בדקות. תבניות מותאמות, דף תרומות מובנה, ואופטימיזציה ל-SEO</p><div class="product-wide-footer"><div class="product-meta"><span class="product-rating">4.8 <span class="material-icons-round">star</span></span></div><button class="btn-install" onclick="event.stopPropagation();addToCart('NGO Site Builder',149,'#7c3aed')">149 ש"ח/חודש</button></div></div></div>
-    <div class="product-wide"><div class="product-wide-icon" style="background:linear-gradient(135deg,#059669,#34d399)"><span class="material-icons-round">newspaper</span></div><div class="product-wide-info"><h3>StoryTeller - סיפורי שינוי</h3><p>AI שכותב סיפורי הצלחה ומוטיבציה מדוחות האימפקט שלכם, מוכן לפרסום ושיתוף</p><div class="product-wide-footer"><div class="product-meta"><span class="product-rating">4.9 <span class="material-icons-round">star</span></span></div><button class="btn-install" onclick="event.stopPropagation();addToCart('StoryTeller',69,'#059669')">69 ש"ח/חודש</button></div></div></div>
-  </div>
-</section>
-
-<!-- HOPA DIGITAL MARKETING -->
-<section class="section fade-up">
-  <div class="section-header">
-    <h2 class="section-title">קידום דיגיטלי - אוסף AmutaPlay</h2>
-    <a href="#" class="section-link">הצג הכל <span class="material-icons-round">arrow_back</span></a>
+    <h2 class="section-title">רשתות חברתיות ושיווק - אוטומציות מהממות</h2>
   </div>
   <div class="products-scroll">
-    <div class="product-card" onclick="openModal('hopa-ads')"><div class="product-thumb" style="background:linear-gradient(135deg,#ea580c,#fb923c)"><div class="pattern"></div><span class="material-icons-round">ads_click</span></div><div class="product-info"><div class="product-name">Google Ad Grants Optimizer</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.9 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#ea580c">ADS</span></div></div></div>
-    <div class="product-card" onclick="openModal('hopa-ga4')"><div class="product-thumb" style="background:linear-gradient(135deg,#0891b2,#67e8f9)"><div class="pattern"></div><span class="material-icons-round">analytics</span></div><div class="product-info"><div class="product-name">GA4 Analytics Dashboard</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.8 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#0891b2">DATA</span></div></div></div>
-    <div class="product-card" onclick="openModal('hopa-seo')"><div class="product-thumb" style="background:linear-gradient(135deg,#059669,#34d399)"><div class="pattern"></div><span class="material-icons-round">travel_explore</span></div><div class="product-info"><div class="product-name">SEO Agent - אופטימיזציה</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.7 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#059669">SEO</span></div></div></div>
-    <div class="product-card" onclick="openModal('hopa-social')"><div class="product-thumb" style="background:linear-gradient(135deg,#db2777,#f9a8d4)"><div class="pattern"></div><span class="material-icons-round">thumb_up</span></div><div class="product-info"><div class="product-name">Social Automation - רשתות</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.8 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#db2777">AUTO</span></div></div></div>
+    <div class="product-card" onclick="openModal('hopa-social')"><div class="product-thumb" style="background:linear-gradient(135deg,#db2777,#f9a8d4)"><div class="pattern"></div><span class="material-icons-round">thumb_up</span></div><div class="product-info"><div class="product-name">Social Automation</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.8 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#db2777">AUTO</span></div></div></div>
+    <div class="product-card" onclick="openModal('hopa-social-design')"><div class="product-thumb" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)"><div class="pattern"></div><span class="material-icons-round">palette</span></div><div class="product-info"><div class="product-name">Social Design - עיצוב פוסטים</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.7 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#7c3aed">DESIGN</span></div></div></div>
     <div class="product-card" onclick="openModal('hopa-linkedin')"><div class="product-thumb" style="background:linear-gradient(135deg,#6366f1,#a5b4fc)"><div class="pattern"></div><span class="material-icons-round">person</span></div><div class="product-info"><div class="product-name">LinkedIn Content Agent</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.7 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#6366f1">SOCIAL</span></div></div></div>
-    <div class="product-card" onclick="openModal('hopa-meta')"><div class="product-thumb" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)"><div class="pattern"></div><span class="material-icons-round">facebook</span></div><div class="product-info"><div class="product-name">Meta Ads - פייסבוק/אינסטגרם</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.6 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#7c3aed">ADS</span></div></div></div>
+    <div class="product-card" onclick="openModal('hopa-meta')"><div class="product-thumb" style="background:linear-gradient(135deg,#ea580c,#fb923c)"><div class="pattern"></div><span class="material-icons-round">facebook</span></div><div class="product-info"><div class="product-name">Meta Ads - פייסבוק/אינסטגרם</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.6 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#ea580c">ADS</span></div></div></div>
+    <div class="product-card" onclick="openModal('hopa-ads')"><div class="product-thumb" style="background:linear-gradient(135deg,#059669,#34d399)"><div class="pattern"></div><span class="material-icons-round">ads_click</span></div><div class="product-info"><div class="product-name">Google Ad Grants</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.9 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#059669">ADS</span></div></div></div>
+    <div class="product-card" onclick="openModal('hopa-seo')"><div class="product-thumb" style="background:linear-gradient(135deg,#0891b2,#67e8f9)"><div class="pattern"></div><span class="material-icons-round">travel_explore</span></div><div class="product-info"><div class="product-name">SEO Agent</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.7 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#0891b2">SEO</span></div></div></div>
+    <div class="product-card" onclick="openModal('hopa-content')"><div class="product-thumb" style="background:linear-gradient(135deg,#0d9488,#2dd4bf)"><div class="pattern"></div><span class="material-icons-round">text_fields</span></div><div class="product-info"><div class="product-name">Content Voice - DNA מותגי</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.9 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#0d9488">BRAND</span></div></div></div>
+    <div class="product-card" onclick="openModal('hopa-newsletter')"><div class="product-thumb" style="background:linear-gradient(135deg,#f59e0b,#fcd34d)"><div class="pattern"></div><span class="material-icons-round">newspaper</span></div><div class="product-info"><div class="product-name">Newsletter System</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.8 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#f59e0b">MAIL</span></div></div></div>
   </div>
 </section>
 
-<!-- HOPA OPERATIONS & MANAGEMENT -->
+<!-- 5. מערכות AI חכמות לניהול -->
 <section class="section fade-up">
   <div class="section-header">
-    <h2 class="section-title">ניהול ותפעול - אוסף AmutaPlay</h2>
-    <a href="#" class="section-link">הצג הכל <span class="material-icons-round">arrow_back</span></a>
+    <h2 class="section-title">מערכות AI חכמות לניהול</h2>
+  </div>
+  <div class="products-scroll">
+    <div class="product-card" onclick="openModal('hopa-admin')"><div class="product-thumb" style="background:linear-gradient(135deg,#0d9488,#2dd4bf)"><div class="pattern"></div><span class="material-icons-round">admin_panel_settings</span></div><div class="product-info"><div class="product-name">Admin Panel - פאנל ניהול</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">5.0 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#0d9488">SYS</span></div></div></div>
+    <div class="product-card" onclick="openModal('hopa-ga4')"><div class="product-thumb" style="background:linear-gradient(135deg,#0891b2,#67e8f9)"><div class="pattern"></div><span class="material-icons-round">analytics</span></div><div class="product-info"><div class="product-name">GA4 Analytics Dashboard</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.8 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#0891b2">DATA</span></div></div></div>
+    <div class="product-card" onclick="openModal('hopa-taxonomy')"><div class="product-thumb" style="background:linear-gradient(135deg,#6366f1,#a5b4fc)"><div class="pattern"></div><span class="material-icons-round">account_tree</span></div><div class="product-info"><div class="product-name">Taxonomy Sync</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.8 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#6366f1">SYS</span></div></div></div>
+    <div class="product-card" onclick="openModal('hopa-monday')"><div class="product-thumb" style="background:linear-gradient(135deg,#ea580c,#fb923c)"><div class="pattern"></div><span class="material-icons-round">view_kanban</span></div><div class="product-info"><div class="product-name">Monday.com - משימות</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.7 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#ea580c">INT</span></div></div></div>
+    <div class="product-card" onclick="openModal('hopa-canva')"><div class="product-thumb" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)"><div class="pattern"></div><span class="material-icons-round">brush</span></div><div class="product-info"><div class="product-name">Canva Agent - עיצוב</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.6 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#7c3aed">DESIGN</span></div></div></div>
+    <div class="product-card" onclick="openModal('hopa-event')"><div class="product-thumb" style="background:linear-gradient(135deg,#db2777,#f9a8d4)"><div class="pattern"></div><span class="material-icons-round">event</span></div><div class="product-info"><div class="product-name">Event Planner - אירועים</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.7 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#db2777">PLAN</span></div></div></div>
+  </div>
+</section>
+
+<!-- 6. מערכת תקציב -->
+<section class="section fade-up">
+  <div class="section-header">
+    <h2 class="section-title">מערכת תקציב</h2>
   </div>
   <div class="products-grid">
-    <div class="product-wide" onclick="openModal('hopa-admin')"><div class="product-wide-icon" style="background:linear-gradient(135deg,#0d9488,#2dd4bf)"><span class="material-icons-round">admin_panel_settings</span></div><div class="product-wide-info"><h3>Admin Panel - פאנל ניהול</h3><p>מערכת ניהול מלאה: מענים, משתמשים, הגדרות, לוגים, ניתוח נתונים ותצוגה בזמן אמת. REST API מובנה</p><div class="product-wide-footer"><div class="product-meta"><span class="product-rating">5.0 <span class="material-icons-round">star</span></span><span style="color:var(--text-secondary)">AmutaPlay</span></div><button class="btn-install" style="background:var(--primary)">רעיון</button></div></div></div>
-    <div class="product-wide" onclick="openModal('hopa-chatwoot')"><div class="product-wide-icon" style="background:linear-gradient(135deg,#059669,#34d399)"><span class="material-icons-round">forum</span></div><div class="product-wide-info"><h3>Chatwoot x WhatsApp - ניטור קבוצות</h3><p>מערכת דו-כיוונית: ניטור עשרות קבוצות וואטסאפ, שליחה מ-Chatwoot, נציגים אנושיים, 3 inboxes</p><div class="product-wide-footer"><div class="product-meta"><span class="product-rating">4.9 <span class="material-icons-round">star</span></span><span style="color:var(--text-secondary)">AmutaPlay</span></div><button class="btn-install" style="background:var(--primary)">רעיון</button></div></div></div>
-    <div class="product-wide" onclick="openModal('hopa-gmail')"><div class="product-wide-icon" style="background:linear-gradient(135deg,#ea580c,#fb923c)"><span class="material-icons-round">mail</span></div><div class="product-wide-info"><h3>Gmail Agent - סוכן דואר</h3><p>חיבור מלא ל-Gmail: קריאת מיילים, שליחה, סינון, תיוג אוטומטי, סריקת תיבה חכמה ודוחות</p><div class="product-wide-footer"><div class="product-meta"><span class="product-rating">4.8 <span class="material-icons-round">star</span></span><span style="color:var(--text-secondary)">AmutaPlay</span></div><button class="btn-install" style="background:var(--primary)">רעיון</button></div></div></div>
-    <div class="product-wide" onclick="openModal('hopa-event')"><div class="product-wide-icon" style="background:linear-gradient(135deg,#db2777,#f9a8d4)"><span class="material-icons-round">event</span></div><div class="product-wide-info"><h3>Event Planner - ניהול אירועים</h3><p>תכנון אירועים מא' עד ת': לוגיסטיקה, הזמנות, רישום משתתפים, תזכורות ומעקב אחרי ביצוע</p><div class="product-wide-footer"><div class="product-meta"><span class="product-rating">4.7 <span class="material-icons-round">star</span></span><span style="color:var(--text-secondary)">AmutaPlay</span></div><button class="btn-install" style="background:var(--primary)">רעיון</button></div></div></div>
+    <div class="product-wide" onclick="openModal('hopa-budget')"><div class="product-wide-icon" style="background:linear-gradient(135deg,#059669,#34d399)"><span class="material-icons-round">account_balance_wallet</span></div><div class="product-wide-info"><h3>Budget Buddy - ניהול תקציב שנתי</h3><p>מערכת תקציב מלאה: CRUD סעיפים, דשבורד גרפי, התראות חריגה, השוואת תכנון מול ביצוע, וייצוא לדוחות</p><div class="product-wide-footer"><div class="product-meta"><span class="product-rating">4.9 <span class="material-icons-round">star</span></span><span style="color:var(--text-secondary)">AmutaPlay</span></div><button class="btn-install" style="background:var(--primary)">חינם</button></div></div></div>
+    <div class="product-wide" onclick="openModal('hopa-presentation')"><div class="product-wide-icon" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)"><span class="material-icons-round">slideshow</span></div><div class="product-wide-info"><h3>Presentation Builder - מצגות</h3><p>בניית מצגות מרהיבות בשפת המותג: שקופיות מעוצבות, רדאר אינטראקטיבי ואנימציות</p><div class="product-wide-footer"><div class="product-meta"><span class="product-rating">4.9 <span class="material-icons-round">star</span></span><span style="color:var(--text-secondary)">AmutaPlay</span></div><button class="btn-install" style="background:var(--primary)">חינם</button></div></div></div>
+    <div class="product-wide" onclick="openModal('hopa-board')"><div class="product-wide-icon" style="background:linear-gradient(135deg,#ea580c,#fb923c)"><span class="material-icons-round">groups</span></div><div class="product-wide-info"><h3>Board Report - דוח דירקטוריון</h3><p>הפקת דוחות דירקטוריון אוטומטית: סיכום פעילות, נתוני אימפקט, תקציב, גיוס ותוכנית עבודה</p><div class="product-wide-footer"><div class="product-meta"><span class="product-rating">4.8 <span class="material-icons-round">star</span></span><span style="color:var(--text-secondary)">AmutaPlay</span></div><button class="btn-install" style="background:var(--primary)">חינם</button></div></div></div>
   </div>
 </section>
 
-<!-- HOPA CONTENT & PRESENTATIONS -->
-<section class="section fade-up">
-  <div class="section-header">
-    <h2 class="section-title">תוכן, מצגות ומדיה - אוסף AmutaPlay</h2>
-    <a href="#" class="section-link">הצג הכל <span class="material-icons-round">arrow_back</span></a>
-  </div>
-  <div class="products-scroll">
-    <div class="product-card" onclick="openModal('hopa-presentation')"><div class="product-thumb" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)"><div class="pattern"></div><span class="material-icons-round">slideshow</span></div><div class="product-info"><div class="product-name">Presentation Builder</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.9 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#7c3aed">PPTX</span></div></div></div>
-    <div class="product-card" onclick="openModal('hopa-video')"><div class="product-thumb" style="background:linear-gradient(135deg,#ea580c,#fb923c)"><div class="pattern"></div><span class="material-icons-round">videocam</span></div><div class="product-info"><div class="product-name">Video Script Writer</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.7 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#ea580c">VIDEO</span></div></div></div>
-    <div class="product-card" onclick="openModal('hopa-newsletter')"><div class="product-thumb" style="background:linear-gradient(135deg,#0891b2,#67e8f9)"><div class="pattern"></div><span class="material-icons-round">newspaper</span></div><div class="product-info"><div class="product-name">Newsletter System</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.8 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#0891b2">MAIL</span></div></div></div>
-    <div class="product-card" onclick="openModal('hopa-content')"><div class="product-thumb" style="background:linear-gradient(135deg,#0d9488,#2dd4bf)"><div class="pattern"></div><span class="material-icons-round">text_fields</span></div><div class="product-info"><div class="product-name">Content Voice - DNA מותגי</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.9 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#0d9488">BRAND</span></div></div></div>
-    <div class="product-card" onclick="openModal('hopa-social-design')"><div class="product-thumb" style="background:linear-gradient(135deg,#db2777,#f9a8d4)"><div class="pattern"></div><span class="material-icons-round">palette</span></div><div class="product-info"><div class="product-name">Social Design - עיצוב פוסטים</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.7 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#db2777">DESIGN</span></div></div></div>
-    <div class="product-card" onclick="openModal('hopa-landing')"><div class="product-thumb" style="background:linear-gradient(135deg,#f59e0b,#fcd34d)"><div class="pattern"></div><span class="material-icons-round">web</span></div><div class="product-info"><div class="product-name">Landing Page Builder</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.6 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#f59e0b">WEB</span></div></div></div>
-  </div>
-</section>
-
-
-<!-- HOPA INTEGRATIONS -->
-<section class="section fade-up">
-  <div class="section-header">
-    <h2 class="section-title">אינטגרציות וחיבורים - אוסף AmutaPlay</h2>
-    <a href="#" class="section-link">הצג הכל <span class="material-icons-round">arrow_back</span></a>
-  </div>
-  <div class="products-scroll">
-    <div class="product-card" onclick="openModal('hopa-monday')"><div class="product-thumb" style="background:linear-gradient(135deg,#ea580c,#fb923c)"><div class="pattern"></div><span class="material-icons-round">view_kanban</span></div><div class="product-info"><div class="product-name">Monday.com - ניהול משימות</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.7 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#ea580c">INT</span></div></div></div>
-    <div class="product-card" onclick="openModal('hopa-canva')"><div class="product-thumb" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)"><div class="pattern"></div><span class="material-icons-round">brush</span></div><div class="product-info"><div class="product-name">Canva Agent - עיצוב מותגי</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.6 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#7c3aed">DESIGN</span></div></div></div>
-    <div class="product-card" onclick="openModal('hopa-drive')"><div class="product-thumb" style="background:linear-gradient(135deg,#f59e0b,#fcd34d)"><div class="pattern"></div><span class="material-icons-round">folder</span></div><div class="product-info"><div class="product-name">Google Drive Agent</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.5 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#f59e0b">CLOUD</span></div></div></div>
-    <div class="product-card" onclick="openModal('hopa-data-import')"><div class="product-thumb" style="background:linear-gradient(135deg,#059669,#34d399)"><div class="pattern"></div><span class="material-icons-round">upload_file</span></div><div class="product-info"><div class="product-name">Data Import - ייבוא נתונים</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.7 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#059669">DATA</span></div></div></div>
-    <div class="product-card" onclick="openModal('hopa-ux')"><div class="product-thumb" style="background:linear-gradient(135deg,#db2777,#f9a8d4)"><div class="pattern"></div><span class="material-icons-round">phone_iphone</span></div><div class="product-info"><div class="product-name">UX Audit - ביקורת חוויה</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.8 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#db2777">UX</span></div></div></div>
-    <div class="product-card" onclick="openModal('hopa-planner')"><div class="product-thumb" style="background:linear-gradient(135deg,#0891b2,#67e8f9)"><div class="pattern"></div><span class="material-icons-round">today</span></div><div class="product-info"><div class="product-name">Daily Planner - תכנון יומי</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.6 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#0891b2">PLAN</span></div></div></div>
-    <div class="product-card" onclick="openModal('hopa-weekly')"><div class="product-thumb" style="background:linear-gradient(135deg,#6366f1,#a5b4fc)"><div class="pattern"></div><span class="material-icons-round">date_range</span></div><div class="product-info"><div class="product-name">Weekly Review - סיכום שבועי</div><div class="product-dev">AmutaPlay</div><div class="product-meta"><span class="product-rating">4.7 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#6366f1">REVIEW</span></div></div></div>
-  </div>
-</section>
-
-<!-- STATS -->
-<div class="stats-bar fade-up">
-  <div class="stats-inner">
-    <div class="stat-item"><div class="stat-number">850+</div><div class="stat-label">כלים וסוכנים</div></div>
-    <div class="stat-item"><div class="stat-number">3,200+</div><div class="stat-label">עמותות וארגונים</div></div>
-    <div class="stat-item"><div class="stat-number">97%</div><div class="stat-label">שביעות רצון</div></div>
-    <div class="stat-item"><div class="stat-number">24/7</div><div class="stat-label">תמיכה טכנית</div></div>
-  </div>
-</div>
-
-
-<!-- PRICING -->
-<section class="section fade-up" id="pricing">
-  <div class="section-header"><h2 class="section-title">חבילות לעמותות</h2></div>
-  <div class="pricing-grid">
-    <div class="pricing-card">
-      <div class="pricing-icon" style="background:linear-gradient(135deg,#5eead4,#2dd4bf)"><span class="material-icons-round">rocket_launch</span></div>
-      <h3>סטארטר</h3><div class="price">0 ש"ח <span>/ לנצח</span></div><div class="price-desc">לעמותות שרק מתחילות</div>
-      <ul class="pricing-features"><li><span class="material-icons-round">check_circle</span> עד 3 כלים חינמיים</li><li><span class="material-icons-round">check_circle</span> CRM עד 200 אנשי קשר</li><li><span class="material-icons-round">check_circle</span> דוח אימפקט בסיסי</li><li><span class="material-icons-round">check_circle</span> תבניות הגשה</li></ul>
-      <button class="btn-pricing">התחילו בחינם</button>
-    </div>
-    <div class="pricing-card popular">
-      <div class="pricing-icon" style="background:linear-gradient(135deg,#0d9488,#059669)"><span class="material-icons-round">volunteer_activism</span></div>
-      <h3>עמותה</h3><div class="price">499 ש"ח <span>/ חודש</span></div><div class="price-desc">לעמותה פעילה עם צוות</div>
-      <ul class="pricing-features"><li><span class="material-icons-round">check_circle</span> כל הסוכנים ללא הגבלה</li><li><span class="material-icons-round">check_circle</span> CRM + גיוס + אימפקט</li><li><span class="material-icons-round">check_circle</span> דוחות ודיווח אוטומטי</li><li><span class="material-icons-round">check_circle</span> דיוור ורשתות חברתיות</li><li><span class="material-icons-round">check_circle</span> תמיכה 24/7</li></ul>
-      <button class="btn-pricing filled">התחילו עכשיו</button>
-    </div>
-    <div class="pricing-card">
-      <div class="pricing-icon" style="background:linear-gradient(135deg,#7c3aed,#6366f1)"><span class="material-icons-round">account_balance</span></div>
-      <h3>קרן / רשת</h3><div class="price">צרו קשר</div><div class="price-desc">לקרנות ורשתות ארגונים</div>
-      <ul class="pricing-features"><li><span class="material-icons-round">check_circle</span> הכל בחבילת עמותה +</li><li><span class="material-icons-round">check_circle</span> דשבורד מרכזי לכל הארגונים</li><li><span class="material-icons-round">check_circle</span> API ואינטגרציות</li><li><span class="material-icons-round">check_circle</span> SLA מובטח</li><li><span class="material-icons-round">check_circle</span> הדרכות ייעודיות</li></ul>
-      <button class="btn-pricing">דברו איתנו</button>
-    </div>
-  </div>
-</section>
-
-<!-- TESTIMONIALS -->
-<section class="section fade-up">
-  <div class="section-header"><h2 class="section-title">מה אומרים מנהלי עמותות</h2></div>
-  <div class="testimonials-scroll">
-    <div class="testimonial-card"><div class="testimonial-stars"><span class="material-icons-round">star</span><span class="material-icons-round">star</span><span class="material-icons-round">star</span><span class="material-icons-round">star</span><span class="material-icons-round">star</span></div><p class="testimonial-text">"סוכן כתיבת ההגשות חסך לנו 20 שעות עבודה בחודש. הגשנו ל-8 קרנות ואושרו 5 מענקים. תשואה מטורפת."</p><div class="testimonial-author"><div class="testimonial-avatar" style="background:linear-gradient(135deg,#0d9488,#2dd4bf)">י</div><div><div class="testimonial-name">יעל ברקוביץ'</div><div class="testimonial-role">מנכ"לית עמותת אור חדש</div></div></div></div>
-    <div class="testimonial-card"><div class="testimonial-stars"><span class="material-icons-round">star</span><span class="material-icons-round">star</span><span class="material-icons-round">star</span><span class="material-icons-round">star</span><span class="material-icons-round">star</span></div><p class="testimonial-text">"מערכת ה-CRM והגיוס שינו לנו את החיים. מ-200 תורמים ל-1,400 תוך שנה. הכל אוטומטי ומדויק."</p><div class="testimonial-author"><div class="testimonial-avatar" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)">א</div><div><div class="testimonial-name">אחמד מנסור</div><div class="testimonial-role">מנהל פיתוח משאבים, ג'וינט</div></div></div></div>
-    <div class="testimonial-card"><div class="testimonial-stars"><span class="material-icons-round">star</span><span class="material-icons-round">star</span><span class="material-icons-round">star</span><span class="material-icons-round">star</span><span class="material-icons-round">star</span></div><p class="testimonial-text">"הדוח לרשם העמותות מוכן בלחיצת כפתור. סוף סוף אפשר להתמקד בשליחות ולא בבירוקרטיה."</p><div class="testimonial-author"><div class="testimonial-avatar" style="background:linear-gradient(135deg,#059669,#34d399)">ר</div><div><div class="testimonial-name">רחל לוי</div><div class="testimonial-role">יו"ר עמותת דרך חדשה</div></div></div></div>
-    <div class="testimonial-card"><div class="testimonial-stars"><span class="material-icons-round">star</span><span class="material-icons-round">star</span><span class="material-icons-round">star</span><span class="material-icons-round">star</span><span class="material-icons-round">star</span></div><p class="testimonial-text">"דשבורד האימפקט הפך אותנו לשקופים ומקצועיים. תורמים רואים בדיוק לאן הכסף הולך ומה השפעתו."</p><div class="testimonial-author"><div class="testimonial-avatar" style="background:linear-gradient(135deg,#0891b2,#67e8f9)">ד</div><div><div class="testimonial-name">דניאל שפירא</div><div class="testimonial-role">סמנכ"ל, קרן ברלוביץ'</div></div></div></div>
-  </div>
-</section>
 
 <!-- FOOTER -->
 <footer>
@@ -1232,13 +1056,6 @@ footer {
 
 <script>
 const products = {
-  'agent-grant':{title:'סוכן כתיבת הגשות',dev:'AmutaPlay AI',icon:'auto_awesome',color:'#0d9488',price:199,desc:'סוכן AI שכותב בקשות מענק מקצועיות. מנתח את הקול הקורא, מתאים את השפה לקרן, ומייצר הצעה מלאה כולל תקציב ולו"ז.',features:['כתיבת הגשה מלאה ב-15 דקות','התאמה אוטומטית לפורמט הקרן','יצירת תקציב ולוח זמנים','ניתוח סיכויי אישור','בנק הגשות מוצלחות','מעקב סטטוס הגשות']},
-  'agent-donor':{title:'סוכן ניהול תורמים',dev:'DonorAI',icon:'handshake',color:'#7c3aed',price:149,desc:'AI שמנהל את כל מחזור חיי התורם: מהקשר הראשון ועד שימור ארוך טווח. מזהה תורמים פוטנציאליים ומתזמן פניות.',features:['זיהוי תורמים פוטנציאליים','תזמון פניות אוטומטי','דוח תורמים חודשי','ניתוח דפוסי תרומה','מיילים מותאמים אישית','חיזוי חידוש תרומות']},
-  'agent-impact':{title:'סוכן מדידת אימפקט',dev:'ImpactMeter',icon:'monitoring',color:'#0891b2',price:179,desc:'מערכת AI שמודדת את ההשפעה החברתית שלכם. מייצרת דוחות אימפקט מרשימים לתורמים ולקרנות.',features:['הגדרת מדדי הצלחה','איסוף נתונים אוטומטי','דוחות אימפקט חזותיים','השוואה לסטנדרטים בינ"ל','תיאוריית שינוי חכמה','ייצוא ל-PDF ואינטראקטיבי']},
-
-  'agent-vol':{title:'סוכן ניהול מתנדבים',dev:'VolunteerPro',icon:'diversity_3',color:'#ea580c',price:99,desc:'מערכת חכמה לגיוס, שיבוץ ושימור מתנדבים. מתאימה מתנדבים לפרויקטים לפי כישורים וזמינות.',features:['גיוס מתנדבים חכם','שיבוץ אוטומטי','מעקב שעות התנדבות','תעודות הערכה','תקשורת עם מתנדבים','דוח שנתי התנדבות']},
-  'agent-social':{title:'סוכן רשתות חברתיות',dev:'SocialNGO',icon:'share',color:'#db2777',price:89,desc:'AI שמנהל את הנוכחות הדיגיטלית של העמותה: כותב פוסטים, מתזמן פרסומים ומנתח ביצועים.',features:['כתיבת פוסטים אוטומטית','תזמון לכל הפלטפורמות','ניתוח ביצועים','גיוס תומכים אורגני','ניהול קמפיינים','דוח חודשי דיגיטלי']},
-  'grant-scanner':{title:'GrantRadar - סורק קולות קוראים',dev:'AmutaPlay',icon:'radar',color:'#0d9488',price:249,desc:'סריקה אוטומטית של מאות קולות קוראים מקרנות, משרדי ממשלה ומוסדות בינלאומיים.',features:['סריקת 500+ מקורות יומית','התראות מותאמות אישית','ניתוח התאמה לעמותה','מעקב דדליינים','שיתוף צוות','ארכיון קולות קוראים']},
   'hopa-brain':{title:'Hopa Brain - מוח תוכן',dev:'AmutaPlay',icon:'psychology',color:'#7c3aed',price:0,desc:'סוכן AI ששולט בכל תוכן הארגון: מסמכים, CSV, PDF, מצגות, מענים, תקציב, הגשות, מיילים. מפת קבצים מלאה עם גישה לכל מקור מידע.',features:['גישה לכל מסמכי הארגון','חיפוש חכם בתוכן','מענה על שאלות מנתוני אמת','חיבור ל-Gmail','ניתוח מצגות ו-PDF','ייצוא מידע מעובד']},
   'hopa-smart-input':{title:'Smart Agent - קליטה חכמה',dev:'AmutaPlay',icon:'auto_fix_high',color:'#0891b2',price:0,desc:'הדבק תוכן מכל מקור (מייל, PDF, וואטסאפ) והסוכן מחלץ את המידע הרלוונטי, ממלא טפסים אוטומטית ושומר למסד הנתונים.',features:['זיהוי אוטומטי של סוג תוכן','חילוץ שדות מטקסט חופשי','מילוי טפסים אוטומטי','שמירה ל-Supabase','וולידציה חכמה','תמיכה בעברית ואנגלית']},
   'hopa-wa-bot':{title:'WhatsApp Bot Router',dev:'AmutaPlay',icon:'smart_toy',color:'#059669',price:0,desc:'בוט וואטסאפ עם 3 נתיבים: ניהול (admin), הגשת מענים (submit), חיפוש שירותים (search). זיהוי גיל אוטומטי, סינון מענים לפי גיל.',features:['3 בוטים בנתב אחד','זיהוי גיל אוטומטי 14-18 / 18-26','חיפוש מענים בזמן אמת','הגשת בקשות דרך וואטסאפ','ניהול סטטוסים','חיבור ל-Chatwoot']},
@@ -1318,8 +1135,6 @@ function openModal(id) {
 function closeModal(e) { if (e.target === document.getElementById('modalOverlay')) document.getElementById('modalOverlay').classList.remove('show'); }
 function addModalToCart() { if (!currentModalProduct) return; addToCart(currentModalProduct.title, currentModalProduct.price, currentModalProduct.color); document.getElementById('modalOverlay').classList.remove('show'); document.getElementById('cartPanel').classList.add('show'); }
 function filterCat(cat, el) { document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active')); if (el) el.classList.add('active'); }
-
-document.querySelectorAll('.device-chip').forEach(chip => { chip.addEventListener('click', () => { document.querySelectorAll('.device-chip').forEach(c => c.classList.remove('active')); chip.classList.add('active'); }); });
 
 const observer = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }); }, { threshold: 0.1 });
 document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));

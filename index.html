@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ImpactPlay - כל הכלים ליצירת אימפקט</title>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -24,7 +24,7 @@
 }
 
 body {
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Rubik', sans-serif;
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
@@ -151,12 +151,21 @@ body {
 .hero-badge .material-icons-round { font-size: 16px; color: var(--social-primary); }
 
 .hero h1 {
-  font-size: 52px;
+  font-size: 56px;
   font-weight: 900;
-  line-height: 1.15;
+  line-height: 1.1;
   margin-bottom: 20px;
-  letter-spacing: -1px;
+  letter-spacing: -1.5px;
   color: var(--text);
+}
+
+.vision-text {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.7;
+  max-width: 620px;
+  margin: 0 auto 12px;
 }
 
 .hero h1 .grad {
@@ -286,7 +295,7 @@ body {
   border-radius: 14px;
   font-size: 16px;
   font-weight: 700;
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Rubik', sans-serif;
   border: none;
   cursor: pointer;
   transition: all 0.3s;
@@ -373,6 +382,75 @@ body {
 .cta-box p { font-size: 17px; opacity: 0.9; margin-bottom: 8px; line-height: 1.7; }
 .cta-box .cta-bold { font-size: 22px; font-weight: 800; margin-top: 16px; }
 
+.carousel-section {
+  position: relative;
+  z-index: 10;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px 40px;
+  overflow: hidden;
+}
+
+.carousel-title {
+  font-size: 28px;
+  font-weight: 900;
+  text-align: center;
+  margin-bottom: 24px;
+  letter-spacing: -0.5px;
+}
+
+.carousel-track {
+  display: flex;
+  gap: 16px;
+  animation: scroll-carousel 30s linear infinite;
+  width: max-content;
+}
+
+.carousel-item {
+  flex-shrink: 0;
+  width: 220px;
+  background: var(--surface);
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: var(--radius);
+  padding: 24px 20px;
+  text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.carousel-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+
+.carousel-item .material-icons-round {
+  font-size: 36px;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, var(--edu-primary), var(--social-primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.carousel-item h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.carousel-item p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+@keyframes scroll-carousel {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.carousel-section:hover .carousel-track {
+  animation-play-state: paused;
+}
+
 .footer {
   position: relative;
   z-index: 10;
@@ -421,10 +499,9 @@ body {
     <div class="logo-text">Impact<span>Play</span></div>
   </a>
   <div class="header-links">
-    <a href="#">אודות</a>
-    <a href="#">מוצרים</a>
-    <a href="#">מחירים</a>
-    <a href="#">צרו קשר</a>
+    <a href="#products">כלים</a>
+    <a href="edu.html">חינוך</a>
+    <a href="social.html">עמותות</a>
   </div>
 </header>
 
@@ -434,19 +511,19 @@ body {
     מונע על ידי AI
   </div>
   <h1>כל הכלים ליצירת<br><span class="grad">אימפקט חברתי</span></h1>
-  <p>מרקטפלייס אחד לשני העולמות: חינוך ומגזר חברתי. סוכנים חכמים, עיצובים, אוטומציות ופתרונות AI במקום אחד.</p>
-  <div class="hero-cta-line">לא צריך לשלם מאות אלפי שקלים על תוכנות ומערכות.<br>העולם השתנה. עכשיו תורכם.</div>
+  <p class="vision-text">הרעיון פשוט: לא להכביד עליכם בעוד מערכות שיעלו אבק בשרתים. יצרנו כלים קלים שעובדים יחד עם הוואטסאפ, שמקלים עליכם את העבודה.</p>
+  <p>חושפים אתכם לטכנולוגיה שכבר קיימת. אוטומציות מהירות וקלות שחוסכות פרסום, שיווק ועוד. והכל במקום אחד.</p>
+  <div class="hero-cta-line">אתם תעשו את האימפקט. אנחנו אחראים על הטכנולוגיה.</div>
 </section>
 
 <div class="cards-container">
   <a class="entry-card edu" href="edu.html">
     <div class="card-icon"><span class="material-icons-round">school</span></div>
     <div class="card-title">EduPlay</div>
-    <div class="card-desc">סוכנים חכמים, ניהול בית ספר, פדגוגיה, מחוללי תוכן, הערכה, ייעוץ, חינוך מיוחד ותקשורת הורים. 73+ מערכות מוכנות.</div>
+    <div class="card-desc">ניהול בית ספר, פדגוגיה, מחוללי תוכן, ייעוץ ורווחה, חברתי ומערכות למידה. 75 מערכות Quartet מוכנות ולחיצות.</div>
     <div class="card-stats">
-      <div class="card-stat"><div class="card-stat-num">1,200+</div><div class="card-stat-label">מוצרים וסוכנים</div></div>
-      <div class="card-stat"><div class="card-stat-num">4,500+</div><div class="card-stat-label">בתי ספר</div></div>
-      <div class="card-stat"><div class="card-stat-num">98%</div><div class="card-stat-label">שביעות רצון</div></div>
+      <div class="card-stat"><div class="card-stat-num">75</div><div class="card-stat-label">מערכות Quartet</div></div>
+      <div class="card-stat"><div class="card-stat-num">5</div><div class="card-stat-label">קטגוריות</div></div>
     </div>
     <div class="card-cta"><span class="material-icons-round">arrow_back</span> כניסה לחנות החינוך</div>
   </a>
@@ -454,15 +531,33 @@ body {
   <a class="entry-card social" href="social.html">
     <div class="card-icon"><span class="material-icons-round">volunteer_activism</span></div>
     <div class="card-title">AmutaPlay</div>
-    <div class="card-desc">גיוס משאבים, סוכנים חכמים, עיצובים, סוכנים לרשתות חברתיות, CRM, אימפקט, תקציב ואסטרטגיה. 850+ כלים.</div>
+    <div class="card-desc">סוכנים חכמים, גיוס משאבים, דוחות אימפקט, רשתות חברתיות ושיווק, מערכות AI לניהול, ומערכת תקציב. הכל עובד, הכל אמיתי.</div>
     <div class="card-stats">
-      <div class="card-stat"><div class="card-stat-num">850+</div><div class="card-stat-label">כלים וסוכנים</div></div>
-      <div class="card-stat"><div class="card-stat-num">3,200+</div><div class="card-stat-label">עמותות וארגונים</div></div>
-      <div class="card-stat"><div class="card-stat-num">97%</div><div class="card-stat-label">שביעות רצון</div></div>
+      <div class="card-stat"><div class="card-stat-num">30+</div><div class="card-stat-label">כלים אמיתיים</div></div>
+      <div class="card-stat"><div class="card-stat-num">6</div><div class="card-stat-label">קטגוריות</div></div>
     </div>
     <div class="card-cta"><span class="material-icons-round">arrow_back</span> כניסה לחנות החברתית</div>
   </a>
 </div>
+
+<!-- PRODUCT CAROUSEL -->
+<section class="carousel-section" id="products">
+  <h2 class="carousel-title">מה תמצאו בפנים?</h2>
+  <div class="carousel-track">
+    <div class="carousel-item"><span class="material-icons-round">smart_toy</span><h3>סוכנים חכמים</h3><p>בוטים, אוטומציות ו-AI שעובדים בשבילכם 24/7</p></div>
+    <div class="carousel-item"><span class="material-icons-round">auto_awesome</span><h3>מחולל הגשות לקרנות</h3><p>AI שכותב בקשות מענק מלאות עם תקציב ולו"ז</p></div>
+    <div class="carousel-item"><span class="material-icons-round">forum</span><h3>בוט וואטסאפ</h3><p>3 נתיבים בנתב אחד: ניהול, הגשה, חיפוש</p></div>
+    <div class="carousel-item"><span class="material-icons-round">monitoring</span><h3>דוחות אימפקט</h3><p>ספר דיגיטלי מרהיב עם אנימציות ודפדוף</p></div>
+    <div class="carousel-item"><span class="material-icons-round">campaign</span><h3>אוטומציית רשתות</h3><p>פוסטים, תזמון, פרסום לפייסבוק ואינסטגרם</p></div>
+    <div class="carousel-item"><span class="material-icons-round">account_balance_wallet</span><h3>ניהול תקציב</h3><p>דשבורד גרפי, התראות חריגה, תכנון מול ביצוע</p></div>
+    <div class="carousel-item"><span class="material-icons-round">summarize</span><h3>דוח בוקר יומי</h3><p>נתוני GA4, קמפיינים ופניות חדשות כל בוקר</p></div>
+    <div class="carousel-item"><span class="material-icons-round">school</span><h3>ניהול בית ספר</h3><p>מערכת שעות, נוכחות, תקציב, מבחנים ועוד</p></div>
+    <div class="carousel-item"><span class="material-icons-round">slideshow</span><h3>מחוללי תוכן</h3><p>מצגות, שאלונים, משחקים, אינפוגרפיקות</p></div>
+    <div class="carousel-item"><span class="material-icons-round">psychology</span><h3>Brain - מוח AI</h3><p>שולט בכל התוכן: מסמכים, CSV, PDF, מענים</p></div>
+    <div class="carousel-item"><span class="material-icons-round">ads_click</span><h3>Google Ad Grants</h3><p>$10,000 לחודש בפרסום חינם לעמותות</p></div>
+    <div class="carousel-item"><span class="material-icons-round">edit_note</span><h3>כתבות CEO</h3><p>2 כתבות שבועיות עם SEO אוטומטי</p></div>
+  </div>
+</section>
 
 <div class="features-row">
   <div class="feature-item">
