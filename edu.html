@@ -647,7 +647,7 @@ body {
 
 .product-thumb {
   width: 100%;
-  height: 130px;
+  height: 140px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -656,19 +656,36 @@ body {
 }
 
 .product-thumb .material-icons-round {
-  font-size: 48px;
+  font-size: 40px;
   color: white;
   z-index: 1;
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.25);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.product-card:hover .product-thumb .material-icons-round {
+  transform: scale(1.1) rotate(-3deg);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.25);
 }
 
 .product-thumb .pattern {
   position: absolute;
   width: 100%;
   height: 100%;
-  opacity: 0.15;
-  background-image: radial-gradient(circle at 20% 50%, white 2px, transparent 2px),
-                     radial-gradient(circle at 80% 20%, white 1.5px, transparent 1.5px),
-                     radial-gradient(circle at 60% 80%, white 1px, transparent 1px);
+  opacity: 0.1;
+  background-image:
+    radial-gradient(circle at 15% 85%, rgba(255,255,255,0.4) 0%, transparent 50%),
+    radial-gradient(circle at 85% 15%, rgba(255,255,255,0.3) 0%, transparent 40%);
 }
 
 .product-info {
@@ -1488,11 +1505,11 @@ footer {
 
 <!-- ===== ROLE FILTER ===== -->
 <div class="role-filter">
-  <a class="role-chip active"><span class="material-icons-round">admin_panel_settings</span> מנהל</a>
-  <a class="role-chip"><span class="material-icons-round">school</span> מחנך</a>
-  <a class="role-chip"><span class="material-icons-round">hub</span> רכז</a>
-  <a class="role-chip"><span class="material-icons-round">group</span> איש צוות</a>
-  <a class="role-chip"><span class="material-icons-round">person</span> תלמיד</a>
+  <a class="role-chip active" onclick="filterByRole('all',this)"><span class="material-icons-round">admin_panel_settings</span> מנהל</a>
+  <a class="role-chip" onclick="filterByRole('teacher',this)"><span class="material-icons-round">school</span> מחנך</a>
+  <a class="role-chip" onclick="filterByRole('counselor',this)"><span class="material-icons-round">hub</span> יועצת</a>
+  <a class="role-chip" onclick="filterByRole('coordinator',this)"><span class="material-icons-round">group</span> רכז חברתי</a>
+  <a class="role-chip" onclick="filterByRole('student',this)"><span class="material-icons-round">person</span> תלמיד</a>
 </div>
 
 <!-- ===== HERO BANNER ===== -->
@@ -1579,7 +1596,7 @@ footer {
 
 
 <!-- ===== QUARTET: MANAGEMENT (25) ===== -->
-<section class="section fade-up" id="sec-management">
+<section class="section fade-up filterable" id="sec-management" data-roles="all,teacher,coordinator">
   <div class="section-header">
     <h2 class="section-title">ניהול בית ספר</h2>
     <a href="#" class="section-link">25 מערכות <span class="material-icons-round">arrow_back</span></a>
@@ -1599,7 +1616,7 @@ footer {
 </section>
 
 <!-- QUARTET: MANAGEMENT ROW 2 -->
-<section class="section fade-up">
+<section class="section fade-up filterable" data-roles="all,teacher,coordinator">
   <div class="section-header">
     <h2 class="section-title">ניהול בית ספר - המשך</h2>
     <a href="#" class="section-link">הצג הכל <span class="material-icons-round">arrow_back</span></a>
@@ -1613,7 +1630,7 @@ footer {
 </section>
 
 <!-- QUARTET: MANAGEMENT ROW 3 -->
-<section class="section fade-up">
+<section class="section fade-up filterable" data-roles="all,teacher,coordinator">
   <div class="products-scroll">
     <div class="product-card" onclick="window.open('https://meytalp-dev.github.io/ort-training/management/broadcast.html','_blank')" style="cursor:pointer"><div class="product-thumb" style="background:linear-gradient(135deg,#673ab7,#9575cd)"><div class="pattern"></div><span class="material-icons-round">campaign</span></div><div class="product-info"><div class="product-name">שידור הודעות</div><div class="product-dev">Quartet</div><div class="product-meta"><span class="product-rating">4.7 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#673ab7">תקשורת</span></div></div></div>
     <div class="product-card" onclick="window.open('https://meytalp-dev.github.io/ort-training/management/landing-recruitment.html','_blank')" style="cursor:pointer"><div class="product-thumb" style="background:linear-gradient(135deg,#00c853,#69f0ae)"><div class="pattern"></div><span class="material-icons-round">work</span></div><div class="product-info"><div class="product-name">גיוס מורים</div><div class="product-dev">Quartet</div><div class="product-meta"><span class="product-rating">4.6 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#00c853">HR</span></div></div></div>
@@ -1628,7 +1645,7 @@ footer {
 </section>
 
 <!-- ===== QUARTET: PEDAGOGY (10) ===== -->
-<section class="section fade-up" id="sec-pedagogy">
+<section class="section fade-up filterable" id="sec-pedagogy" data-roles="all,teacher">
   <div class="section-header">
     <h2 class="section-title">פדגוגיה</h2>
     <a href="#" class="section-link">10 מערכות <span class="material-icons-round">arrow_back</span></a>
@@ -1648,7 +1665,7 @@ footer {
 </section>
 
 <!-- ===== QUARTET: COUNSELING (8) ===== -->
-<section class="section fade-up" id="sec-counseling">
+<section class="section fade-up filterable" id="sec-counseling" data-roles="all,counselor,coordinator">
   <div class="section-header">
     <h2 class="section-title">ייעוץ ורווחה</h2>
     <a href="#" class="section-link">8 מערכות <span class="material-icons-round">arrow_back</span></a>
@@ -1661,7 +1678,7 @@ footer {
   </div>
 </section>
 
-<section class="section fade-up">
+<section class="section fade-up filterable" data-roles="all,counselor,coordinator">
   <div class="products-scroll">
     <div class="product-card" onclick="window.open('https://meytalp-dev.github.io/ort-training/management/therapy.html','_blank')" style="cursor:pointer"><div class="product-thumb" style="background:linear-gradient(135deg,#00bfa5,#64ffda)"><div class="pattern"></div><span class="material-icons-round">medical_services</span></div><div class="product-info"><div class="product-name">טיפולים ותזכורות</div><div class="product-dev">Quartet</div><div class="product-meta"><span class="product-rating">4.7 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#00bfa5">טיפול</span></div></div></div>
     <div class="product-card" onclick="window.open('https://meytalp-dev.github.io/ort-training/management/resilience-messages.html','_blank')" style="cursor:pointer"><div class="product-thumb" style="background:linear-gradient(135deg,#ff9800,#ffb74d)"><div class="pattern"></div><span class="material-icons-round">self_improvement</span></div><div class="product-info"><div class="product-name">הודעות חוסן</div><div class="product-dev">Quartet</div><div class="product-meta"><span class="product-rating">4.8 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#ff9800">חוסן</span></div></div></div>
@@ -1671,7 +1688,7 @@ footer {
 </section>
 
 <!-- ===== QUARTET: SOCIAL (8) ===== -->
-<section class="section fade-up" id="sec-social">
+<section class="section fade-up filterable" id="sec-social" data-roles="all,coordinator,counselor,student">
   <div class="section-header">
     <h2 class="section-title">חברתי ותלמידים</h2>
     <a href="#" class="section-link">8 מערכות <span class="material-icons-round">arrow_back</span></a>
@@ -1690,7 +1707,7 @@ footer {
 </section>
 
 <!-- ===== QUARTET: GENERATORS (10) ===== -->
-<section class="section fade-up" id="sec-learning">
+<section class="section fade-up filterable" id="sec-learning" data-roles="all,teacher,student">
   <div class="section-header">
     <h2 class="section-title">מחוללי למידה</h2>
     <a href="#" class="section-link">10 מחוללים <span class="material-icons-round">arrow_back</span></a>
@@ -1703,7 +1720,7 @@ footer {
   </div>
 </section>
 
-<section class="section fade-up">
+<section class="section fade-up filterable" data-roles="all,teacher,student">
   <div class="products-scroll">
     <div class="product-card" onclick="window.open('https://meytalp-dev.github.io/ort-training/opener-builder/','_blank')" style="cursor:pointer"><div class="product-thumb" style="background:linear-gradient(135deg,#ff9800,#ffb74d)"><div class="pattern"></div><span class="material-icons-round">rocket_launch</span></div><div class="product-info"><div class="product-name">מחולל פתיחות שיעור</div><div class="product-dev">Quartet</div><div class="product-meta"><span class="product-rating">4.8 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#ff9800">12 סוגים</span></div></div></div>
     <div class="product-card" onclick="window.open('https://meytalp-dev.github.io/ort-training/game-builder/','_blank')" style="cursor:pointer"><div class="product-thumb" style="background:linear-gradient(135deg,#e91e63,#f06292)"><div class="pattern"></div><span class="material-icons-round">sports_esports</span></div><div class="product-info"><div class="product-name">מחולל משחק לימודי</div><div class="product-dev">Quartet</div><div class="product-meta"><span class="product-rating">4.9 <span class="material-icons-round">star</span></span><span class="product-tag" style="background:#e91e63">משחק</span></div></div></div>
@@ -1714,8 +1731,8 @@ footer {
   </div>
 </section>
 
-<!-- ===== QUARTET: PLAYERS & LIBRARIES (6) ===== -->
-<section class="section fade-up">
+<!-- ===== LEARNING CONTINUATION (6) ===== -->
+<section class="section fade-up filterable" data-roles="all,teacher,student">
   <div class="section-header">
     <h2 class="section-title">נגנים וספריות</h2>
     <a href="#" class="section-link">6 מערכות <span class="material-icons-round">arrow_back</span></a>
@@ -1731,7 +1748,7 @@ footer {
 </section>
 
 <!-- ===== QUARTET: STANDALONE (7) ===== -->
-<section class="section fade-up">
+<section class="section fade-up filterable" data-roles="all,teacher,student">
   <div class="section-header">
     <h2 class="section-title">מערכות עצמאיות</h2>
     <a href="#" class="section-link">7 מערכות <span class="material-icons-round">arrow_back</span></a>
@@ -1956,7 +1973,21 @@ function addModalToCart() {
 function filterCategory(cat, el) {
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   if (el) el.classList.add('active');
-  // In production: filter products by category
+}
+
+// ===== ROLE FILTER =====
+function filterByRole(role, el) {
+  document.querySelectorAll('.role-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.filterable').forEach(section => {
+    const roles = section.dataset.roles || '';
+    if (role === 'all' || roles.includes(role)) {
+      section.style.display = '';
+      section.style.opacity = '1';
+    } else {
+      section.style.display = 'none';
+    }
+  });
 }
 
 // ===== SEARCH =====
