@@ -10,15 +10,15 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-  --bg: #0a0a1a;
-  --surface: #12122a;
-  --surface-2: #1a1a3e;
-  --text: #ffffff;
-  --text-secondary: #94a3b8;
-  --edu-primary: #4F8CF7;
+  --bg: #f8f9fb;
+  --surface: #ffffff;
+  --surface-2: #f1f3f8;
+  --text: #1a1a2e;
+  --text-secondary: #64748b;
+  --edu-primary: #4F6AF7;
   --edu-secondary: #7c4dff;
-  --social-primary: #10b981;
-  --social-secondary: #0d9488;
+  --social-primary: #0d9488;
+  --social-secondary: #059669;
   --radius: 16px;
   --radius-lg: 24px;
 }
@@ -35,8 +35,8 @@ body {
   position: fixed;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px);
   background-size: 60px 60px;
   pointer-events: none;
   z-index: 0;
@@ -47,8 +47,8 @@ body {
   width: 600px;
   height: 600px;
   border-radius: 50%;
-  filter: blur(120px);
-  opacity: 0.15;
+  filter: blur(150px);
+  opacity: 0.08;
   pointer-events: none;
   z-index: 0;
 }
@@ -100,7 +100,7 @@ body {
 .logo-text {
   font-size: 26px;
   font-weight: 800;
-  color: white;
+  color: var(--text);
   letter-spacing: -0.5px;
 }
 
@@ -139,24 +139,24 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(79,106,247,0.08);
+  border: 1px solid rgba(79,106,247,0.15);
   border-radius: 100px;
   padding: 8px 20px;
   font-size: 13px;
-  color: var(--text-secondary);
+  color: var(--edu-primary);
   margin-bottom: 24px;
-  backdrop-filter: blur(10px);
 }
 
 .hero-badge .material-icons-round { font-size: 16px; color: var(--social-primary); }
 
 .hero h1 {
-  font-size: 56px;
+  font-size: 52px;
   font-weight: 900;
   line-height: 1.15;
   margin-bottom: 20px;
   letter-spacing: -1px;
+  color: var(--text);
 }
 
 .hero h1 .grad {
@@ -166,11 +166,18 @@ body {
 }
 
 .hero p {
-  font-size: 20px;
+  font-size: 19px;
   color: var(--text-secondary);
   line-height: 1.7;
-  max-width: 600px;
-  margin: 0 auto 40px;
+  max-width: 620px;
+  margin: 0 auto 20px;
+}
+
+.hero-cta-line {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 40px;
 }
 
 .cards-container {
@@ -191,47 +198,28 @@ body {
   border-radius: var(--radius-lg);
   padding: 40px 36px;
   text-decoration: none;
-  color: white;
+  color: var(--text);
   overflow: hidden;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   display: flex;
   flex-direction: column;
   min-height: 380px;
-}
-
-.entry-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: var(--radius-lg);
-  padding: 1px;
-  background: linear-gradient(135deg, transparent, transparent);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  transition: background 0.4s;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
 }
 
 .entry-card:hover {
   transform: translateY(-8px);
-  border-color: transparent;
 }
 
 .entry-card.edu:hover {
-  box-shadow: 0 20px 60px rgba(79,140,247,0.2);
-}
-
-.entry-card.edu:hover::before {
-  background: linear-gradient(135deg, var(--edu-primary), var(--edu-secondary));
+  box-shadow: 0 20px 60px rgba(79,106,247,0.15);
+  border-color: rgba(79,106,247,0.3);
 }
 
 .entry-card.social:hover {
-  box-shadow: 0 20px 60px rgba(16,185,129,0.2);
-}
-
-.entry-card.social:hover::before {
-  background: linear-gradient(135deg, var(--social-primary), var(--social-secondary));
+  box-shadow: 0 20px 60px rgba(13,148,136,0.15);
+  border-color: rgba(13,148,136,0.3);
 }
 
 .card-icon {
@@ -269,7 +257,7 @@ body {
 
 .card-icon .material-icons-round { font-size: 36px; color: white; }
 
-.card-title { font-size: 28px; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.3px; }
+.card-title { font-size: 28px; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.3px; color: var(--text); }
 
 .card-desc {
   font-size: 16px;
@@ -362,20 +350,40 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
-.feature-item h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.feature-item h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; color: var(--text); }
 .feature-item p { font-size: 12px; color: var(--text-secondary); }
+
+.cta-section {
+  position: relative;
+  z-index: 10;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 24px 60px;
+  text-align: center;
+}
+
+.cta-box {
+  background: linear-gradient(135deg, var(--edu-primary), var(--social-primary));
+  border-radius: var(--radius-lg);
+  padding: 48px 40px;
+  color: white;
+}
+
+.cta-box h2 { font-size: 28px; font-weight: 900; margin-bottom: 12px; }
+.cta-box p { font-size: 17px; opacity: 0.9; margin-bottom: 8px; line-height: 1.7; }
+.cta-box .cta-bold { font-size: 22px; font-weight: 800; margin-top: 16px; }
 
 .footer {
   position: relative;
   z-index: 10;
   text-align: center;
   padding: 40px 24px;
-  border-top: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid rgba(0,0,0,0.06);
 }
 
 .footer p { font-size: 13px; color: var(--text-secondary); }
 .footer a { color: var(--text-secondary); text-decoration: none; margin: 0 12px; }
-.footer a:hover { color: white; }
+.footer a:hover { color: var(--edu-primary); }
 
 @media (max-width: 768px) {
   .header { padding: 16px 20px; }
@@ -426,14 +434,15 @@ body {
     מונע על ידי AI
   </div>
   <h1>כל הכלים ליצירת<br><span class="grad">אימפקט חברתי</span></h1>
-  <p>מרקטפלייס אחד לשני העולמות: חינוך ומגזר חברתי. סוכנים חכמים, כלי ניהול, אוטומציות ופתרונות AI במקום אחד.</p>
+  <p>מרקטפלייס אחד לשני העולמות: חינוך ומגזר חברתי. סוכנים חכמים, עיצובים, אוטומציות ופתרונות AI במקום אחד.</p>
+  <div class="hero-cta-line">לא צריך לשלם מאות אלפי שקלים על תוכנות ומערכות.<br>העולם השתנה. עכשיו תורכם.</div>
 </section>
 
 <div class="cards-container">
   <a class="entry-card edu" href="edu.html">
     <div class="card-icon"><span class="material-icons-round">school</span></div>
     <div class="card-title">EduPlay</div>
-    <div class="card-desc">כל מה שמערכת החינוך צריכה: סוכנים חכמים, ניהול בית ספר, פדגוגיה, רישיונות, הערכה, חינוך מיוחד ותקשורת הורים.</div>
+    <div class="card-desc">סוכנים חכמים, ניהול בית ספר, פדגוגיה, מחוללי תוכן, הערכה, ייעוץ, חינוך מיוחד ותקשורת הורים. 73+ מערכות מוכנות.</div>
     <div class="card-stats">
       <div class="card-stat"><div class="card-stat-num">1,200+</div><div class="card-stat-label">מוצרים וסוכנים</div></div>
       <div class="card-stat"><div class="card-stat-num">4,500+</div><div class="card-stat-label">בתי ספר</div></div>
@@ -445,7 +454,7 @@ body {
   <a class="entry-card social" href="social.html">
     <div class="card-icon"><span class="material-icons-round">volunteer_activism</span></div>
     <div class="card-title">AmutaPlay</div>
-    <div class="card-desc">כל מה שהמגזר השלישי צריך: גיוס משאבים, CRM, אימפקט, ציות, תקשורת, תקציב, אסטרטגיה ו-35+ כלי הופה מוכנים.</div>
+    <div class="card-desc">גיוס משאבים, סוכנים חכמים, עיצובים, סוכנים לרשתות חברתיות, CRM, אימפקט, תקציב ואסטרטגיה. 850+ כלים.</div>
     <div class="card-stats">
       <div class="card-stat"><div class="card-stat-num">850+</div><div class="card-stat-label">כלים וסוכנים</div></div>
       <div class="card-stat"><div class="card-stat-num">3,200+</div><div class="card-stat-label">עמותות וארגונים</div></div>
@@ -475,6 +484,15 @@ body {
     <div class="feature-icon"><span class="material-icons-round">support_agent</span></div>
     <h3>תמיכה 24/7</h3>
     <p>צוות מומחים זמין</p>
+  </div>
+</div>
+
+<div class="cta-section" style="animation:float-in 0.8s ease 0.8s both">
+  <div class="cta-box">
+    <h2>לא צריכים לשלם מאות אלפי שקלים</h2>
+    <p>על תוכנות, מערכות וסוכנים. הטכנולוגיה כבר כאן, חינם או בעלות מינימלית.</p>
+    <p>זהו. העולם השתנה.</p>
+    <div class="cta-bold">ועכשיו תורכם!</div>
   </div>
 </div>
 
