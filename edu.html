@@ -8,6 +8,8 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+.section[id] { scroll-margin-top: 120px; }
 
 :root {
   --primary: #1a73e8;
@@ -1475,12 +1477,12 @@ footer {
 <!-- ===== NAV TABS ===== -->
 <nav class="nav-tabs">
   <div class="nav-tabs-inner">
-    <a class="nav-tab active" href="#" onclick="event.preventDefault();window.scrollTo({top:0,behavior:'smooth'})">הכל</a>
-    <a class="nav-tab" href="#sec-management">כלי ניהול</a>
-    <a class="nav-tab" href="#sec-pedagogy">פדגוגיה</a>
-    <a class="nav-tab" href="#sec-counseling">ייעוצי</a>
-    <a class="nav-tab" href="#sec-social">חברתי</a>
-    <a class="nav-tab" href="#sec-learning">מערכות למידה</a>
+    <a class="nav-tab active" href="#" onclick="event.preventDefault();window.scrollTo({top:0,behavior:'smooth'})">הכל (75)</a>
+    <a class="nav-tab" href="#sec-management">כלי ניהול (25)</a>
+    <a class="nav-tab" href="#sec-pedagogy">פדגוגיה (10)</a>
+    <a class="nav-tab" href="#sec-counseling">ייעוצי (8)</a>
+    <a class="nav-tab" href="#sec-social">חברתי (9)</a>
+    <a class="nav-tab" href="#sec-learning">מערכות למידה (23)</a>
   </div>
 </nav>
 
@@ -1519,9 +1521,9 @@ footer {
         <span class="highlight">EduPlay AI</span><br>
         מערכת החינוך של המחר
       </h1>
-      <p class="hero-subtitle">לא להכביד על המערכת בעוד מערכות שישבו ויעלו אבק. כלים קלים שעובדים יחד עם מה שכבר קיים, ומקלים עליכם את העבודה.</p>
+      <p class="hero-subtitle">מערכות קלות לתפעול, בוטים חכמים ו-75 כלים שנבנו לייעל את בית הספר שלכם. בלי להתקין, בלי להכביד, הכל עובד מהדפדפן.</p>
       <div class="hero-actions">
-        <a href="#products" class="btn-primary">
+        <a href="#sec-management" class="btn-primary">
           <span class="material-icons-round">explore</span>
           גלו את הכלים
         </a>

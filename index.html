@@ -475,6 +475,233 @@ body {
   animation-play-state: paused;
 }
 
+.section-block {
+  position: relative;
+  z-index: 10;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 24px 60px;
+}
+
+.section-block h2 {
+  font-size: 32px;
+  font-weight: 900;
+  text-align: center;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+.section-block .section-sub {
+  font-size: 17px;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: 32px;
+  line-height: 1.7;
+}
+
+.impact-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.impact-card {
+  background: var(--surface);
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: var(--radius-lg);
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.impact-num {
+  font-size: 42px;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--edu-primary), var(--social-primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 4px;
+}
+
+.impact-label {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.impact-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.pricing-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.price-card {
+  background: var(--surface);
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: var(--radius-lg);
+  padding: 36px 28px;
+  text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.price-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.1);
+}
+
+.price-card.featured {
+  border: 2px solid var(--social-primary);
+  position: relative;
+}
+
+.price-card.featured::before {
+  content: 'הכי פופולרי';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, var(--edu-primary), var(--social-primary));
+  color: white;
+  padding: 4px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.price-card h3 {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.price-amount {
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.price-amount span {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
+.price-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+
+.price-features {
+  list-style: none;
+  text-align: right;
+  margin-bottom: 24px;
+}
+
+.price-features li {
+  padding: 6px 0;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.price-features li .material-icons-round {
+  font-size: 18px;
+  color: var(--social-primary);
+}
+
+.price-btn {
+  display: inline-block;
+  padding: 12px 28px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: 'Rubik', sans-serif;
+  border: 2px solid var(--text);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.price-btn:hover {
+  background: var(--text);
+  color: white;
+}
+
+.price-btn.filled {
+  background: linear-gradient(135deg, var(--edu-primary), var(--social-primary));
+  color: white;
+  border: none;
+}
+
+.price-btn.filled:hover {
+  box-shadow: 0 8px 24px rgba(79,106,247,0.3);
+}
+
+.about-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: center;
+}
+
+.about-text h3 {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 16px;
+}
+
+.about-text p {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: 12px;
+}
+
+.about-values {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.about-value {
+  background: var(--surface);
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: var(--radius);
+  padding: 20px 16px;
+  text-align: center;
+}
+
+.about-value .material-icons-round {
+  font-size: 32px;
+  color: var(--social-primary);
+  margin-bottom: 8px;
+}
+
+.about-value h4 {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.about-value p {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+  .impact-grid, .pricing-row { grid-template-columns: 1fr; }
+  .about-content { grid-template-columns: 1fr; }
+}
+
 .footer {
   position: relative;
   z-index: 10;
@@ -524,6 +751,8 @@ body {
   </a>
   <div class="header-links">
     <a href="#products">כלים</a>
+    <a href="#impact">האימפקט שלנו</a>
+    <a href="#pricing">מחירים</a>
     <a href="edu.html">חינוך</a>
     <a href="social.html">עמותות</a>
   </div>
@@ -535,8 +764,8 @@ body {
     מונע על ידי AI
   </div>
   <h1>כל הכלים ליצירת<br><span class="grad">אימפקט חברתי</span></h1>
-  <p class="vision-text">הרעיון פשוט: לא להכביד עליכם בעוד מערכות שיעלו אבק בשרתים. יצרנו כלים קלים שעובדים יחד עם הוואטסאפ, שמקלים עליכם את העבודה.</p>
-  <p>חושפים אתכם לטכנולוגיה שכבר קיימת. אוטומציות מהירות וקלות שחוסכות פרסום, שיווק ועוד. והכל במקום אחד.</p>
+  <p class="vision-text">מערכות קלות לתפעול, בוטים חכמים וכלי AI שמייעלים את הארגון שלכם. בלי מערכות כבדות שיעלו אבק, רק מה שבאמת עובד.</p>
+  <p>אוטומציות שחוסכות שעות של עבודה, מהוואטסאפ ועד גיוס המשאבים. והכל במקום אחד.</p>
   <div class="hero-cta-line">אתם תעשו את האימפקט. אנחנו אחראים על הטכנולוגיה.</div>
 </section>
 
@@ -606,7 +835,127 @@ body {
   </div>
 </div>
 
-<div class="cta-section" style="animation:float-in 0.8s ease 0.8s both">
+<!-- IMPACT SECTION -->
+<section class="section-block" id="impact" style="animation:float-in 0.8s ease 0.7s both">
+  <h2>האימפקט שלנו</h2>
+  <p class="section-sub">הטכנולוגיה שבנינו כבר עובדת. הנה מה שקורה כשנותנים לארגונים את הכלים הנכונים.</p>
+  <div class="impact-grid">
+    <div class="impact-card">
+      <div class="impact-num">75+</div>
+      <div class="impact-label">מערכות חינוך פעילות</div>
+      <div class="impact-desc">ניהול, פדגוגיה, ייעוץ, מחוללים ונגנים - הכל עובד ולחיץ</div>
+    </div>
+    <div class="impact-card">
+      <div class="impact-num">30+</div>
+      <div class="impact-label">כלים למגזר החברתי</div>
+      <div class="impact-desc">סוכנים חכמים, גיוס משאבים, דוחות, שיווק ותקציב</div>
+    </div>
+    <div class="impact-card">
+      <div class="impact-num">24/7</div>
+      <div class="impact-label">אוטומציות פעילות</div>
+      <div class="impact-desc">בוט וואטסאפ, דוח בוקר, פוסטים, כתבות - עובד גם כשאתם ישנים</div>
+    </div>
+    <div class="impact-card">
+      <div class="impact-num">0</div>
+      <div class="impact-label">שקלים על שרתים</div>
+      <div class="impact-desc">הכל רץ על GitHub Pages, Supabase ו-Edge Functions. בלי עלויות תשתית</div>
+    </div>
+    <div class="impact-card">
+      <div class="impact-num">3</div>
+      <div class="impact-label">בוטים בנתב אחד</div>
+      <div class="impact-desc">ניהול, הגשת מענים וחיפוש שירותים - הכל דרך וואטסאפ</div>
+    </div>
+    <div class="impact-card">
+      <div class="impact-num">AI</div>
+      <div class="impact-label">שכותב הגשות לקרנות</div>
+      <div class="impact-desc">מנתח קול קורא, מתאים שפה, מייצר תקציב ולו"ז אוטומטית</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING SECTION -->
+<section class="section-block" id="pricing" style="animation:float-in 0.8s ease 0.75s both">
+  <h2>מחירים</h2>
+  <p class="section-sub">הטכנולוגיה הזו נבנתה כדי להנגיש, לא כדי להרוויח. רוב הכלים חינמיים לחלוטין.</p>
+  <div class="pricing-row">
+    <div class="price-card">
+      <h3>חינם לנצח</h3>
+      <div class="price-amount">0 <span>ש"ח</span></div>
+      <div class="price-desc">לארגונים שרק מתחילים</div>
+      <ul class="price-features">
+        <li><span class="material-icons-round">check_circle</span> כל 75 מערכות החינוך</li>
+        <li><span class="material-icons-round">check_circle</span> בוט וואטסאפ</li>
+        <li><span class="material-icons-round">check_circle</span> דוח בוקר יומי</li>
+        <li><span class="material-icons-round">check_circle</span> מחולל הגשות בסיסי</li>
+      </ul>
+      <button class="price-btn">התחילו בחינם</button>
+    </div>
+    <div class="price-card featured">
+      <h3>ארגון</h3>
+      <div class="price-amount">499 <span>ש"ח / חודש</span></div>
+      <div class="price-desc">לעמותה או ארגון פעיל</div>
+      <ul class="price-features">
+        <li><span class="material-icons-round">check_circle</span> הכל בחינם +</li>
+        <li><span class="material-icons-round">check_circle</span> כל הסוכנים החכמים</li>
+        <li><span class="material-icons-round">check_circle</span> גיוס משאבים מלא</li>
+        <li><span class="material-icons-round">check_circle</span> דוחות אימפקט</li>
+        <li><span class="material-icons-round">check_circle</span> אוטומציית רשתות</li>
+        <li><span class="material-icons-round">check_circle</span> תמיכה ישירה</li>
+      </ul>
+      <button class="price-btn filled">התחילו עכשיו</button>
+    </div>
+    <div class="price-card">
+      <h3>רשת / קרן</h3>
+      <div class="price-amount">צרו קשר</div>
+      <div class="price-desc">לקרנות ורשתות ארגונים</div>
+      <ul class="price-features">
+        <li><span class="material-icons-round">check_circle</span> הכל בארגון +</li>
+        <li><span class="material-icons-round">check_circle</span> דשבורד מרכזי</li>
+        <li><span class="material-icons-round">check_circle</span> API ואינטגרציות</li>
+        <li><span class="material-icons-round">check_circle</span> הדרכות ייעודיות</li>
+        <li><span class="material-icons-round">check_circle</span> SLA מובטח</li>
+      </ul>
+      <button class="price-btn">דברו איתנו</button>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT / WHO WE ARE -->
+<section class="section-block" id="about" style="animation:float-in 0.8s ease 0.8s both">
+  <h2>מי אנחנו</h2>
+  <div class="about-content">
+    <div class="about-text">
+      <h3>הטכנולוגיה שלכם. האימפקט שלכם.</h3>
+      <p>אנחנו לא חברת תוכנה. אנחנו אנשי חינוך ומגזר חברתי שהבינו שהטכנולוגיה כבר כאן, רק צריך להנגיש אותה.</p>
+      <p>במקום לשלם מאות אלפי שקלים על מערכות כבדות, בנינו כלים קלים שעובדים עם מה שכבר יש לכם: וואטסאפ, דפדפן, ומייל.</p>
+      <p>כל הכלים נבנו מתוך עבודה אמיתית בשטח, עם מנהלי בתי ספר, עמותות וארגונים חברתיים.</p>
+    </div>
+    <div class="about-values">
+      <div class="about-value">
+        <span class="material-icons-round">lightbulb</span>
+        <h4>פשטות</h4>
+        <p>כלים שעובדים מהיום הראשון</p>
+      </div>
+      <div class="about-value">
+        <span class="material-icons-round">favorite</span>
+        <h4>שליחות</h4>
+        <p>נבנה מתוך אמונה באימפקט</p>
+      </div>
+      <div class="about-value">
+        <span class="material-icons-round">bolt</span>
+        <h4>מהירות</h4>
+        <p>אוטומציות שחוסכות שעות</p>
+      </div>
+      <div class="about-value">
+        <span class="material-icons-round">lock_open</span>
+        <h4>נגישות</h4>
+        <p>חינם או בעלות מינימלית</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="cta-section" style="animation:float-in 0.8s ease 0.85s both">
   <div class="cta-box">
     <h2>לא צריכים לשלם מאות אלפי שקלים</h2>
     <p>על תוכנות, מערכות וסוכנים. הטכנולוגיה כבר כאן, חינם או בעלות מינימלית.</p>
