@@ -1,5 +1,7 @@
 {
   "regions": ["fra1"],
   "cleanUrls": true,
-  "framework": null
+  "framework": null,
+  "buildCommand": "",
+  "outputDirectory": "."
 }
