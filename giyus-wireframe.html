@@ -10,13 +10,15 @@
   --primary: #6C5CE7;
   --primary-light: #A29BFE;
   --accent: #00B894;
-  --bg: #FAFAFE;
+  --bg: #F7F7FB;
   --card: #FFFFFF;
   --text: #2D3436;
   --text-light: #636E72;
   --text-muted: #B2BEC3;
-  --border: #F0F0F5;
+  --border: #EEEEF2;
   --danger: #E17055;
+  --user-bg: #6C5CE7;
+  --bot-bg: #FFFFFF;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -26,491 +28,329 @@ body {
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
+  display: flex;
+  justify-content: center;
 }
 
 /* ===== APP SHELL ===== */
 .app {
-  max-width: 520px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: 600px;
   min-height: 100vh;
-  background: white;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
   position: relative;
-  box-shadow: 0 0 60px rgba(0,0,0,0.06);
 }
 
 /* ===== HEADER ===== */
 .header {
-  padding: 20px 24px 16px;
+  padding: 16px 20px;
+  background: white;
+  border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 12px;
   position: sticky;
   top: 0;
-  background: white;
   z-index: 50;
-  border-bottom: 1px solid var(--border);
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
 }
 
 .logo-mark {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   background: var(--primary);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 800;
+  color: white;
+}
+
+.header-info { flex: 1; }
+
+.header-name {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.header-status {
+  font-size: 12px;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.header-status::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+.header-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* ===== CHAT AREA ===== */
+.chat-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 16px 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Message bubbles */
+.msg {
+  display: flex;
+  gap: 10px;
+  max-width: 92%;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.msg.bot { align-self: flex-start; }
+.msg.user { align-self: flex-end; flex-direction: row-reverse; }
+
+.msg-avatar {
+  width: 32px;
+  height: 32px;
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
-  font-weight: 800;
+  font-size: 14px;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.msg.bot .msg-avatar {
+  background: var(--primary);
   color: white;
-}
-
-.logo-text {
-  font-size: 20px;
   font-weight: 800;
-  color: var(--text);
 }
 
-.header-actions {
-  display: flex;
-  gap: 8px;
+.msg.user .msg-avatar {
+  background: #DDD;
+  font-size: 14px;
 }
 
-.icon-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
+.msg-bubble {
+  border-radius: 18px;
+  padding: 14px 18px;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.msg.bot .msg-bubble {
   background: white;
+  border: 1px solid var(--border);
+  border-top-right-radius: 6px;
+}
+
+.msg.user .msg-bubble {
+  background: var(--primary);
+  color: white;
+  border-top-left-radius: 6px;
+}
+
+/* Rich content inside bot messages */
+.msg-bubble h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.msg-bubble p {
+  margin-bottom: 8px;
+}
+
+.msg-bubble p:last-child { margin-bottom: 0; }
+
+/* Opportunity cards inside chat */
+.opp-card-chat {
+  background: var(--bg);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin: 8px 0;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.opp-card-chat:hover {
+  border-color: var(--primary-light);
+  background: rgba(108,92,231,0.04);
+}
+
+.opp-card-chat:active {
+  transform: scale(0.98);
+}
+
+.opp-top-row {
   display: flex;
   align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 18px;
-  transition: all 0.2s;
-  position: relative;
-}
-
-.icon-btn:hover { background: var(--bg); }
-
-.icon-btn .dot {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  width: 8px;
-  height: 8px;
-  background: var(--danger);
-  border-radius: 50%;
-  border: 2px solid white;
-}
-
-/* ===== SCREENS ===== */
-.screen { display: none; }
-.screen.active { display: block; }
-
-/* ===== SCREEN: INBOX ===== */
-.inbox-summary {
-  padding: 20px 24px;
-  background: linear-gradient(135deg, #6C5CE7 0%, #A29BFE 100%);
-  color: white;
-  margin: 0;
-}
-
-.inbox-greeting {
-  font-size: 15px;
-  opacity: 0.85;
-  margin-bottom: 4px;
-}
-
-.inbox-headline {
-  font-size: 24px;
-  font-weight: 800;
-  line-height: 1.3;
-}
-
-.inbox-headline span {
-  color: #55EFC4;
-}
-
-/* Cards */
-.inbox-list {
-  padding: 12px 16px 100px;
-}
-
-.inbox-date {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-muted);
-  padding: 12px 8px 8px;
-}
-
-.opp-card {
-  background: white;
-  border-radius: 16px;
-  padding: 20px;
-  margin-bottom: 10px;
-  border: 1px solid var(--border);
-  cursor: pointer;
-  transition: all 0.2s;
-  position: relative;
-}
-
-.opp-card:hover {
-  border-color: var(--primary-light);
-  box-shadow: 0 4px 20px rgba(108,92,231,0.08);
-}
-
-.opp-card:active {
-  transform: scale(0.99);
-}
-
-.opp-top {
-  display: flex;
-  align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
-.opp-source {
+.opp-source-sm {
   font-size: 12px;
   font-weight: 600;
   color: var(--primary);
 }
 
-.opp-match {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 13px;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 8px;
-}
-
-.match-high { background: #E8F8F5; color: #00B894; }
-.match-mid { background: #FEF9E7; color: #F39C12; }
-
-.opp-title {
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 1.4;
-  margin-bottom: 12px;
-}
-
-.opp-bottom {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.opp-amount {
-  font-size: 20px;
-  font-weight: 800;
-  color: var(--text);
-}
-
-.opp-deadline {
+.opp-match-sm {
   font-size: 12px;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 8px;
-}
-
-.dl-urgent { background: #FADBD8; color: #E74C3C; }
-.dl-soon { background: #FEF3CD; color: #D68910; }
-.dl-ok { background: #E8F8F5; color: #00B894; }
-
-.opp-new {
-  position: absolute;
-  top: -6px;
-  left: 16px;
-  background: var(--danger);
-  color: white;
-  font-size: 10px;
   font-weight: 700;
   padding: 2px 8px;
   border-radius: 6px;
 }
 
-/* ===== SCREEN: OPPORTUNITY DETAIL ===== */
-.detail-header {
-  padding: 16px 24px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  background: white;
-  z-index: 50;
-}
+.match-h { background: #E8F8F5; color: #00B894; }
+.match-m { background: #FEF9E7; color: #F39C12; }
 
-.back-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 16px;
-  transition: all 0.2s;
-}
-
-.back-btn:hover { background: var(--bg); }
-
-.detail-header-title {
-  font-size: 15px;
+.opp-title-sm {
+  font-size: 14px;
   font-weight: 600;
-  flex: 1;
-}
-
-.detail-body {
-  padding: 0 24px 120px;
-}
-
-.detail-hero {
-  padding: 24px 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.detail-source-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   margin-bottom: 8px;
+  line-height: 1.4;
 }
 
-.detail-source {
+.opp-meta-row {
+  display: flex;
+  gap: 12px;
   font-size: 13px;
-  font-weight: 600;
-  color: var(--primary);
-  background: rgba(108,92,231,0.06);
-  padding: 4px 12px;
-  border-radius: 8px;
 }
 
-.detail-match {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--accent);
-}
-
-.detail-title {
-  font-size: 22px;
-  font-weight: 800;
-  line-height: 1.3;
-  margin-bottom: 16px;
-}
-
-.detail-stats {
-  display: flex;
-  gap: 24px;
-}
-
-.detail-stat {
-  display: flex;
-  flex-direction: column;
-}
-
-.detail-stat .label {
-  font-size: 11px;
-  color: var(--text-muted);
-  font-weight: 500;
-}
-
-.detail-stat .value {
-  font-size: 18px;
+.opp-amount-sm {
   font-weight: 700;
 }
 
-.detail-stat .value.urgent { color: var(--danger); }
-
-/* Requirements */
-.detail-section {
-  padding: 20px 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.detail-section:last-child { border: none; }
-
-.section-title {
-  font-size: 14px;
-  font-weight: 700;
-  margin-bottom: 12px;
-  color: var(--text);
-}
-
-.detail-desc {
-  font-size: 14px;
-  line-height: 1.7;
+.opp-dl-sm {
   color: var(--text-light);
 }
 
-.req-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.opp-dl-sm.urgent { color: var(--danger); font-weight: 600; }
+
+/* Draft section inside chat */
+.draft-section {
+  background: rgba(108,92,231,0.04);
+  border: 1px solid rgba(108,92,231,0.12);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin: 8px 0;
 }
 
-.req-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  background: var(--bg);
-  border-radius: 10px;
-  font-size: 14px;
-}
-
-.req-icon {
-  width: 24px;
-  height: 24px;
-  border-radius: 7px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  flex-shrink: 0;
-}
-
-.req-icon.ready {
-  background: #E8F8F5;
-  color: var(--accent);
-}
-
-.req-icon.missing {
-  background: #FEF3CD;
-  color: #F39C12;
-}
-
-.req-text { flex: 1; }
-
-.req-status {
+.draft-section .draft-label {
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-.req-status.ready { color: var(--accent); }
-.req-status.missing { color: #F39C12; }
+.draft-section .draft-text {
+  font-size: 14px;
+  line-height: 1.7;
+}
 
-/* Match reasoning */
-.match-reasons {
+/* Checklist inside chat */
+.chat-checklist {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  margin: 8px 0;
 }
 
-.match-reason {
+.chat-check {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 13px;
-  color: var(--text-light);
+  padding: 6px 0;
 }
 
-.match-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent);
+.check-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
   flex-shrink: 0;
 }
 
-/* CTA */
-.detail-cta {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 520px;
-  padding: 16px 24px;
-  background: white;
-  border-top: 1px solid var(--border);
-  z-index: 60;
+.check-dot.ok { background: #E8F8F5; color: var(--accent); }
+.check-dot.miss { background: #FEF3CD; color: #F39C12; }
+
+/* Quick action chips (suggestions) */
+.suggestions {
   display: flex;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
 }
 
-.btn-main {
-  flex: 1;
-  padding: 16px;
-  border-radius: 14px;
+.suggest-chip {
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: white;
   font-family: 'Heebo', sans-serif;
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
   cursor: pointer;
-  border: none;
   transition: all 0.2s;
-  text-align: center;
+  white-space: nowrap;
 }
 
-.btn-main.primary {
+.suggest-chip:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: rgba(108,92,231,0.04);
+}
+
+.suggest-chip:active {
   background: var(--primary);
   color: white;
 }
 
-.btn-main.primary:hover {
-  background: #5A4BD1;
-  box-shadow: 0 6px 20px rgba(108,92,231,0.3);
-}
-
-.btn-main.secondary {
-  background: var(--bg);
-  color: var(--text);
-  flex: 0 0 auto;
-  padding: 16px 20px;
-}
-
-/* ===== SCREEN: WRITING ===== */
-.writing-header {
-  padding: 16px 24px;
+/* Progress bar in chat */
+.chat-progress {
   display: flex;
   align-items: center;
-  gap: 12px;
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  background: white;
-  z-index: 50;
-}
-
-.writing-header-info {
-  flex: 1;
-}
-
-.writing-grant-name {
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.writing-status {
-  font-size: 12px;
-  color: var(--accent);
-}
-
-.writing-body {
-  padding: 0 0 180px;
-}
-
-/* Progress */
-.writing-progress {
-  padding: 16px 24px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  gap: 10px;
+  margin: 8px 0;
+  padding: 10px 14px;
   background: var(--bg);
+  border-radius: 10px;
 }
 
-.progress-bar {
+.chat-progress-bar {
   flex: 1;
   height: 6px;
   background: var(--border);
@@ -518,110 +358,58 @@ body {
   overflow: hidden;
 }
 
-.progress-fill {
+.chat-progress-fill {
   height: 100%;
-  background: var(--accent);
   border-radius: 3px;
-  width: 60%;
-  transition: width 0.5s;
+  background: var(--accent);
 }
 
-.progress-text {
+.chat-progress-text {
   font-size: 12px;
   font-weight: 600;
   color: var(--accent);
   white-space: nowrap;
 }
 
-/* Sections */
-.writing-section {
-  padding: 20px 24px;
-  border-bottom: 1px solid var(--border);
-}
-
-.writing-section-header {
+/* Typing indicator */
+.typing {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.writing-section-title {
-  font-size: 15px;
-  font-weight: 700;
-}
-
-.writing-section-status {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 3px 10px;
-  border-radius: 6px;
-}
-
-.ws-done { background: #E8F8F5; color: var(--accent); }
-.ws-draft { background: rgba(108,92,231,0.08); color: var(--primary); }
-.ws-empty { background: var(--bg); color: var(--text-muted); }
-
-.writing-content {
-  font-size: 14px;
-  line-height: 1.8;
-  color: var(--text);
-  padding: 16px;
-  background: var(--bg);
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  position: relative;
-}
-
-.writing-content.ai-written {
-  border-color: rgba(108,92,231,0.2);
-  background: rgba(108,92,231,0.03);
-}
-
-.ai-tag {
-  display: inline-flex;
-  align-items: center;
   gap: 4px;
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--primary);
-  background: rgba(108,92,231,0.08);
-  padding: 3px 8px;
-  border-radius: 6px;
-  margin-bottom: 8px;
+  padding: 8px 0;
 }
 
-.writing-placeholder {
-  color: var(--text-muted);
-  font-size: 14px;
-  padding: 24px 16px;
-  background: var(--bg);
-  border-radius: 12px;
-  border: 2px dashed var(--border);
-  text-align: center;
-  cursor: pointer;
+.typing-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--text-muted);
+  border-radius: 50%;
+  animation: typingBounce 1.4s infinite;
 }
 
-.writing-placeholder:hover {
-  border-color: var(--primary-light);
-  color: var(--primary);
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-6px); opacity: 1; }
 }
 
-/* Writing CTA */
-.writing-cta {
+/* ===== INPUT AREA ===== */
+.input-area {
   position: fixed;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
-  max-width: 520px;
-  padding: 12px 24px 16px;
+  max-width: 600px;
+  padding: 12px 16px 16px;
   background: white;
   border-top: 1px solid var(--border);
   z-index: 60;
 }
 
-.ai-quick-actions {
+.input-suggestions {
   display: flex;
   gap: 6px;
   overflow-x: auto;
@@ -629,907 +417,503 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
-.ai-quick-actions::-webkit-scrollbar { display: none; }
+.input-suggestions::-webkit-scrollbar { display: none; }
 
-.ai-chip {
-  padding: 8px 14px;
-  border-radius: 20px;
-  border: 1px solid var(--primary-light);
-  background: white;
-  color: var(--primary);
-  font-family: 'Heebo', sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.2s;
-}
-
-.ai-chip:hover {
-  background: var(--primary);
-  color: white;
-}
-
-.writing-actions {
+.input-row {
   display: flex;
-  gap: 10px;
+  gap: 8px;
+  align-items: flex-end;
 }
 
-/* ===== SCREEN: SETTINGS (org profile) ===== */
-.settings-body {
-  padding: 16px 24px 100px;
+.input-box {
+  flex: 1;
+  background: var(--bg);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: border-color 0.2s;
 }
 
-.settings-section {
-  margin-bottom: 24px;
+.input-box:focus-within {
+  border-color: var(--primary-light);
 }
 
-.settings-title {
-  font-size: 14px;
-  font-weight: 700;
-  margin-bottom: 12px;
+.input-box input {
+  flex: 1;
+  border: none;
+  background: none;
+  font-family: 'Heebo', sans-serif;
+  font-size: 15px;
+  outline: none;
   color: var(--text);
 }
 
-.field-row {
-  margin-bottom: 12px;
+.input-box input::placeholder {
+  color: var(--text-muted);
 }
 
-.field-label-sm {
-  font-size: 12px;
-  color: var(--text-light);
-  margin-bottom: 4px;
-}
-
-.field-display {
-  padding: 12px 14px;
-  background: var(--bg);
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.doc-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  background: var(--bg);
-  border-radius: 10px;
-  font-size: 13px;
-  margin: 0 0 6px 6px;
-}
-
-.doc-chip .status {
-  font-size: 10px;
-  font-weight: 700;
-}
-
-.doc-chip .status.ok { color: var(--accent); }
-
-/* ===== BOTTOM NAV ===== */
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 520px;
-  background: white;
-  border-top: 1px solid var(--border);
-  display: flex;
-  z-index: 100;
-  padding: 8px 0 12px;
-}
-
-.nav-tab {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 8px 0;
-  cursor: pointer;
-  transition: all 0.2s;
+.attach-btn {
   background: none;
   border: none;
-  font-family: 'Heebo', sans-serif;
-}
-
-.nav-tab .nav-icon {
-  font-size: 22px;
-  opacity: 0.4;
-  transition: all 0.2s;
-}
-
-.nav-tab .nav-label {
-  font-size: 11px;
-  font-weight: 500;
+  font-size: 20px;
+  cursor: pointer;
   color: var(--text-muted);
-  transition: all 0.2s;
+  padding: 0;
+  transition: color 0.2s;
 }
 
-.nav-tab.active .nav-icon { opacity: 1; }
-.nav-tab.active .nav-label { color: var(--primary); font-weight: 700; }
+.attach-btn:hover { color: var(--primary); }
 
-.nav-tab .nav-badge {
-  position: absolute;
-  top: 2px;
-  margin-right: -14px;
-  width: 18px;
-  height: 18px;
-  background: var(--danger);
+.send-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--primary);
+  border: none;
   color: white;
-  font-size: 10px;
-  font-weight: 700;
-  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid white;
+  transition: all 0.2s;
+  flex-shrink: 0;
 }
 
-.nav-icon-wrap {
-  position: relative;
+.send-btn:hover {
+  background: #5A4BD1;
+  box-shadow: 0 4px 16px rgba(108,92,231,0.3);
 }
 
-/* ===== ONBOARDING OVERLAY ===== */
-.onboarding {
-  display: none;
+/* ===== DEMO CONTROLS ===== */
+.demo-bar {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
-  background: white;
+  background: #2D3436;
+  color: white;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   z-index: 200;
-  justify-content: center;
-  align-items: center;
-}
-
-.onboarding.active { display: flex; }
-
-.onboarding-content {
-  max-width: 520px;
-  width: 100%;
-  padding: 40px 32px;
-  text-align: center;
-}
-
-.onboarding-step { display: none; }
-.onboarding-step.active { display: block; }
-
-.ob-icon {
-  font-size: 64px;
-  margin-bottom: 24px;
-}
-
-.ob-title {
-  font-size: 26px;
-  font-weight: 800;
-  margin-bottom: 12px;
-  line-height: 1.3;
-}
-
-.ob-desc {
-  font-size: 16px;
-  color: var(--text-light);
-  line-height: 1.6;
-  margin-bottom: 32px;
-}
-
-.ob-input {
-  width: 100%;
-  padding: 16px 20px;
-  border-radius: 14px;
-  border: 2px solid var(--border);
-  font-family: 'Heebo', sans-serif;
-  font-size: 16px;
-  text-align: center;
-  outline: none;
-  transition: border-color 0.2s;
-  margin-bottom: 16px;
-}
-
-.ob-input:focus { border-color: var(--primary); }
-
-.ob-auto-result {
-  background: var(--bg);
-  border-radius: 14px;
-  padding: 20px;
-  text-align: right;
-  margin-bottom: 24px;
-  display: none;
-}
-
-.ob-auto-result.show { display: block; }
-
-.ob-auto-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 0;
-  font-size: 14px;
-}
-
-.ob-auto-row .label { color: var(--text-light); }
-.ob-auto-row .value { font-weight: 600; }
-
-.ob-drop {
-  border: 2px dashed var(--border);
-  border-radius: 16px;
-  padding: 40px 20px;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-bottom: 24px;
-}
-
-.ob-drop:hover {
-  border-color: var(--primary-light);
-  background: rgba(108,92,231,0.02);
-}
-
-.ob-drop-icon {
-  font-size: 40px;
-  margin-bottom: 8px;
-}
-
-.ob-drop-text {
-  font-size: 15px;
-  color: var(--text-light);
-}
-
-.ob-drop-hint {
-  font-size: 12px;
-  color: var(--text-muted);
-  margin-top: 4px;
-}
-
-.ob-files {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
-  margin-bottom: 24px;
-}
-
-.ob-file-chip {
-  padding: 6px 14px;
-  background: #E8F8F5;
-  color: var(--accent);
-  border-radius: 8px;
   font-size: 13px;
-  font-weight: 500;
 }
 
-.btn-ob {
-  width: 100%;
-  padding: 16px;
-  border-radius: 14px;
-  font-family: 'Heebo', sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  border: none;
-  background: var(--primary);
+.demo-bar button {
+  padding: 4px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.08);
   color: white;
+  font-family: 'Heebo', sans-serif;
+  font-size: 12px;
+  cursor: pointer;
   transition: all 0.2s;
 }
 
-.btn-ob:hover {
-  background: #5A4BD1;
-  box-shadow: 0 6px 24px rgba(108,92,231,0.3);
+.demo-bar button:hover { background: rgba(255,255,255,0.15); }
+.demo-bar button.active { background: var(--primary); border-color: var(--primary); }
+
+.header { margin-top: 36px; }
+
+/* File attachment in chat */
+.file-attach {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(108,92,231,0.06);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  margin: 4px 0;
 }
 
-.ob-skip {
-  margin-top: 16px;
+.file-attach .fa-icon {
   font-size: 14px;
-  color: var(--text-muted);
-  cursor: pointer;
-  background: none;
-  border: none;
-  font-family: 'Heebo', sans-serif;
 }
 
-.ob-skip:hover { color: var(--primary); }
-
-.ob-steps {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 32px;
-}
-
-.ob-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--border);
-}
-
-.ob-dot.active { background: var(--primary); width: 24px; border-radius: 4px; }
-
-/* ===== RESPONSIVE ===== */
-@media (min-width: 521px) {
-  .app {
-    border-radius: 24px;
-    margin: 24px auto;
-    min-height: calc(100vh - 48px);
-    overflow: hidden;
-  }
-  .bottom-nav, .detail-cta, .writing-cta {
-    border-radius: 0 0 24px 24px;
-  }
-}
-
-/* ===== DEMO LABEL ===== */
-.demo-label {
-  position: fixed;
-  top: 12px;
-  left: 50%;
-  transform: translateX(-50%);
+/* Export button in chat */
+.export-btn-chat {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
   background: var(--primary);
   color: white;
-  padding: 6px 16px;
-  border-radius: 20px;
-  font-size: 12px;
+  border-radius: 12px;
+  font-size: 14px;
   font-weight: 600;
-  z-index: 300;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.demo-label button {
-  background: rgba(255,255,255,0.2);
   border: none;
-  color: white;
-  padding: 2px 10px;
-  border-radius: 10px;
-  font-family: 'Heebo', sans-serif;
-  font-size: 11px;
   cursor: pointer;
+  font-family: 'Heebo', sans-serif;
+  margin-top: 8px;
+  transition: all 0.2s;
 }
 
-.demo-label button:hover { background: rgba(255,255,255,0.3); }
+.export-btn-chat:hover {
+  background: #5A4BD1;
+}
+
+/* Time stamp */
+.time-stamp {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 8px 0;
+}
+
+@media (min-width: 601px) {
+  .app {
+    margin: 0 auto;
+    box-shadow: 0 0 60px rgba(0,0,0,0.06);
+  }
+}
 </style>
 </head>
 <body>
 
-<!-- Demo Label -->
-<div class="demo-label">
-  Wireframe &mdash; מערכת גיוס משאבים
-  <button onclick="showOnboarding()">Onboarding</button>
+<!-- Demo Controls -->
+<div class="demo-bar">
+  <span>תרחיש:</span>
+  <button class="active" onclick="loadScenario('welcome')">פתיחה</button>
+  <button onclick="loadScenario('opportunities')">הזדמנויות</button>
+  <button onclick="loadScenario('detail')">פרטים</button>
+  <button onclick="loadScenario('writing')">כתיבת הגשה</button>
+  <button onclick="loadScenario('refine')">שיפור</button>
 </div>
 
-<!-- ===== ONBOARDING ===== -->
-<div class="onboarding" id="onboarding">
-  <div class="onboarding-content">
-
-    <!-- Step 1 -->
-    <div class="onboarding-step active" id="ob-step-1">
-      <div class="ob-steps">
-        <div class="ob-dot active"></div>
-        <div class="ob-dot"></div>
-        <div class="ob-dot"></div>
-      </div>
-      <div class="ob-icon">&#128269;</div>
-      <div class="ob-title">מה שם העמותה?</div>
-      <div class="ob-desc">נמצא אותה אוטומטית ברשם העמותות</div>
-      <input class="ob-input" placeholder='למשל: "עמותת הופה"' oninput="simulateSearch(this.value)">
-      <div class="ob-auto-result" id="ob-result">
-        <div class="ob-auto-row"><span class="label">שם</span><span class="value">עמותת הופה</span></div>
-        <div class="ob-auto-row"><span class="label">ע.ר.</span><span class="value">580718847</span></div>
-        <div class="ob-auto-row"><span class="label">תחום</span><span class="value">חינוך, נוער בסיכון</span></div>
-        <div class="ob-auto-row"><span class="label">מחזור שנתי</span><span class="value">&#8362;857,100</span></div>
-      </div>
-      <button class="btn-ob" onclick="nextStep(2)">זו העמותה שלי</button>
-    </div>
-
-    <!-- Step 2 -->
-    <div class="onboarding-step" id="ob-step-2">
-      <div class="ob-steps">
-        <div class="ob-dot"></div>
-        <div class="ob-dot active"></div>
-        <div class="ob-dot"></div>
-      </div>
-      <div class="ob-icon">&#128195;</div>
-      <div class="ob-title">העלו מסמכים</div>
-      <div class="ob-desc">ה-AI ילמד את הארגון שלכם וישתמש<br>בנתונים אמיתיים בכל הגשה</div>
-      <div class="ob-drop" onclick="simulateUpload()">
-        <div class="ob-drop-icon">&#128228;</div>
-        <div class="ob-drop-text">גררו קבצים לכאן</div>
-        <div class="ob-drop-hint">PDF, Word, Excel</div>
-      </div>
-      <div class="ob-files" id="ob-files"></div>
-      <button class="btn-ob" onclick="nextStep(3)">המשך</button>
-      <button class="ob-skip" onclick="nextStep(3)">אעלה אחר כך</button>
-    </div>
-
-    <!-- Step 3 -->
-    <div class="onboarding-step" id="ob-step-3">
-      <div class="ob-steps">
-        <div class="ob-dot"></div>
-        <div class="ob-dot"></div>
-        <div class="ob-dot active"></div>
-      </div>
-      <div class="ob-icon">&#10024;</div>
-      <div class="ob-title">הכל מוכן!</div>
-      <div class="ob-desc">מעכשיו תקבלו התראות על קולות קוראים<br>שמתאימים לארגון שלכם. בואו נתחיל.</div>
-      <button class="btn-ob" onclick="closeOnboarding()">הציגו לי הזדמנויות</button>
-    </div>
-
-  </div>
-</div>
-
-<!-- ===== APP ===== -->
 <div class="app">
 
-  <!-- ===== SCREEN 1: INBOX ===== -->
-  <div id="screen-inbox" class="screen active">
-    <div class="header">
-      <div class="logo">
-        <div class="logo-mark">G</div>
-        <div class="logo-text">Giyus</div>
-      </div>
-      <div class="header-actions">
-        <div class="icon-btn" onclick="navigate('settings')">&#9881;</div>
-      </div>
+  <!-- Header -->
+  <div class="header">
+    <div class="logo-mark">G</div>
+    <div class="header-info">
+      <div class="header-name">Giyus</div>
+      <div class="header-status">מכיר את הארגון שלך</div>
     </div>
+    <button class="header-btn" title="מסמכי הארגון">&#128194;</button>
+  </div>
 
-    <div class="inbox-summary">
-      <div class="inbox-greeting">בוקר טוב, לירון</div>
-      <div class="inbox-headline">יש לך <span>3 הזדמנויות חדשות</span><br>השבוע</div>
+  <!-- Chat Area -->
+  <div class="chat-area" id="chat">
+    <!-- Messages injected by JS -->
+  </div>
+
+  <!-- Input -->
+  <div class="input-area">
+    <div class="input-suggestions" id="input-suggestions">
+      <!-- Suggestions injected by JS -->
     </div>
-
-    <div class="inbox-list">
-      <div class="inbox-date">היום</div>
-
-      <div class="opp-card" onclick="navigate('detail')">
-        <div class="opp-new">חדש</div>
-        <div class="opp-top">
-          <div class="opp-source">קרן רש"י</div>
-          <div class="opp-match match-high">92% התאמה</div>
-        </div>
-        <div class="opp-title">מענקים לתוכניות מניעת נשירה בפריפריה</div>
-        <div class="opp-bottom">
-          <div class="opp-amount">&#8362;150,000</div>
-          <div class="opp-deadline dl-urgent">5 ימים נותרו</div>
-        </div>
+    <div class="input-row">
+      <div class="input-box">
+        <button class="attach-btn" title="צרף קובץ">&#128206;</button>
+        <input type="text" id="chat-input" placeholder="שאלו משהו, או בקשו לכתוב הגשה..." onkeydown="if(event.key==='Enter')sendMessage()">
       </div>
-
-      <div class="opp-card" onclick="navigate('detail')">
-        <div class="opp-new">חדש</div>
-        <div class="opp-top">
-          <div class="opp-source">משרד הרווחה</div>
-          <div class="opp-match match-high">87% התאמה</div>
-        </div>
-        <div class="opp-title">ליווי צעירים בוגרי מסגרות חוץ ביתיות</div>
-        <div class="opp-bottom">
-          <div class="opp-amount">&#8362;280,000</div>
-          <div class="opp-deadline dl-soon">18 יום</div>
-        </div>
-      </div>
-
-      <div class="inbox-date">השבוע</div>
-
-      <div class="opp-card" onclick="navigate('detail')">
-        <div class="opp-top">
-          <div class="opp-source">European Youth Foundation</div>
-          <div class="opp-match match-high">85% התאמה</div>
-        </div>
-        <div class="opp-title">Youth Empowerment & Social Inclusion Grant</div>
-        <div class="opp-bottom">
-          <div class="opp-amount">&euro;50,000</div>
-          <div class="opp-deadline dl-ok">34 יום</div>
-        </div>
-      </div>
-
-      <div class="opp-card" onclick="navigate('detail')">
-        <div class="opp-top">
-          <div class="opp-source">קרן ברלוביץ'</div>
-          <div class="opp-match match-mid">71% התאמה</div>
-        </div>
-        <div class="opp-title">תמיכה בפרויקטים חינוכיים קהילתיים</div>
-        <div class="opp-bottom">
-          <div class="opp-amount">&#8362;100,000</div>
-          <div class="opp-deadline dl-ok">42 יום</div>
-        </div>
-      </div>
-
-      <div class="opp-card" onclick="navigate('detail')">
-        <div class="opp-top">
-          <div class="opp-source">רשות החדשנות</div>
-          <div class="opp-match match-mid">64% התאמה</div>
-        </div>
-        <div class="opp-title">חדשנות חברתית: טכנולוגיה לשירותים חברתיים</div>
-        <div class="opp-bottom">
-          <div class="opp-amount">&#8362;500,000</div>
-          <div class="opp-deadline dl-ok">56 יום</div>
-        </div>
-      </div>
-
+      <button class="send-btn" onclick="sendMessage()">&#8593;</button>
     </div>
   </div>
 
-  <!-- ===== SCREEN 2: OPPORTUNITY DETAIL ===== -->
-  <div id="screen-detail" class="screen">
-    <div class="detail-header">
-      <button class="back-btn" onclick="navigate('inbox')">&rarr;</button>
-      <div class="detail-header-title">פרטי ההזדמנות</div>
-    </div>
-
-    <div class="detail-body">
-      <div class="detail-hero">
-        <div class="detail-source-row">
-          <div class="detail-source">קרן רש"י &bull; קרנות פרטיות</div>
-          <div class="detail-match">92% התאמה</div>
-        </div>
-        <div class="detail-title">מענקים לתוכניות מניעת נשירה בפריפריה 2026</div>
-        <div class="detail-stats">
-          <div class="detail-stat">
-            <span class="label">סכום</span>
-            <span class="value">&#8362;150,000</span>
-          </div>
-          <div class="detail-stat">
-            <span class="label">דדליין</span>
-            <span class="value urgent">5 ימים</span>
-          </div>
-          <div class="detail-stat">
-            <span class="label">תקופה</span>
-            <span class="value">12 חודשים</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="detail-section">
-        <div class="section-title">תיאור</div>
-        <div class="detail-desc">
-          קול קורא לעמותות הפועלות בתחום מניעת נשירת בני נוער מהמערכת החינוכית באזורי פריפריה. דגש על מתודולוגיות חדשניות ושימוש בטכנולוגיה. עדיפות לארגונים עם ניסיון מוכח ומדדי הצלחה.
-        </div>
-      </div>
-
-      <div class="detail-section">
-        <div class="section-title">למה זה מתאים לכם</div>
-        <div class="match-reasons">
-          <div class="match-reason"><div class="match-dot"></div> תחום מניעת נשירה = ליבת הפעילות שלכם</div>
-          <div class="match-reason"><div class="match-dot"></div> פועלים בפריפריה (צפון, דרום, ירושלים)</div>
-          <div class="match-reason"><div class="match-dot"></div> מודל רדאר 360 = חדשנות טכנולוגית</div>
-          <div class="match-reason"><div class="match-dot"></div> גודל תקציב תואם לדרישות הקרן</div>
-        </div>
-      </div>
-
-      <div class="detail-section">
-        <div class="section-title">מה צריך להגשה</div>
-        <div class="req-list">
-          <div class="req-item">
-            <div class="req-icon ready">&#10003;</div>
-            <div class="req-text">תיאור הארגון</div>
-            <div class="req-status ready">מוכן</div>
-          </div>
-          <div class="req-item">
-            <div class="req-icon ready">&#10003;</div>
-            <div class="req-text">ניסיון מוכח</div>
-            <div class="req-status ready">מוכן</div>
-          </div>
-          <div class="req-item">
-            <div class="req-icon missing">!</div>
-            <div class="req-text">תכנית עבודה</div>
-            <div class="req-status missing">AI יכתוב</div>
-          </div>
-          <div class="req-item">
-            <div class="req-icon missing">!</div>
-            <div class="req-text">תקציב מפורט</div>
-            <div class="req-status missing">AI יכתוב</div>
-          </div>
-          <div class="req-item">
-            <div class="req-icon ready">&#10003;</div>
-            <div class="req-text">אישור ניהול תקין</div>
-            <div class="req-status ready">מצורף</div>
-          </div>
-          <div class="req-item">
-            <div class="req-icon ready">&#10003;</div>
-            <div class="req-text">דוח כספי מבוקר</div>
-            <div class="req-status ready">מצורף</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="detail-cta">
-      <button class="btn-main secondary" onclick="navigate('inbox')">&#128278;</button>
-      <button class="btn-main primary" onclick="navigate('writing')">&#10024; כתוב לי הגשה</button>
-    </div>
-  </div>
-
-  <!-- ===== SCREEN 3: WRITING ===== -->
-  <div id="screen-writing" class="screen">
-    <div class="writing-header">
-      <button class="back-btn" onclick="navigate('detail')">&rarr;</button>
-      <div class="writing-header-info">
-        <div class="writing-grant-name">קרן רש"י - מניעת נשירה</div>
-        <div class="writing-status">&#10003; AI כתב טיוטה ראשונה</div>
-      </div>
-      <button class="btn-main primary" style="padding:10px 16px;font-size:13px;flex:0;" onclick="alert('ייצוא PDF...')">&#128196; ייצא</button>
-    </div>
-
-    <div class="writing-body">
-      <div class="writing-progress">
-        <div class="progress-bar">
-          <div class="progress-fill" style="width:60%"></div>
-        </div>
-        <div class="progress-text">4 מתוך 6 סעיפים</div>
-      </div>
-
-      <!-- Section 1 -->
-      <div class="writing-section">
-        <div class="writing-section-header">
-          <div class="writing-section-title">1. תיאור הארגון</div>
-          <div class="writing-section-status ws-done">&#10003; מוכן</div>
-        </div>
-        <div class="writing-content ai-written">
-          <div class="ai-tag">&#10024; נכתב מתוך מסמכי הארגון</div>
-          <p>עמותת הופה (ע.ר. 580718847) פועלת מאז 2023 בתחום ליווי בני נוער וצעירים בגילאי 14-26 הנמצאים בסיכון לנשירה. הארגון מפעיל מודל ייחודי בשם "רדאר 360" המשלב זיהוי מוקדם, התאמה אישית וליווי רציף. בשנת 2025 ליוותה הופה למעלה מ-1,200 צעירים ב-15 יישובים.</p>
-        </div>
-      </div>
-
-      <!-- Section 2 -->
-      <div class="writing-section">
-        <div class="writing-section-header">
-          <div class="writing-section-title">2. ניסיון מוכח</div>
-          <div class="writing-section-status ws-done">&#10003; מוכן</div>
-        </div>
-        <div class="writing-content ai-written">
-          <div class="ai-tag">&#10024; נכתב מתוך דוח אימפקט 2025</div>
-          <p>בשלוש שנות פעילות צברה הופה ניסיון בליווי 2,400+ צעירים, עם שיעור הצלחה של 87% במניעת נשירה. המודל הוטמע ב-15 יישובים כולל ירושלים, באר שבע וקריית שמונה.</p>
-        </div>
-      </div>
-
-      <!-- Section 3 -->
-      <div class="writing-section">
-        <div class="writing-section-header">
-          <div class="writing-section-title">3. תכנית עבודה</div>
-          <div class="writing-section-status ws-draft">&#9998; טיוטה</div>
-        </div>
-        <div class="writing-content ai-written">
-          <div class="ai-tag">&#10024; טיוטת AI - ערכו לפי הצורך</div>
-          <p>התוכנית תפעל ב-12 חודשים בשלושה שלבים: (1) מיפוי וזיהוי - 3 חודשים ראשונים, (2) התערבות אינטנסיבית - חודשים 4-9, (3) ייצוב וגמילה - חודשים 10-12. יעד: ליווי 200 צעירים נוספים בשני יישובי פריפריה חדשים.</p>
-        </div>
-      </div>
-
-      <!-- Section 4 -->
-      <div class="writing-section">
-        <div class="writing-section-header">
-          <div class="writing-section-title">4. תקציב</div>
-          <div class="writing-section-status ws-empty">טרם נכתב</div>
-        </div>
-        <div class="writing-placeholder" onclick="alert('AI כותב טיוטת תקציב...')">
-          &#10024; לחצו כאן וה-AI יכתוב טיוטת תקציב
-        </div>
-      </div>
-
-      <!-- Section 5 -->
-      <div class="writing-section">
-        <div class="writing-section-header">
-          <div class="writing-section-title">5. מדדי הצלחה</div>
-          <div class="writing-section-status ws-empty">טרם נכתב</div>
-        </div>
-        <div class="writing-placeholder" onclick="alert('AI כותב מדדי הצלחה...')">
-          &#10024; לחצו כאן וה-AI יכתוב מדדי הצלחה
-        </div>
-      </div>
-
-      <!-- Section 6 -->
-      <div class="writing-section">
-        <div class="writing-section-header">
-          <div class="writing-section-title">6. מסמכים מצורפים</div>
-          <div class="writing-section-status ws-done">&#10003; מוכן</div>
-        </div>
-        <div class="req-list">
-          <div class="req-item">
-            <div class="req-icon ready">&#10003;</div>
-            <span>אישור ניהול תקין 2026.pdf</span>
-          </div>
-          <div class="req-item">
-            <div class="req-icon ready">&#10003;</div>
-            <span>דוח כספי מבוקר 2025.pdf</span>
-          </div>
-          <div class="req-item">
-            <div class="req-icon ready">&#10003;</div>
-            <span>תקנון העמותה.pdf</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="writing-cta">
-      <div class="ai-quick-actions">
-        <button class="ai-chip">&#9997; שפר ניסוח</button>
-        <button class="ai-chip">&#128207; קצר</button>
-        <button class="ai-chip">&#128170; חזק טענה</button>
-        <button class="ai-chip">&#128202; הוסף נתון</button>
-        <button class="ai-chip">&#127760; תרגם EN</button>
-      </div>
-      <div class="writing-actions">
-        <button class="btn-main secondary" style="flex:0 0 auto;padding:14px 18px;" onclick="navigate('detail')">&#128278;</button>
-        <button class="btn-main primary" onclick="alert('שולח הגשה...')">&#128640; שלח הגשה</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== SCREEN 4: SETTINGS (org) ===== -->
-  <div id="screen-settings" class="screen">
-    <div class="detail-header">
-      <button class="back-btn" onclick="navigate('inbox')">&rarr;</button>
-      <div class="detail-header-title">הארגון שלי</div>
-    </div>
-
-    <div class="settings-body">
-      <div class="settings-section">
-        <div class="settings-title">פרטי ארגון</div>
-        <div class="field-row">
-          <div class="field-label-sm">שם</div>
-          <div class="field-display">עמותת הופה</div>
-        </div>
-        <div class="field-row">
-          <div class="field-label-sm">מספר עמותה</div>
-          <div class="field-display">580718847</div>
-        </div>
-        <div class="field-row">
-          <div class="field-label-sm">תחומים</div>
-          <div class="field-display">חינוך, נוער בסיכון, מניעת נשירה</div>
-        </div>
-        <div class="field-row">
-          <div class="field-label-sm">אזור</div>
-          <div class="field-display">ארצי (דגש פריפריה)</div>
-        </div>
-        <div class="field-row">
-          <div class="field-label-sm">תקציב שנתי</div>
-          <div class="field-display">&#8362;857,100</div>
-        </div>
-      </div>
-
-      <div class="settings-section">
-        <div class="settings-title">מסמכים (AI קרא אותם)</div>
-        <div class="doc-chip">&#128196; אישור ניהול תקין <span class="status ok">&#10003;</span></div>
-        <div class="doc-chip">&#128196; דוח כספי 2025 <span class="status ok">&#10003;</span></div>
-        <div class="doc-chip">&#128196; דוח מילולי 2025 <span class="status ok">&#10003;</span></div>
-        <div class="doc-chip">&#128196; תקנון <span class="status ok">&#10003;</span></div>
-        <div class="doc-chip">&#128196; דוח אימפקט <span class="status ok">&#10003;</span></div>
-      </div>
-
-      <div class="settings-section">
-        <div class="settings-title">היסטוריית הגשות</div>
-        <div class="req-list">
-          <div class="req-item">
-            <div class="req-icon ready">&#10003;</div>
-            <div class="req-text">
-              <div style="font-weight:600;">מגה-אור - רדאר 360</div>
-              <div style="font-size:12px;color:var(--text-muted);">אושר &bull; &#8362;300,000</div>
-            </div>
-          </div>
-          <div class="req-item">
-            <div class="req-icon ready">&#10003;</div>
-            <div class="req-text">
-              <div style="font-weight:600;">משרד הרווחה - בוגרים</div>
-              <div style="font-size:12px;color:var(--text-muted);">אושר &bull; &#8362;180,000</div>
-            </div>
-          </div>
-          <div class="req-item">
-            <div class="req-icon missing">&#8987;</div>
-            <div class="req-text">
-              <div style="font-weight:600;">קרן ברלוביץ'</div>
-              <div style="font-size:12px;color:var(--text-muted);">ממתין &bull; &#8362;100,000</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="settings-section">
-        <div class="settings-title">התראות</div>
-        <div class="field-row">
-          <div class="field-display" style="display:flex;justify-content:space-between;align-items:center;">
-            מייל על הזדמנויות חדשות
-            <span style="color:var(--accent);font-weight:700;">פעיל</span>
-          </div>
-        </div>
-        <div class="field-row">
-          <div class="field-display" style="display:flex;justify-content:space-between;align-items:center;">
-            תזכורת דדליין (3 ימים לפני)
-            <span style="color:var(--accent);font-weight:700;">פעיל</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<!-- Bottom Nav (only on inbox) -->
-<div class="bottom-nav" id="bottom-nav">
-  <button class="nav-tab active" onclick="navigate('inbox')">
-    <div class="nav-icon-wrap">
-      <span class="nav-icon">&#9733;</span>
-      <span class="nav-badge">3</span>
-    </div>
-    <span class="nav-label">הזדמנויות</span>
-  </button>
-  <button class="nav-tab" onclick="navigate('writing')">
-    <span class="nav-icon">&#9998;</span>
-    <span class="nav-label">הגשות</span>
-  </button>
-  <button class="nav-tab" onclick="navigate('settings')">
-    <span class="nav-icon">&#9881;</span>
-    <span class="nav-label">הארגון</span>
-  </button>
 </div>
 
 <script>
-function navigate(screen) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + screen).classList.add('active');
+const chatEl = document.getElementById('chat');
+const inputEl = document.getElementById('chat-input');
+const suggestionsEl = document.getElementById('input-suggestions');
 
-  // Show/hide bottom nav
-  const bottomNav = document.getElementById('bottom-nav');
-  const showNav = ['inbox', 'settings'].includes(screen);
-  bottomNav.style.display = showNav ? 'flex' : 'none';
+// ===== SCENARIOS =====
+const scenarios = {
 
-  // Show/hide detail CTA
-  const detailCta = document.querySelector('.detail-cta');
-  if (detailCta) detailCta.style.display = screen === 'detail' ? 'flex' : 'none';
+  welcome: {
+    messages: [
+      {
+        type: 'bot',
+        html: `
+          <h3>&#128075; היי לירון!</h3>
+          <p>אני Giyus, העוזר האישי שלך לגיוס משאבים.</p>
+          <p>אני כבר מכיר את עמותת הופה — קראתי את הדוחות, התקנון, ונתוני האימפקט שלכם.</p>
+          <p>מה תרצי לעשות?</p>
+        `,
+        suggestions: ['מה חדש בשבילי?', 'כתוב לי הגשה', 'חפש קרנות לנוער בסיכון', 'מה הסטטוס של ההגשות שלי?']
+      }
+    ]
+  },
 
-  const writingCta = document.querySelector('.writing-cta');
-  if (writingCta) writingCta.style.display = screen === 'writing' ? 'block' : 'none';
+  opportunities: {
+    messages: [
+      {
+        type: 'user',
+        html: 'מה חדש בשבילי?'
+      },
+      {
+        type: 'bot',
+        html: `
+          <p>מצאתי <strong>3 הזדמנויות חדשות</strong> שמתאימות להופה:</p>
 
-  // Update nav tabs
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  if (screen === 'inbox') document.querySelectorAll('.nav-tab')[0].classList.add('active');
-  if (screen === 'writing') document.querySelectorAll('.nav-tab')[1].classList.add('active');
-  if (screen === 'settings') document.querySelectorAll('.nav-tab')[2].classList.add('active');
+          <div class="opp-card-chat" onclick="loadScenario('detail')">
+            <div class="opp-top-row">
+              <span class="opp-source-sm">קרן רש"י</span>
+              <span class="opp-match-sm match-h">92%</span>
+            </div>
+            <div class="opp-title-sm">מענקים לתוכניות מניעת נשירה בפריפריה</div>
+            <div class="opp-meta-row">
+              <span class="opp-amount-sm">&#8362;150,000</span>
+              <span class="opp-dl-sm urgent">5 ימים נותרו</span>
+            </div>
+          </div>
 
-  window.scrollTo(0, 0);
-}
+          <div class="opp-card-chat">
+            <div class="opp-top-row">
+              <span class="opp-source-sm">משרד הרווחה</span>
+              <span class="opp-match-sm match-h">87%</span>
+            </div>
+            <div class="opp-title-sm">ליווי צעירים בוגרי מסגרות חוץ ביתיות</div>
+            <div class="opp-meta-row">
+              <span class="opp-amount-sm">&#8362;280,000</span>
+              <span class="opp-dl-sm">18 יום</span>
+            </div>
+          </div>
 
-// Onboarding
-function showOnboarding() {
-  document.getElementById('onboarding').classList.add('active');
-  document.querySelectorAll('.onboarding-step').forEach(s => s.classList.remove('active'));
-  document.getElementById('ob-step-1').classList.add('active');
-}
+          <div class="opp-card-chat">
+            <div class="opp-top-row">
+              <span class="opp-source-sm">European Youth Foundation</span>
+              <span class="opp-match-sm match-h">85%</span>
+            </div>
+            <div class="opp-title-sm">Youth Empowerment & Social Inclusion</div>
+            <div class="opp-meta-row">
+              <span class="opp-amount-sm">&euro;50,000</span>
+              <span class="opp-dl-sm">34 יום</span>
+            </div>
+          </div>
 
-function nextStep(n) {
-  document.querySelectorAll('.onboarding-step').forEach(s => s.classList.remove('active'));
-  document.getElementById('ob-step-' + n).classList.add('active');
-}
+          <p>הכי דחוף: <strong>קרן רש"י</strong> — 5 ימים. רוצה שאכתוב לך הגשה?</p>
+        `,
+        suggestions: ['כן, תכתוב הגשה לרש"י', 'ספר לי עוד על רש"י', 'מה עם משרד הרווחה?', 'חפש עוד הזדמנויות']
+      }
+    ]
+  },
 
-function closeOnboarding() {
-  document.getElementById('onboarding').classList.remove('active');
-}
+  detail: {
+    messages: [
+      {
+        type: 'user',
+        html: 'ספר לי עוד על רש"י'
+      },
+      {
+        type: 'bot',
+        html: `
+          <h3>קרן רש"י — מניעת נשירה 2026</h3>
+          <p>קול קורא לעמותות שפועלות במניעת נשירת בני נוער בפריפריה. דגש על חדשנות טכנולוגית ומדידת אימפקט.</p>
 
-function simulateSearch(val) {
-  const result = document.getElementById('ob-result');
-  if (val.length > 3) {
-    result.classList.add('show');
-  } else {
-    result.classList.remove('show');
+          <p><strong>למה 92% התאמה?</strong></p>
+          <div class="chat-checklist">
+            <div class="chat-check"><span class="check-dot ok">&#10003;</span> מניעת נשירה = ליבת הפעילות שלכם</div>
+            <div class="chat-check"><span class="check-dot ok">&#10003;</span> פועלים בפריפריה</div>
+            <div class="chat-check"><span class="check-dot ok">&#10003;</span> רדאר 360 = חדשנות טכנולוגית</div>
+            <div class="chat-check"><span class="check-dot ok">&#10003;</span> גודל תקציב מתאים</div>
+          </div>
+
+          <p><strong>מה צריך:</strong></p>
+          <div class="chat-checklist">
+            <div class="chat-check"><span class="check-dot ok">&#10003;</span> תיאור ארגון — <em>יש לי</em></div>
+            <div class="chat-check"><span class="check-dot ok">&#10003;</span> ניסיון מוכח — <em>יש לי</em></div>
+            <div class="chat-check"><span class="check-dot miss">&#9998;</span> תכנית עבודה — <em>אכתוב</em></div>
+            <div class="chat-check"><span class="check-dot miss">&#9998;</span> תקציב — <em>אכתוב</em></div>
+            <div class="chat-check"><span class="check-dot ok">&#10003;</span> אישור ניהול תקין — <em>מצורף</em></div>
+            <div class="chat-check"><span class="check-dot ok">&#10003;</span> דוח כספי — <em>מצורף</em></div>
+          </div>
+
+          <p>4 מתוך 6 דברים כבר מוכנים. אני צריך לכתוב רק תכנית עבודה ותקציב. תגידי "כתוב" ואני מתחיל.</p>
+        `,
+        suggestions: ['כתוב לי הגשה', 'כמה זמן ייקח?', 'תראה לי את ה-PDF של הקול קורא']
+      }
+    ]
+  },
+
+  writing: {
+    messages: [
+      {
+        type: 'user',
+        html: 'כתוב לי הגשה'
+      },
+      {
+        type: 'bot',
+        html: `
+          <p>כותב... &#9997;</p>
+
+          <div class="chat-progress">
+            <div class="chat-progress-bar"><div class="chat-progress-fill" style="width:100%"></div></div>
+            <span class="chat-progress-text">6/6 סעיפים</span>
+          </div>
+
+          <div class="draft-section">
+            <div class="draft-label">&#10024; 1. תיאור הארגון</div>
+            <div class="draft-text">עמותת הופה (ע.ר. 580718847) פועלת מאז 2023 בליווי בני נוער וצעירים בגילאי 14-26 בסיכון לנשירה. הארגון מפעיל מודל "רדאר 360" המשלב זיהוי מוקדם, התאמה אישית וליווי רציף. בשנת 2025 ליוותה הופה 1,200+ צעירים ב-15 יישובים.</div>
+          </div>
+
+          <div class="draft-section">
+            <div class="draft-label">&#10024; 2. ניסיון מוכח</div>
+            <div class="draft-text">בשלוש שנות פעילות: 2,400+ צעירים, שיעור הצלחה 87% במניעת נשירה, 15 יישובים כולל ירושלים, באר שבע וקריית שמונה. שביעות רצון משתתפים 94%.</div>
+          </div>
+
+          <div class="draft-section">
+            <div class="draft-label">&#10024; 3. תכנית עבודה</div>
+            <div class="draft-text">12 חודשים בשלושה שלבים: מיפוי וזיהוי (חודשים 1-3), התערבות אינטנסיבית (4-9), ייצוב וגמילה (10-12). יעד: 200 צעירים נוספים בשני יישובי פריפריה חדשים.</div>
+          </div>
+
+          <div class="draft-section">
+            <div class="draft-label">&#10024; 4. תקציב</div>
+            <div class="draft-text">סה"כ &#8362;150,000: כוח אדם &#8362;85,000 (57%), הכשרות &#8362;25,000 (17%), טכנולוגיה &#8362;20,000 (13%), תפעול &#8362;12,000 (8%), מדידה והערכה &#8362;8,000 (5%).</div>
+          </div>
+
+          <div class="draft-section">
+            <div class="draft-label">&#10024; 5. מדדי הצלחה</div>
+            <div class="draft-text">KPIs: 200 צעירים מלווים, 85%+ מניעת נשירה, 90%+ שביעות רצון, 2 יישובים חדשים, 50+ מנטורים מתנדבים.</div>
+          </div>
+
+          <p><strong>6. מסמכים מצורפים:</strong> אישור ניהול תקין, דוח כספי 2025, תקנון</p>
+
+          <p>ההגשה מוכנה. מה עושים?</p>
+
+          <button class="export-btn-chat" onclick="alert('מייצא PDF...')">&#128196; הורד כ-PDF</button>
+        `,
+        suggestions: ['שפר את הניסוח', 'קצר את סעיף 3', 'הוסף נתונים לסעיף 2', 'תרגם לאנגלית', 'שלח למייל שלי']
+      }
+    ]
+  },
+
+  refine: {
+    messages: [
+      {
+        type: 'user',
+        html: 'חזק את סעיף 2, תוסיף נתונים'
+      },
+      {
+        type: 'bot',
+        html: `
+          <p>שיפרתי את סעיף 2:</p>
+
+          <div class="draft-section">
+            <div class="draft-label">&#10024; 2. ניסיון מוכח (גרסה משופרת)</div>
+            <div class="draft-text">
+              הופה צברה שלוש שנות ניסיון מוכח בשטח:<br><br>
+              <strong>נתוני ליבה:</strong> 2,400+ צעירים בליווי, 15 יישובים ברחבי הארץ, 87% שיעור מניעת נשירה (לעומת ממוצע ארצי של 62%), שביעות רצון 94% בקרב משתתפים.<br><br>
+              <strong>חדשנות:</strong> מודל "רדאר 360" הינו הראשון בישראל המשלב AI לזיהוי מוקדם של צעירים בסיכון עם מאגר של 600+ מענים מותאמים אישית.<br><br>
+              <strong>הכרה:</strong> זכייה במענק רשות החדשנות 2025 (&#8362;250K), אישור מגה-אור 2026 (&#8362;300K), שותפות עם משרד הרווחה.
+            </div>
+          </div>
+
+          <p>שינויים: הוספתי השוואה לממוצע ארצי (62% vs 87%), פירוט החדשנות הטכנולוגית, והכרה חיצונית (מענקים שקיבלתם). זה חזק יותר?</p>
+        `,
+        suggestions: ['מושלם, תעדכן את ה-PDF', 'עוד יותר קצר', 'תשנה גם סעיף 3', 'שלח הכל למייל']
+      }
+    ]
   }
+};
+
+// ===== RENDER =====
+function loadScenario(name) {
+  chatEl.innerHTML = '';
+
+  // Update demo buttons
+  document.querySelectorAll('.demo-bar button').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+
+  // Build all previous messages for context
+  const order = ['welcome', 'opportunities', 'detail', 'writing', 'refine'];
+  const upTo = order.indexOf(name);
+
+  let allMessages = [];
+  for (let i = 0; i <= upTo; i++) {
+    if (i > 0) {
+      // Add time stamp between scenarios
+      allMessages.push({ type: 'time' });
+    }
+    allMessages = allMessages.concat(scenarios[order[i]].messages);
+  }
+
+  // Render
+  let lastSuggestions = [];
+  allMessages.forEach((msg, idx) => {
+    if (msg.type === 'time') {
+      return; // skip timestamps for cleaner look
+    }
+
+    const div = document.createElement('div');
+    div.className = `msg ${msg.type}`;
+
+    const avatar = msg.type === 'bot' ? '<div class="msg-avatar">G</div>' : '<div class="msg-avatar">&#128100;</div>';
+    const bubble = `<div class="msg-bubble">${msg.html}</div>`;
+
+    div.innerHTML = avatar + bubble;
+    chatEl.appendChild(div);
+
+    if (msg.suggestions) {
+      lastSuggestions = msg.suggestions;
+    }
+  });
+
+  // Render suggestions
+  renderSuggestions(lastSuggestions);
+
+  // Scroll to bottom
+  setTimeout(() => chatEl.scrollTop = chatEl.scrollHeight, 100);
 }
 
-let uploadCount = 0;
-const fileNames = ['אישור ניהול תקין.pdf', 'דוח כספי 2025.pdf', 'דוח מילולי.pdf', 'תקנון.pdf'];
-function simulateUpload() {
-  if (uploadCount < fileNames.length) {
-    const container = document.getElementById('ob-files');
-    const chip = document.createElement('div');
-    chip.className = 'ob-file-chip';
-    chip.textContent = '&#10003; ' + fileNames[uploadCount];
-    chip.innerHTML = '&#10003; ' + fileNames[uploadCount];
-    container.appendChild(chip);
-    uploadCount++;
-  }
+function renderSuggestions(suggestions) {
+  suggestionsEl.innerHTML = '';
+  suggestions.forEach(text => {
+    const chip = document.createElement('button');
+    chip.className = 'suggest-chip';
+    chip.textContent = text;
+    chip.onclick = () => {
+      inputEl.value = text;
+      sendMessage();
+    };
+    suggestionsEl.appendChild(chip);
+  });
+}
+
+function sendMessage() {
+  const text = inputEl.value.trim();
+  if (!text) return;
+
+  // Add user message
+  const div = document.createElement('div');
+  div.className = 'msg user';
+  div.innerHTML = `<div class="msg-avatar">&#128100;</div><div class="msg-bubble">${text}</div>`;
+  chatEl.appendChild(div);
+  inputEl.value = '';
+
+  // Add typing indicator
+  const typing = document.createElement('div');
+  typing.className = 'msg bot';
+  typing.innerHTML = `<div class="msg-avatar">G</div><div class="msg-bubble"><div class="typing"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+  chatEl.appendChild(typing);
+
+  chatEl.scrollTop = chatEl.scrollHeight;
+
+  // Simulate response after delay
+  setTimeout(() => {
+    typing.remove();
+    const response = document.createElement('div');
+    response.className = 'msg bot';
+    response.innerHTML = `<div class="msg-avatar">G</div><div class="msg-bubble"><p>אני עובד על זה... (בגרסה האמיתית כאן תהיה תשובה חכמה מה-AI)</p></div>`;
+    chatEl.appendChild(response);
+    chatEl.scrollTop = chatEl.scrollHeight;
+  }, 1500);
+
+  // Clear suggestions
+  suggestionsEl.innerHTML = '';
 }
 
 // Init
-navigate('inbox');
+loadScenario('welcome');
 </script>
 
 </body>
