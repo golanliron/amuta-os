@@ -949,36 +949,58 @@ const SB = document.getElementById('sb-body');
 // ===== SIDEBAR TABS =====
 const tabData = {
 org: `
-<div class="org-section">פרטי ארגון</div>
+<div class="org-section">&#127970; זהות הארגון</div>
 <div class="org-grid">
   <div class="org-card"><div class="org-label">שם</div><div class="org-val">עמותת הופה</div></div>
   <div class="org-card"><div class="org-label">ע.ר.</div><div class="org-val">580718847</div></div>
   <div class="org-card"><div class="org-label">תחום</div><div class="org-val">מניעת נשירה</div></div>
   <div class="org-card"><div class="org-label">גילאים</div><div class="org-val">14-26</div></div>
   <div class="org-card"><div class="org-label">מודל</div><div class="org-val accent">רדאר 360</div></div>
-  <div class="org-card"><div class="org-label">מוטבים</div><div class="org-val accent">1,500</div></div>
-  <div class="org-card"><div class="org-label">יישובים</div><div class="org-val">15</div></div>
-  <div class="org-card"><div class="org-label">מחזור</div><div class="org-val accent">950,000 &#8362;</div></div>
-  <div class="org-card"><div class="org-label">עובדים</div><div class="org-val">8 + 50 מנטורים</div></div>
-  <div class="org-card"><div class="org-label">הצלחה</div><div class="org-val accent">87%</div></div>
   <div class="org-card"><div class="org-label">אזורים</div><div class="org-val">צפון, דרום, י-ם</div></div>
+  <div class="org-card"><div class="org-label">עובדים</div><div class="org-val">8 + 50 מנטורים</div></div>
   <div class="org-card"><div class="org-label">ניהול תקין</div><div class="org-val">תקף 2027</div></div>
 </div>
-<div class="org-section">מסמכים</div>
+
+<div class="org-section">&#128200; תקציב ומספרים</div>
+<div class="org-grid">
+  <div class="org-card"><div class="org-label">מחזור שנתי</div><div class="org-val accent">950,000 &#8362;</div></div>
+  <div class="org-card"><div class="org-label">מוטבים</div><div class="org-val accent">1,500</div></div>
+  <div class="org-card"><div class="org-label">יישובים</div><div class="org-val">15</div></div>
+  <div class="org-card"><div class="org-label">עלות לצעיר</div><div class="org-val accent">633 &#8362;</div></div>
+  <div class="org-card"><div class="org-label">הצלחה</div><div class="org-val accent">87%</div></div>
+  <div class="org-card"><div class="org-label">שביעות רצון</div><div class="org-val">94%</div></div>
+</div>
+
+<div class="org-section">&#128194; פרויקטים פעילים</div>
 <div class="org-docs">
-  <div class="org-doc"><span class="check">&#10003;</span> דוח מילולי 2025</div>
+  <div class="org-doc"><span class="check" style="color:var(--fish)">&#9679;</span> מניעת נשירה 14-18 | 15 יישובים | 800 צעירים</div>
+  <div class="org-doc"><span class="check" style="color:var(--fish)">&#9679;</span> תוכנית בוגרים 18-26 | 5 יישובים | 700 צעירים</div>
+  <div class="org-doc"><span class="check" style="color:var(--fish)">&#9679;</span> רדאר 360 - מנוע AI | פיתוח טכנולוגי</div>
+</div>
+
+<div class="org-section">&#128176; מענקים פעילים</div>
+<div class="org-docs">
+  <div class="org-doc"><span class="check">&#10003;</span> רשות החדשנות | 250K | עד 12/2026</div>
+  <div class="org-doc"><span class="check">&#10003;</span> מגה-אור | 300K | עד 06/2027</div>
+</div>
+
+<div class="org-section">&#128196; מסמכים שנקראו</div>
+<div class="org-docs">
+  <div class="org-doc"><span class="check">&#10003;</span> דוח מילולי 2025 (42 עמ')</div>
   <div class="org-doc"><span class="check">&#10003;</span> דוח כספי מבוקר</div>
   <div class="org-doc"><span class="check">&#10003;</span> דוח אימפקט</div>
-  <div class="org-doc"><span class="check">&#10003;</span> תקנון</div>
-  <div class="org-doc"><span class="check">&#10003;</span> אישור ניהול תקין</div>
-  <div class="org-doc"><span class="check">&#10003;</span> אתר hopa.org.il</div>
+  <div class="org-doc"><span class="check">&#10003;</span> תקנון + אישור ניהול תקין</div>
+  <div class="org-doc"><span class="check">&#10003;</span> אתר hopa.org.il (14 דפים)</div>
 </div>
-<button class="org-upload-btn">+ העלאת מסמך חדש</button>
-<div class="org-section">מענקים פעילים</div>
+
+<div class="org-section">&#128221; הגשות קודמות</div>
 <div class="org-docs">
-  <div class="org-doc"><span class="check">&#10003;</span> רשות החדשנות (250K)</div>
-  <div class="org-doc"><span class="check">&#10003;</span> מגה-אור (300K)</div>
+  <div class="org-doc"><span class="check" style="color:var(--yes)">&#10003;</span> רשות החדשנות 2025 | אושר</div>
+  <div class="org-doc"><span class="check" style="color:var(--yes)">&#10003;</span> מגה-אור 2026 | אושר</div>
+  <div class="org-doc"><span class="check" style="color:var(--ink-3)">&#10007;</span> קרן וולף 2025 | נדחה</div>
 </div>
+
+<button class="org-upload-btn">+ העלאת מסמך חדש</button>
 `,
 
 opps: `
