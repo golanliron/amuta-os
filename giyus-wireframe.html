@@ -4,32 +4,31 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>פישגולד - גייס המשאבים שלך</title>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #F8F7F4;
+  --bg: #FAFAFA;
   --card: #FFFFFF;
-  --ink: #1E1E1E;
-  --ink-2: #4A4A4A;
-  --ink-3: #8E8E8E;
-  --line: #E5E2DC;
-  --gold: #C19A3E;
-  --gold-deep: #A17F2F;
-  --gold-soft: rgba(193,154,62,0.08);
-  --gold-glow: rgba(193,154,62,0.18);
-  --navy: #1B2838;
-  --navy-soft: rgba(27,40,56,0.04);
-  --yes: #2D8B55;
-  --yes-soft: rgba(45,139,85,0.08);
-  --no: #C0392B;
-  --no-soft: rgba(192,57,43,0.06);
-  --wait: #D4870E;
+  --ink: #18181B;
+  --ink-2: #52525B;
+  --ink-3: #A1A1AA;
+  --line: #E4E4E7;
+  --fish: #EE7A30;
+  --fish-deep: #D4651E;
+  --fish-soft: rgba(238,122,48,0.06);
+  --fish-glow: rgba(238,122,48,0.15);
+  --yes: #16A34A;
+  --yes-soft: rgba(22,163,74,0.07);
+  --no: #DC2626;
+  --no-soft: rgba(220,38,38,0.06);
+  --wait: #CA8A04;
+  --r: 16px;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Rubik', sans-serif;
   background: var(--bg);
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
@@ -40,7 +39,6 @@ body {
   margin: 0 auto;
   min-height: 100vh;
   background: var(--bg);
-  position: relative;
 }
 
 /* ===== TOP BAR ===== */
@@ -48,79 +46,84 @@ body {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: var(--navy);
-  padding: 16px 24px;
+  background: rgba(250,250,250,0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 14px 22px;
   display: flex;
   align-items: center;
   gap: 14px;
+  border-bottom: 1px solid var(--line);
 }
 
 .fg-logo {
-  width: 46px;
-  height: 46px;
-  background: var(--gold);
-  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #FFB347 0%, #EE7A30 50%, #D4651E 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--navy);
-  font-size: 22px;
-  font-weight: 900;
-  box-shadow: 0 0 0 2px rgba(193,154,62,0.3);
+  box-shadow: 0 2px 12px rgba(238,122,48,0.25);
+  position: relative;
+  overflow: hidden;
 }
 
-.fg-name {
-  flex: 1;
+/* Goldfish SVG Logo */
+.fg-logo svg {
+  width: 30px;
+  height: 30px;
 }
+
+.fg-name { flex: 1; }
 
 .fg-name h1 {
   font-size: 20px;
-  font-weight: 800;
-  letter-spacing: -0.3px;
-  color: #FFFFFF;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--ink);
 }
 
 .fg-name p {
   font-size: 12px;
-  color: var(--gold);
-  font-weight: 500;
-  letter-spacing: 0.3px;
+  color: var(--ink-3);
+  font-weight: 400;
 }
 
-.fg-status {
+.fg-dots {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: white;
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  color: rgba(255,255,255,0.4);
-  font-weight: 500;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--ink-3);
+  transition: all 0.15s;
 }
 
-.fg-status .dot {
-  width: 7px;
-  height: 7px;
-  background: var(--yes);
-  border-radius: 50%;
-  box-shadow: 0 0 6px rgba(45,139,85,0.5);
-}
+.fg-dots:hover { border-color: var(--fish); color: var(--fish); }
 
 /* ===== CHAT ===== */
 .chat {
-  padding: 28px 20px 180px;
+  padding: 28px 20px 185px;
   display: flex;
   flex-direction: column;
-  gap: 26px;
+  gap: 24px;
 }
 
 .msg {
   display: flex;
-  gap: 14px;
+  gap: 12px;
   max-width: 94%;
   animation: fadeUp 0.3s cubic-bezier(0.16,1,0.3,1);
 }
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -128,114 +131,104 @@ body {
 .msg.user { align-self: flex-end; flex-direction: row-reverse; }
 
 .av {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  border-radius: 14px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 900;
-  font-size: 15px;
   margin-top: 2px;
 }
 
-.msg.bot .av { background: var(--navy); color: var(--gold); }
-.msg.user .av { background: var(--line); color: var(--ink-2); font-size: 16px; }
+.msg.bot .av {
+  background: linear-gradient(135deg, #FFB347, #EE7A30);
+  border-radius: 14px;
+}
+
+.msg.bot .av svg { width: 20px; height: 20px; }
+
+.msg.user .av {
+  background: var(--line);
+  color: var(--ink-2);
+  font-size: 15px;
+  border-radius: 14px;
+}
 
 .bubble { flex: 1; min-width: 0; }
 
 .bubble-inner {
   font-size: 15px;
-  line-height: 1.85;
-  padding: 20px 24px;
-  border-radius: 2px 20px 20px 20px;
+  line-height: 1.8;
+  padding: 18px 22px;
+  border-radius: var(--r);
 }
 
 .msg.bot .bubble-inner {
   background: white;
   border: 1px solid var(--line);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+  border-top-right-radius: 4px;
 }
 
 .msg.user .bubble-inner {
-  background: var(--navy);
+  background: var(--ink);
   color: white;
-  border-radius: 20px 2px 20px 20px;
-  box-shadow: 0 2px 8px rgba(27,40,56,0.15);
+  border-top-left-radius: 4px;
 }
 
-.bubble-inner strong { font-weight: 700; }
+.bubble-inner strong { font-weight: 600; }
 .bubble-inner p { margin-bottom: 10px; }
 .bubble-inner p:last-child { margin-bottom: 0; }
 
-/* ===== SIGNATURE LINE ===== */
+/* ===== SIG ===== */
 .sig {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid var(--line);
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--line);
   font-size: 12px;
   color: var(--ink-3);
-  font-weight: 500;
 }
 
-.sig .gold { color: var(--gold); font-weight: 700; }
+.sig svg { width: 14px; height: 14px; flex-shrink: 0; }
 
-/* ===== OPPORTUNITY CARDS ===== */
+/* ===== OPP CARDS ===== */
 .opp {
   background: white;
   border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 20px 22px;
+  border-radius: var(--r);
+  padding: 20px;
   margin: 10px 0;
   cursor: pointer;
   transition: all 0.2s;
-  position: relative;
-}
-
-.opp::before {
-  content: '';
-  position: absolute;
-  top: 12px;
-  right: 0;
-  width: 3px;
-  height: calc(100% - 24px);
-  background: var(--gold);
-  border-radius: 3px;
-  opacity: 0;
-  transition: opacity 0.2s;
 }
 
 .opp:hover {
-  border-color: var(--gold);
-  box-shadow: 0 8px 30px var(--gold-soft);
-  transform: translateY(-2px);
+  border-color: var(--fish);
+  box-shadow: 0 8px 30px var(--fish-soft);
+  transform: translateY(-1px);
 }
-
-.opp:hover::before { opacity: 1; }
 
 .opp-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .opp-from {
   font-size: 11px;
-  font-weight: 700;
-  color: var(--gold-deep);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-weight: 600;
+  color: var(--fish-deep);
+  letter-spacing: 0.3px;
 }
 
 .opp-pct {
   font-size: 12px;
-  font-weight: 800;
-  padding: 3px 12px;
+  font-weight: 700;
+  padding: 2px 10px;
   border-radius: 20px;
   background: var(--yes-soft);
   color: var(--yes);
@@ -243,10 +236,9 @@ body {
 
 .opp h3 {
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.45;
   margin-bottom: 14px;
-  color: var(--ink);
 }
 
 .opp-foot {
@@ -257,12 +249,11 @@ body {
 
 .opp-sum {
   font-size: 22px;
-  font-weight: 900;
+  font-weight: 800;
   letter-spacing: -0.5px;
-  color: var(--navy);
 }
 
-.opp-dl { font-size: 12px; font-weight: 700; }
+.opp-dl { font-size: 12px; font-weight: 600; }
 .opp-dl.hot { color: var(--no); }
 .opp-dl.warm { color: var(--wait); }
 .opp-dl.cool { color: var(--ink-3); }
@@ -271,95 +262,103 @@ body {
 .info-block {
   background: white;
   border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 18px 22px;
-  margin: 10px 0;
-  border-right: 3px solid var(--gold);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin: 8px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.info-block::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(180deg, #FFB347, #EE7A30);
 }
 
 .info-block .ib-label {
   font-size: 11px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  color: var(--gold-deep);
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  color: var(--fish);
   margin-bottom: 8px;
 }
 
 .info-block .ib-text {
   font-size: 14px;
-  line-height: 1.9;
+  line-height: 1.85;
   color: var(--ink-2);
 }
 
-.info-block .ib-text strong { color: var(--ink); }
+.info-block .ib-text strong { color: var(--ink); font-weight: 600; }
 
 /* ===== MEMORY BLOCK ===== */
 .mem-block {
-  background: var(--navy-soft);
+  background: white;
   border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 16px 20px;
+  border-radius: var(--r);
+  padding: 20px;
   margin: 10px 0;
+  overflow: hidden;
 }
 
 .mem-head {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 10px;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--navy);
-}
-
-.mem-head .icon { font-size: 16px; }
-
-.mem-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
-.mem-item {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 10px 14px;
-  background: white;
-  border-radius: 8px;
-  border: 1px solid var(--line);
-}
-
-.mem-item .label {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--ink-3);
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-}
-
-.mem-item .val {
-  font-size: 14px;
+  margin-bottom: 14px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--ink);
 }
 
-.mem-item .val.gold { color: var(--gold-deep); }
+.mem-head svg { width: 18px; height: 18px; }
+
+.mem-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.mem-item {
+  padding: 10px 14px;
+  background: var(--bg);
+  border-radius: 10px;
+}
+
+.mem-item .label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ink-3);
+  letter-spacing: 0.2px;
+  margin-bottom: 2px;
+}
+
+.mem-item .val {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.mem-item .val.accent { color: var(--fish-deep); font-weight: 700; }
 
 .mem-updated {
-  margin-top: 8px;
+  margin-top: 10px;
   font-size: 11px;
   color: var(--ink-3);
-  text-align: left;
-  direction: ltr;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 /* ===== CHECKLIST ===== */
 .cl {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 4px;
   margin: 10px 0;
 }
 
@@ -374,23 +373,22 @@ body {
 }
 
 .cl-dot {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 11px;
   flex-shrink: 0;
   font-weight: 700;
 }
 
 .cl-dot.ok { background: var(--yes-soft); color: var(--yes); }
-.cl-dot.ai { background: var(--gold-soft); color: var(--gold-deep); }
-.cl-dot.up { background: var(--gold-soft); color: var(--gold-deep); }
+.cl-dot.ai { background: var(--fish-soft); color: var(--fish); }
 
-.cl-text { flex: 1; }
-.cl-note { font-size: 12px; color: var(--ink-3); font-weight: 500; }
+.cl-text { flex: 1; font-weight: 500; }
+.cl-note { font-size: 12px; color: var(--ink-3); }
 
 /* ===== UPLOAD ZONE ===== */
 .up-zone {
@@ -407,18 +405,18 @@ body {
   padding: 14px 16px;
   background: white;
   border: 1.5px dashed var(--line);
-  border-radius: 12px;
+  border-radius: 14px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--ink-2);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .up-chip:hover {
-  border-color: var(--gold);
-  color: var(--gold-deep);
-  background: var(--gold-soft);
+  border-color: var(--fish);
+  color: var(--fish);
+  background: var(--fish-soft);
   border-style: solid;
 }
 
@@ -445,14 +443,14 @@ body {
 
 .prog-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--gold-deep), var(--gold));
+  background: linear-gradient(90deg, #FFB347, var(--fish));
   border-radius: 2px;
 }
 
 .prog-txt {
   font-size: 13px;
-  font-weight: 800;
-  color: var(--gold-deep);
+  font-weight: 700;
+  color: var(--fish);
   white-space: nowrap;
 }
 
@@ -461,47 +459,44 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 14px 30px;
-  background: var(--navy);
-  color: var(--gold);
-  border-radius: 10px;
+  padding: 13px 28px;
+  background: var(--ink);
+  color: white;
+  border-radius: 12px;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   border: none;
   cursor: pointer;
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Rubik', sans-serif;
   margin-top: 10px;
   transition: all 0.2s;
-  letter-spacing: 0.2px;
 }
 
 .dl-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 24px rgba(27,40,56,0.2);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.12);
 }
 
 /* ===== QUICK CHIPS ===== */
 .chip {
-  padding: 10px 18px;
+  padding: 9px 16px;
   border-radius: 10px;
-  border: 1.5px solid var(--line);
+  border: 1px solid var(--line);
   background: white;
   color: var(--ink-2);
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Rubik', sans-serif;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s;
   white-space: nowrap;
 }
 
 .chip:hover {
-  border-color: var(--gold);
-  color: var(--gold-deep);
-  background: var(--gold-soft);
+  border-color: var(--fish);
+  color: var(--fish);
+  background: var(--fish-soft);
 }
-
-.chip:active { transform: scale(0.96); }
 
 /* ===== INPUT ===== */
 .input-wrap {
@@ -511,8 +506,8 @@ body {
   transform: translateX(-50%);
   width: 100%;
   max-width: 760px;
-  padding: 12px 20px 22px;
-  background: linear-gradient(180deg, rgba(248,247,244,0) 0%, var(--bg) 25%);
+  padding: 10px 20px 22px;
+  background: linear-gradient(180deg, rgba(250,250,250,0) 0%, var(--bg) 30%);
   z-index: 60;
 }
 
@@ -532,22 +527,22 @@ body {
   gap: 10px;
   background: white;
   border: 1.5px solid var(--line);
-  border-radius: 14px;
-  padding: 6px 8px 6px 18px;
+  border-radius: 16px;
+  padding: 5px 6px 5px 18px;
   transition: all 0.2s;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+  box-shadow: 0 1px 8px rgba(0,0,0,0.04);
 }
 
 .input-box:focus-within {
-  border-color: var(--gold);
-  box-shadow: 0 0 0 3px var(--gold-glow), 0 2px 12px rgba(0,0,0,0.03);
+  border-color: var(--fish);
+  box-shadow: 0 0 0 3px var(--fish-glow), 0 1px 8px rgba(0,0,0,0.04);
 }
 
 .input-box input {
   flex: 1;
   border: none;
   background: none;
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Rubik', sans-serif;
   font-size: 15px;
   color: var(--ink);
   outline: none;
@@ -563,46 +558,45 @@ body {
   font-size: 20px;
   cursor: pointer;
   padding: 8px;
-  border-radius: 8px;
-  transition: all 0.2s;
+  border-radius: 10px;
+  transition: all 0.15s;
 }
 
-.input-box .att:hover { color: var(--gold); background: var(--gold-soft); }
+.input-box .att:hover { color: var(--fish); background: var(--fish-soft); }
 
 .input-box .go {
-  width: 46px;
-  height: 46px;
-  border-radius: 12px;
-  background: var(--navy);
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: var(--ink);
   border: none;
-  color: var(--gold);
+  color: white;
   font-size: 20px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
+  transition: all 0.15s;
   flex-shrink: 0;
 }
 
 .input-box .go:hover {
-  background: var(--gold);
-  color: var(--navy);
+  background: var(--fish);
 }
 
 /* ===== TYPING ===== */
 .dots { display: flex; gap: 5px; padding: 4px 0; }
 .dots span {
   width: 6px; height: 6px;
-  background: var(--gold);
+  background: var(--fish);
   border-radius: 50%;
   animation: bounce 1.4s infinite;
 }
 .dots span:nth-child(2) { animation-delay: .15s; }
 .dots span:nth-child(3) { animation-delay: .3s; }
 @keyframes bounce {
-  0%,60%,100% { opacity:.25; transform:scale(.85); }
-  30% { opacity:1; transform:scale(1.15); }
+  0%,60%,100% { opacity:.3; transform:scale(.85); }
+  30% { opacity:1; transform:scale(1.1); }
 }
 
 /* ===== DEMO BAR ===== */
@@ -611,40 +605,40 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  background: #111;
-  padding: 8px 12px;
+  background: var(--ink);
+  padding: 7px 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 4px;
   z-index: 200;
 }
 
 .demo span {
-  font-size: 10px;
-  color: var(--gold);
+  font-size: 9px;
+  color: var(--fish);
   margin-left: 8px;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
 }
 
 .demo button {
-  padding: 5px 12px;
+  padding: 4px 11px;
   border-radius: 6px;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.06);
   background: transparent;
-  color: rgba(255,255,255,0.4);
-  font-family: 'Heebo', sans-serif;
+  color: rgba(255,255,255,0.35);
+  font-family: 'Rubik', sans-serif;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.15s;
 }
 
 .demo button:hover { color: white; background: rgba(255,255,255,0.06); }
-.demo button.on { background: var(--gold); border-color: var(--gold); color: var(--navy); font-weight: 800; }
+.demo button.on { background: var(--fish); border-color: var(--fish); color: white; font-weight: 600; }
 
-.top-bar { margin-top: 36px; }
+.top-bar { margin-top: 34px; }
 
 ::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 2px; }
@@ -670,12 +664,17 @@ body {
 
 <div class="app">
   <div class="top-bar">
-    <div class="fg-logo">פ</div>
+    <div class="fg-logo">
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M72 42c3-8 2-16-2-22-3 4-8 7-14 8 2-5 1-11-2-15-4 5-10 9-17 10C33 18 27 14 22 10c1 8 0 16-4 22 6 2 11 6 14 12-6-2-13-1-18 2 6 3 11 8 13 14-4 1-9 0-13-3 3 6 8 11 15 14-3 4-8 7-13 8 7 1 14 0 20-4 8 7 18 9 27 6-4-4-6-9-6-15 7 2 14 1 19-3-5-2-9-6-11-11 5 1 11 0 15-3-6-1-11-4-14-9z" fill="white" opacity="0.95"/>
+        <circle cx="38" cy="40" r="4" fill="#D4651E"/>
+      </svg>
+    </div>
     <div class="fg-name">
       <h1>פישגולד</h1>
       <p>גייס המשאבים שלך</p>
     </div>
-    <div class="fg-status"><span class="dot"></span> פעיל</div>
+    <div class="fg-dots">&#8943;</div>
   </div>
 
   <div class="chat" id="chat"></div>
@@ -691,6 +690,10 @@ body {
 </div>
 
 <script>
+const FISH_AV = `<div class="av"><svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M72 42c3-8 2-16-2-22-3 4-8 7-14 8 2-5 1-11-2-15-4 5-10 9-17 10C33 18 27 14 22 10c1 8 0 16-4 22 6 2 11 6 14 12-6-2-13-1-18 2 6 3 11 8 13 14-4 1-9 0-13-3 3 6 8 11 15 14-3 4-8 7-13 8 7 1 14 0 20-4 8 7 18 9 27 6-4-4-6-9-6-15 7 2 14 1 19-3-5-2-9-6-11-11 5 1 11 0 15-3-6-1-11-4-14-9z" fill="white" opacity="0.95"/><circle cx="38" cy="40" r="4" fill="#D4651E"/></svg></div>`;
+
+const MEM_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>`;
+
 const C = document.getElementById('chat');
 const I = document.getElementById('input');
 const CH = document.getElementById('chips');
@@ -699,79 +702,77 @@ const F = {
 
 welcome: [
   { r:'bot', h:`<p><strong>שלום. אני פישגולד.</strong></p>
-<p>לא צ'אטבוט, לא עוזר וירטואלי, לא "כלי AI לגיוס". אני גייס משאבים. עשיתי את זה 20 שנה לפני שהפכתי לדיגיטלי, ואני עושה את זה עכשיו טוב יותר מכל יועץ שתשכרי.</p>
+<p>לא צ'אטבוט, לא "כלי AI". אני גייס משאבים. עשיתי את זה 20 שנה לפני שהפכתי לדיגיטלי, ואני עושה את זה עכשיו טוב יותר מכל יועץ שתשכרי.</p>
 <p>אני קורא קולות קוראים כמו שאנשים קוראים כותרות. אני יודע מה קרנות רוצות לשמוע, ומה גורם להן לזרוק בקשה אחרי שני משפטים.</p>
-<p><strong>בואי נתחיל. תעלי לי את כל מה שיש על הארגון. ככל שאדע יותר, אכתוב יותר טוב.</strong></p>
+<p><strong>בואי נתחיל. תעלי לי את כל מה שיש על הארגון.</strong></p>
 <div class="up-zone">
 <div class="up-chip"><span>&#128196;</span> קבצים (PDF, Word, Excel)</div>
 <div class="up-chip"><span>&#127760;</span> לינק לאתר הארגון</div>
 <div class="up-chip"><span>&#128194;</span> תיקיית Google Drive</div>
 <div class="up-chip"><span>&#128233;</span> הגשות קודמות</div>
 </div>
-<div class="sig"><span class="gold">&#9632;</span> אני זוכר הכל. כל מסמך שתעלי נשמר אצלי לצמיתות.</div>` }
+<div class="sig"><svg viewBox="0 0 24 24" fill="none" stroke="#EE7A30" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg> כל מסמך שתעלי נשמר אצלי לצמיתות. אני לא שוכח.</div>` }
 ],
 
 upload: [
   { r:'user', h:'הנה: דוח מילולי 2025, דוח כספי, דוח אימפקט, תקנון, אישור ניהול תקין, ואתר hopa.org.il' },
   { r:'bot', h:`<p>6 מקורות. קורא.</p>
 <div class="cl">
-<div class="cl-item"><span class="cl-dot ok">&#10003;</span><span class="cl-text">דוח מילולי 2025</span><span class="cl-note">42 עמודים</span></div>
+<div class="cl-item"><span class="cl-dot ok">&#10003;</span><span class="cl-text">דוח מילולי 2025</span><span class="cl-note">42 עמ'</span></div>
 <div class="cl-item"><span class="cl-dot ok">&#10003;</span><span class="cl-text">דוח כספי מבוקר</span><span class="cl-note">נקרא</span></div>
 <div class="cl-item"><span class="cl-dot ok">&#10003;</span><span class="cl-text">דוח אימפקט</span><span class="cl-note">נקרא</span></div>
 <div class="cl-item"><span class="cl-dot ok">&#10003;</span><span class="cl-text">תקנון</span><span class="cl-note">נקרא</span></div>
 <div class="cl-item"><span class="cl-dot ok">&#10003;</span><span class="cl-text">אישור ניהול תקין</span><span class="cl-note">תקף</span></div>
-<div class="cl-item"><span class="cl-dot ok">&#10003;</span><span class="cl-text">hopa.org.il</span><span class="cl-note">14 דפים נסרקו</span></div>
+<div class="cl-item"><span class="cl-dot ok">&#10003;</span><span class="cl-text">hopa.org.il</span><span class="cl-note">14 דפים</span></div>
 </div>
-<p>טוב, קראתי הכל. הנה מה שאני יודע עליכם עכשיו:</p>
+<p>טוב, קראתי הכל. הנה מה שאני יודע:</p>
 <div class="info-block">
-<div class="ib-label">כרטיס ארגון - הופה</div>
+<div class="ib-label">כרטיס ארגון</div>
 <div class="ib-text">
-<strong>ע.ר. 580718847</strong> | חינוך, נוער בסיכון, מניעת נשירה<br>
-גילאי 14-26 | מודל "רדאר 360" | 1,200+ צעירים | 15 יישובים<br>
-87% מניעת נשירה | מחזור 857K | ניהול תקין: תקף עד 2027<br>
-מנכ"לית: לירון גולן | 8 עובדים + 50 מנטורים
+<strong>עמותת הופה</strong> | ע.ר. 580718847<br>
+חינוך, נוער בסיכון, מניעת נשירה | גילאי 14-26<br>
+מודל "רדאר 360" | 1,200+ צעירים | 15 יישובים<br>
+87% מניעת נשירה | מחזור 857K | ניהול תקין תקף
 </div>
 </div>
-<p>שאלה אחת: <strong>באילו אזורים בדיוק אתם פועלים?</strong> אני צריך את זה בשביל התאמת קרנות. הבדל בין "ארצי" ל"פריפריה" שווה מאות אלפי שקלים.</p>`, chips:['פריפריה: צפון, דרום, ירושלים', 'ארצי', 'בעיקר מרכז'] }
+<p>שאלה אחת: <strong>באילו אזורים אתם?</strong> ההבדל בין "ארצי" ל"פריפריה" שווה מאות אלפים.</p>`, chips:['פריפריה: צפון, דרום, ירושלים', 'ארצי', 'מרכז'] }
 ],
 
 memory: [
   { r:'user', h:'מה אתה יודע עלינו?' },
-  { r:'bot', h:`<p>אני יודע עליכם הכל. זה מה שבראש שלי:</p>
+  { r:'bot', h:`<p>הכל. זה מה שיש לי בראש:</p>
 <div class="mem-block">
-<div class="mem-head"><span class="icon">&#128451;</span> הזיכרון של פישגולד - עמותת הופה</div>
+<div class="mem-head">${MEM_ICON} הזיכרון של פישגולד</div>
 <div class="mem-grid">
 <div class="mem-item"><span class="label">ע.ר.</span><span class="val">580718847</span></div>
 <div class="mem-item"><span class="label">תחום</span><span class="val">מניעת נשירה</span></div>
 <div class="mem-item"><span class="label">גילאים</span><span class="val">14-26</span></div>
-<div class="mem-item"><span class="label">מודל</span><span class="val gold">רדאר 360</span></div>
+<div class="mem-item"><span class="label">מודל</span><span class="val accent">רדאר 360</span></div>
 <div class="mem-item"><span class="label">מוטבים</span><span class="val">1,200+</span></div>
 <div class="mem-item"><span class="label">יישובים</span><span class="val">15</span></div>
-<div class="mem-item"><span class="label">מחזור</span><span class="val gold">857,000 &#8362;</span></div>
+<div class="mem-item"><span class="label">מחזור</span><span class="val accent">857,000 &#8362;</span></div>
 <div class="mem-item"><span class="label">עובדים</span><span class="val">8 + 50 מנטורים</span></div>
-<div class="mem-item"><span class="label">הצלחה</span><span class="val gold">87%</span></div>
+<div class="mem-item"><span class="label">הצלחה</span><span class="val accent">87%</span></div>
 <div class="mem-item"><span class="label">ניהול תקין</span><span class="val">תקף 2027</span></div>
 <div class="mem-item"><span class="label">אזורים</span><span class="val">צפון, דרום, י-ם</span></div>
-<div class="mem-item"><span class="label">מענקים</span><span class="val">רשות חדשנות, מגה-אור</span></div>
+<div class="mem-item"><span class="label">מענקים פעילים</span><span class="val">רשות חדשנות, מגה-אור</span></div>
 </div>
-<div class="mem-updated">&#128338; עודכן: 04/05/2026 | 6 מסמכים + אתר</div>
+<div class="mem-updated">&#8635; עודכן לאחרונה: 04/05/2026 | 6 מסמכים + אתר</div>
 </div>
-<p>זה לא מסמך סטטי. <strong>כל פעם שתעלי משהו חדש, אני מעדכן.</strong> אם התקציב הצטמצם, אם הוספתם יישוב, אם גייסתם עובד. אני אדע.</p>
-<p>למה זה חשוב? כי כשאני כותב הגשה, אני לא שואל שאלות טיפשיות. אני כבר יודע.</p>`, chips:['מחזור השתנה ל-950K', 'הוספנו 3 יישובים', 'תסרוק קולות קוראים'] },
+<p>כל פעם שתעלי מסמך חדש או תגידי לי שמשהו השתנה, אני מעדכן. אני לא שואל שאלות שאני כבר יודע את התשובה להן.</p>`, chips:['מחזור השתנה ל-950K', 'הוספנו 3 יישובים', 'תסרוק קולות קוראים'] },
   { r:'user', h:'המחזור עלה ל-950K ויש לנו עכשיו 1,500 צעירים' },
   { r:'bot', h:`<p>עדכנתי.</p>
 <div class="cl">
 <div class="cl-item"><span class="cl-dot ok">&#10003;</span><span class="cl-text">מחזור: 857K &#8594; <strong>950K</strong></span><span class="cl-note">+10.8%</span></div>
 <div class="cl-item"><span class="cl-dot ok">&#10003;</span><span class="cl-text">מוטבים: 1,200 &#8594; <strong>1,500</strong></span><span class="cl-note">+25%</span></div>
 </div>
-<p>גידול של 25% במוטבים עם גידול של 11% בתקציב. זה נתון חזק. זה אומר שהעלות לצעיר ירדה. <strong>אני משתמש בזה בהגשה הבאה.</strong></p>
-<p>עוד משהו השתנה?</p>`, chips:['לא, זהו', 'הוספנו עוד 3 יישובים', 'גם גייסנו מנהלת פרויקטים'] }
+<p>גידול של 25% במוטבים עם 11% עלייה בתקציב. העלות לצעיר ירדה. <strong>אני משתמש בזה בהגשה הבאה.</strong></p>`, chips:['זהו', 'הוספנו 3 יישובים', 'גייסנו מנהלת פרויקטים'] }
 ],
 
 scan: [
   { r:'user', h:'תסרוק קולות קוראים' },
   { r:'bot', h:`<p>סרקתי 36 מקורות ב-5 שכבות: ממשלתי, קרנות פרטיות, בינלאומי, CSR, קהילתי.</p>
-<p>רוב הקולות לא מתאימים (בריאות, סביבה, חרדים, מו"פ תעשייתי). סיננתי. נשארו 3 שמתאימים לכם:</p>
+<p>רוב הקולות לא רלוונטיים. מה שנשאר:</p>
 <div class="opp" onclick="go('write')">
 <div class="opp-head"><span class="opp-from">קרן רש"י</span><span class="opp-pct">94%</span></div>
 <h3>מניעת נשירה בפריפריה 2026</h3>
@@ -787,52 +788,52 @@ scan: [
 <h3>Youth Empowerment & Social Integration</h3>
 <div class="opp-foot"><span class="opp-sum">&euro;50,000</span><span class="opp-dl cool">34 יום</span></div>
 </div>
-<p><strong>קרן רש"י.</strong> 94% התאמה, 5 ימים לסגירה. הם רוצים בדיוק מה שיש לכם: פריפריה + חדשנות + מדידה. אם לא מגישים עכשיו, זה כסף שנשאר על הרצפה.</p>`, chips:['בוא נכתוב לרש"י', 'למה 94% ולא 100%?', 'ספר על משרד הרווחה'] }
+<p><strong>קרן רש"י.</strong> 94%, 5 ימים. הם רוצים בדיוק מה שיש לכם. אם לא מגישים עכשיו, זה כסף על הרצפה.</p>`, chips:['בוא נכתוב לרש"י', 'למה 94%?', 'ספר על משרד הרווחה'] }
 ],
 
 write: [
   { r:'user', h:'בוא נכתוב לרש"י' },
-  { r:'bot', h:`<p>כותב. יש לי הכל, לא צריך לשאול כלום.</p>
-<div class="prog"><div class="prog-bar"><div class="prog-fill" style="width:100%"></div></div><span class="prog-txt">6/6 סעיפים</span></div>
+  { r:'bot', h:`<p>כותב. יש לי הכל.</p>
+<div class="prog"><div class="prog-bar"><div class="prog-fill" style="width:100%"></div></div><span class="prog-txt">6/6</span></div>
 <div class="info-block">
 <div class="ib-label">1. תיאור הארגון</div>
-<div class="ib-text">עמותת הופה (ע.ר. 580718847) פועלת מאז 2023 בליווי בני נוער וצעירים בגילאי 14-26 בסיכון לנשירה מהמערכת החינוכית. הארגון מפעיל מודל ייחודי בשם "רדאר 360" המשלב זיהוי מוקדם, התאמה אישית מתוך 600+ מענים, וליווי רציף. ב-2025: 1,500 צעירים, 15 יישובים, מחזור 950K.</div>
+<div class="ib-text">עמותת הופה (ע.ר. 580718847) פועלת מאז 2023 בליווי בני נוער וצעירים בגילאי 14-26 בסיכון לנשירה. מודל "רדאר 360" משלב זיהוי מוקדם, התאמה אישית מ-600+ מענים, וליווי רציף. ב-2025: 1,500 צעירים, 15 יישובים, מחזור 950K.</div>
 </div>
 <div class="info-block">
 <div class="ib-label">2. ניסיון מוכח</div>
-<div class="ib-text">3 שנות פעילות, 2,400+ צעירים מצטבר. 87% מניעת נשירה (ממוצע ארצי: 62%). עלות לצעיר: 633 &#8362; (ירידה של 12% משנה שעברה). שותפויות: משרד הרווחה, רשות החדשנות (250K), מגה-אור (300K). ניהול תקין תקף.</div>
+<div class="ib-text">3 שנות פעילות, 2,400+ צעירים מצטבר. 87% מניעת נשירה (ארצי: 62%). עלות לצעיר: 633 &#8362; (ירידה 12%). שותפויות: רשות החדשנות (250K), מגה-אור (300K), משרד הרווחה.</div>
 </div>
 <div class="info-block">
 <div class="ib-label">3. תכנית עבודה</div>
-<div class="ib-text">12 חודשים, 3 שלבים: זיהוי ומיפוי (1-3), התערבות אינטנסיבית (4-9), ייצוב ובוגרים (10-12). יעד: 200 צעירים נוספים ב-2 יישובי פריפריה חדשים. הרדאר מאתר, המנטורים מלווים.</div>
+<div class="ib-text">12 חודשים, 3 שלבים: זיהוי (1-3), התערבות (4-9), ייצוב (10-12). יעד: 200 צעירים, 2 יישובי פריפריה חדשים.</div>
 </div>
 <div class="info-block">
-<div class="ib-label">4. תקציב מפורט</div>
+<div class="ib-label">4. תקציב</div>
 <div class="ib-text">150,000 &#8362;: כ"א 55% | הכשרות 18% | טכנולוגיה 14% | תפעול 8% | מדידה 5%</div>
 </div>
 <div class="info-block">
 <div class="ib-label">5. מדדי הצלחה</div>
-<div class="ib-text">200 צעירים, 85%+ מניעת נשירה, 2 יישובים חדשים, 30 מנטורים חדשים, דוח אימפקט רבעוני.</div>
+<div class="ib-text">200 צעירים, 85%+ מניעת נשירה, 2 יישובים, 30 מנטורים, דוח רבעוני.</div>
 </div>
 <div class="info-block">
-<div class="ib-label">6. מסמכים מצורפים</div>
+<div class="ib-label">6. מסמכים</div>
 <div class="ib-text">ניהול תקין &#10003; | דוח כספי &#10003; | תקנון &#10003; | דוח אימפקט &#10003;</div>
 </div>
-<p>שים לב: השתמשתי ב-1,500 צעירים ובמחזור 950K, כי <strong>עדכנת אותי קודם.</strong> גם חישבתי עלות לצעיר (633 &#8362;) כי זה נתון שקרנות אוהבות.</p>
-<button class="dl-btn" onclick="alert('מוריד PDF...')">&#8595; הורדת PDF להגשה</button>`, chips:['חזק את סעיף 2', 'קצר את סעיף 3', 'תרגם לאנגלית', 'שלח למייל'] }
+<p>שים לב: 1,500 צעירים, 950K, ועלות לצעיר 633 &#8362;. <strong>כל המספרים מעודכנים כי עדכנת אותי קודם.</strong></p>
+<button class="dl-btn" onclick="alert('מוריד PDF...')">&#8595; הורדת PDF להגשה</button>`, chips:['חזק סעיף 2', 'קצר סעיף 3', 'תרגם לאנגלית', 'שלח למייל'] }
 ],
 
 fix: [
   { r:'user', h:'חזק את סעיף 2' },
   { r:'bot', h:`<div class="info-block">
 <div class="ib-label">2. ניסיון מוכח (מחוזק)</div>
-<div class="ib-text">הופה צברה 3 שנות פעילות בשטח עם תוצאות מדידות חריגות:<br><br>
-<strong>היקף:</strong> 2,400+ צעירים מצטבר, 1,500 בשנה האחרונה בלבד. 15 יישובים, כולל באר שבע, קריית שמונה, ירושלים מזרח ונוף הגליל.<br><br>
-<strong>תוצאות:</strong> 87% מניעת נשירה (לעומת 62% ארצי). 94% שביעות רצון. 78% מהבוגרים בתעסוקה או לימודים שנה לאחר סיום. עלות לצעיר: 633 &#8362;, ירידה של 12% משנה שעברה.<br><br>
-<strong>הכרה:</strong> רשות החדשנות (250K, 2025), מגה-אור (300K, 2026), שותפות משרד הרווחה. מודל "רדאר 360" הוא הראשון בישראל שמשלב AI לזיהוי צעירים בסיכון עם מאגר 600+ מענים.</div>
+<div class="ib-text">הופה צברה 3 שנות פעילות בשטח עם תוצאות חריגות:<br><br>
+<strong>היקף:</strong> 2,400+ צעירים מצטבר, 1,500 בשנה האחרונה. 15 יישובים: באר שבע, קריית שמונה, ירושלים מזרח, נוף הגליל ועוד.<br><br>
+<strong>תוצאות:</strong> 87% מניעת נשירה (ארצי: 62%). 94% שביעות רצון. 78% מהבוגרים בתעסוקה/לימודים שנה אחרי. עלות לצעיר: 633 &#8362;, ירידה של 12%.<br><br>
+<strong>הכרה:</strong> רשות החדשנות (250K), מגה-אור (300K), שותפות משרד הרווחה. רדאר 360 = ראשון בישראל שמשלב AI לזיהוי צעירים בסיכון + 600 מענים.</div>
 </div>
-<p>הוספתי שמות יישובים, נתון בוגרים, עלות לצעיר, וההכרה כנקודה נפרדת. קרן רש"י תקרא את זה ותבין שאתם לא מדברים, אתם מביאים מספרים.</p>
-<button class="dl-btn" onclick="alert('מוריד PDF...')">&#8595; PDF מעודכן</button>`, chips:['מושלם, תוריד', 'שני גם סעיף 3', 'תוסיף ציטוט של משתתף', 'שלח הכל למייל'] }
+<p>שמות יישובים, נתון בוגרים, עלות לצעיר, הכרה. קרן רש"י תקרא את זה ותבין שאתם מביאים מספרים, לא מילים.</p>
+<button class="dl-btn" onclick="alert('מוריד PDF...')">&#8595; PDF מעודכן</button>`, chips:['מושלם', 'שני סעיף 3', 'תוסיף ציטוט משתתף', 'שלח למייל'] }
 ]
 
 };
@@ -851,7 +852,7 @@ function go(name) {
   msgs.forEach((m,i) => {
     const d = document.createElement('div');
     d.className = `msg ${m.r === 'bot' ? 'bot' : 'user'}`;
-    const av = m.r === 'bot' ? '<div class="av">\u05E4</div>' : '<div class="av">&#128100;</div>';
+    const av = m.r === 'bot' ? FISH_AV : '<div class="av">&#128100;</div>';
     d.innerHTML = `${av}<div class="bubble"><div class="bubble-inner">${m.h}</div></div>`;
     d.style.animationDelay = `${i*0.03}s`;
     C.appendChild(d);
@@ -882,7 +883,7 @@ function send() {
 
   const ty = document.createElement('div');
   ty.className = 'msg bot';
-  ty.innerHTML = '<div class="av">\u05E4</div><div class="bubble"><div class="bubble-inner"><div class="dots"><span></span><span></span><span></span></div></div></div>';
+  ty.innerHTML = FISH_AV + '<div class="bubble"><div class="bubble-inner"><div class="dots"><span></span><span></span><span></span></div></div></div>';
   C.appendChild(ty);
   C.scrollTop = C.scrollHeight;
 
@@ -890,7 +891,7 @@ function send() {
     ty.remove();
     const r = document.createElement('div');
     r.className = 'msg bot';
-    r.innerHTML = '<div class="av">\u05E4</div><div class="bubble"><div class="bubble-inner"><p>עובד על זה...</p></div></div>';
+    r.innerHTML = FISH_AV + '<div class="bubble"><div class="bubble-inner"><p>עובד על זה...</p></div></div>';
     C.appendChild(r);
     C.scrollTop = C.scrollHeight;
   }, 1200);
