@@ -835,6 +835,7 @@ body {
   <button onclick="go('scan')">סריקה</button>
   <button onclick="go('write')">כתיבה</button>
   <button onclick="go('fix')">שיפור</button>
+  <button onclick="go('send')">שליחה</button>
 </div>
 
 <button class="sb-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">&#9776;</button>
@@ -1098,7 +1099,26 @@ fix: [
 <strong>תוצאות:</strong> 87% מניעת נשירה (ארצי: 62%). 94% שביעות רצון. 78% בוגרים בתעסוקה/לימודים. עלות לצעיר: 633 &#8362;, ירידה 12%.<br><br>
 <strong>הכרה:</strong> רשות החדשנות (250K), מגה-אור (300K), שותפות משרד הרווחה. רדאר 360 = ראשון בישראל: AI לזיהוי צעירים + 600 מענים.</div></div>
 <p>שמות יישובים, נתון בוגרים, עלות לצעיר. קרן רש"י תראה מספרים, לא מילים.</p>
-<button class="dl-btn" onclick="alert('מוריד...')">&#8595; PDF מעודכן</button>`, chips:['מושלם', 'שני סעיף 3', 'שלח למייל'] }
+<button class="dl-btn" onclick="alert('מוריד...')">&#8595; PDF מעודכן</button>`, chips:['מושלם', 'שלח לי את הדוח הכספי', 'שלח הגשה למייל'] }
+],
+
+send: [
+  { r:'user', h:'שלח לי את הדוח הכספי למייל' },
+  { r:'bot', h:`<p>שולח את <strong>דוח כספי מבוקר 2025</strong> ל-liron@hopa.org.il.</p>
+<div class="cl">
+<div class="cl-item"><span class="cl-dot ok">&#10003;</span><span class="cl-text">דוח כספי מבוקר 2025.pdf</span><span class="cl-note">נשלח למייל</span></div>
+</div>
+<p>מה עוד?</p>`, chips:['שלח גם את התקנון', 'שלח הכל לוואטסאפ', 'שלח את ההגשה לרש"י למייל'] },
+  { r:'user', h:'שלח את כל המסמכים לוואטסאפ' },
+  { r:'bot', h:`<p>שולח 5 מסמכים לוואטסאפ 058-558-5991:</p>
+<div class="cl">
+<div class="cl-item"><span class="cl-dot ok">&#10003;</span><span class="cl-text">דוח מילולי 2025.pdf</span><span class="cl-note">נשלח</span></div>
+<div class="cl-item"><span class="cl-dot ok">&#10003;</span><span class="cl-text">דוח כספי מבוקר 2025.pdf</span><span class="cl-note">נשלח</span></div>
+<div class="cl-item"><span class="cl-dot ok">&#10003;</span><span class="cl-text">דוח אימפקט 2025.pdf</span><span class="cl-note">נשלח</span></div>
+<div class="cl-item"><span class="cl-dot ok">&#10003;</span><span class="cl-text">תקנון.pdf</span><span class="cl-note">נשלח</span></div>
+<div class="cl-item"><span class="cl-dot ok">&#10003;</span><span class="cl-text">אישור ניהול תקין.pdf</span><span class="cl-note">נשלח</span></div>
+</div>
+<p>הכל אצלך. אם את צריכה גם את ההגשה לרש"י כ-PDF מוכן, תגידי.</p>`, chips:['שלח גם את ההגשה לרש"י', 'תודה', 'תזכיר לי מחר על הדדליין'] }
 ]
 
 };
@@ -1108,7 +1128,7 @@ function go(name) {
   document.querySelectorAll('.demo button').forEach(b => b.classList.remove('on'));
   if(event?.target) event.target.classList.add('on');
 
-  const order = ['welcome','upload','scan','write','fix'];
+  const order = ['welcome','upload','scan','write','fix','send'];
   const idx = order.indexOf(name);
   let msgs = [];
   for(let i = 0; i <= idx; i++) msgs = msgs.concat(F[order[i]]);
