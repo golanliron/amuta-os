@@ -6,6 +6,185 @@
 <title>פישגולד - גייס המשאבים שלך</title>
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
+/* ===== SPLASH SCREEN ===== */
+.splash {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 9999;
+  background: linear-gradient(180deg, #0A1628 0%, #0D2847 30%, #134B8A 60%, #1A6BB5 80%, #2190D5 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: opacity 0.6s, transform 0.6s;
+}
+
+.splash.hide {
+  opacity: 0;
+  transform: scale(1.05);
+  pointer-events: none;
+}
+
+/* Ocean waves */
+.waves {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+}
+
+.wave {
+  position: absolute;
+  bottom: 0;
+  left: -5%;
+  width: 110%;
+  height: 60px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 50% 50% 0 0;
+  animation: wave 4s ease-in-out infinite;
+}
+
+.wave:nth-child(2) {
+  bottom: 10px;
+  height: 50px;
+  background: rgba(255,255,255,0.03);
+  animation-delay: -1s;
+  animation-duration: 5s;
+}
+
+.wave:nth-child(3) {
+  bottom: 20px;
+  height: 40px;
+  background: rgba(255,255,255,0.02);
+  animation-delay: -2s;
+  animation-duration: 6s;
+}
+
+@keyframes wave {
+  0%, 100% { transform: translateX(-2%); }
+  50% { transform: translateX(2%); }
+}
+
+/* Fish */
+.splash-fish {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  animation: swim 3s ease-in-out infinite;
+  z-index: 2;
+}
+
+@keyframes swim {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-12px) rotate(-3deg); }
+  75% { transform: translateY(8px) rotate(2deg); }
+}
+
+.splash-fish svg {
+  width: 140px;
+  height: 140px;
+  filter: drop-shadow(0 8px 32px rgba(238,122,48,0.4));
+}
+
+/* Dollars floating */
+.dollars {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.dollar {
+  position: absolute;
+  font-size: 24px;
+  opacity: 0;
+  animation: floatUp 3s ease-in infinite;
+}
+
+.dollar:nth-child(1) { left: 20%; animation-delay: 0s; }
+.dollar:nth-child(2) { left: 35%; animation-delay: 0.4s; font-size: 18px; }
+.dollar:nth-child(3) { left: 55%; animation-delay: 0.8s; font-size: 28px; }
+.dollar:nth-child(4) { left: 70%; animation-delay: 1.2s; }
+.dollar:nth-child(5) { left: 45%; animation-delay: 1.6s; font-size: 20px; }
+.dollar:nth-child(6) { left: 15%; animation-delay: 2s; font-size: 16px; }
+.dollar:nth-child(7) { left: 80%; animation-delay: 0.6s; font-size: 22px; }
+.dollar:nth-child(8) { left: 60%; animation-delay: 1.8s; }
+
+@keyframes floatUp {
+  0% { bottom: 30%; opacity: 0; transform: scale(0.5) rotate(0deg); }
+  20% { opacity: 0.8; }
+  50% { opacity: 0.6; }
+  100% { bottom: 80%; opacity: 0; transform: scale(0.3) rotate(30deg); }
+}
+
+/* Splash text */
+.splash-text {
+  margin-top: 32px;
+  text-align: center;
+  z-index: 2;
+}
+
+.splash-text h1 {
+  font-family: 'Rubik', sans-serif;
+  font-size: 42px;
+  font-weight: 900;
+  color: white;
+  letter-spacing: -1px;
+  margin-bottom: 8px;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+}
+
+.splash-text p {
+  font-family: 'Rubik', sans-serif;
+  font-size: 16px;
+  color: rgba(255,255,255,0.6);
+  font-weight: 400;
+}
+
+/* Loading bar */
+.splash-loader {
+  margin-top: 40px;
+  width: 200px;
+  height: 3px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.splash-loader-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #FFB347, #EE7A30);
+  border-radius: 2px;
+  animation: load 2.5s ease-in-out forwards;
+}
+
+@keyframes load {
+  0% { width: 0%; }
+  30% { width: 40%; }
+  60% { width: 70%; }
+  90% { width: 95%; }
+  100% { width: 100%; }
+}
+
+.splash-status {
+  margin-top: 14px;
+  font-family: 'Rubik', sans-serif;
+  font-size: 12px;
+  color: rgba(255,255,255,0.35);
+  z-index: 2;
+  animation: statusChange 2.5s steps(1) forwards;
+}
+
+@keyframes statusChange {
+  0% { }
+  33% { }
+  66% { }
+}
+
 :root {
   --bg: #FAFAFA;
   --card: #FFFFFF;
@@ -865,6 +1044,64 @@ body {
 </head>
 <body>
 
+<!-- SPLASH SCREEN -->
+<div class="splash" id="splash">
+  <div class="dollars">
+    <div class="dollar">$</div>
+    <div class="dollar">$</div>
+    <div class="dollar">$</div>
+    <div class="dollar">$</div>
+    <div class="dollar">$</div>
+    <div class="dollar">$</div>
+    <div class="dollar">$</div>
+    <div class="dollar">$</div>
+  </div>
+  <div class="splash-fish">
+    <svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
+      <!-- Body -->
+      <ellipse cx="105" cy="80" rx="55" ry="45" fill="#EE7A30"/>
+      <ellipse cx="105" cy="80" rx="55" ry="45" fill="url(#fishGrad)"/>
+      <!-- Tail -->
+      <path d="M50 80 L20 50 L25 80 L20 110 Z" fill="#D4651E"/>
+      <!-- Top fin -->
+      <path d="M90 38 Q105 15 120 38" fill="#D4651E" opacity="0.8"/>
+      <!-- Bottom fin -->
+      <path d="M100 120 Q110 138 125 120" fill="#D4651E" opacity="0.6"/>
+      <!-- Eye -->
+      <circle cx="130" cy="70" r="10" fill="white"/>
+      <circle cx="133" cy="69" r="5.5" fill="#1A1A1A"/>
+      <circle cx="135" cy="67" r="2" fill="white"/>
+      <!-- Mouth (eating) -->
+      <path d="M155 82 Q165 80 155 78" stroke="#B8510D" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <!-- Scales pattern -->
+      <path d="M80 65 Q90 60 100 65" stroke="#D4651E" stroke-width="1" fill="none" opacity="0.4"/>
+      <path d="M75 80 Q85 75 95 80" stroke="#D4651E" stroke-width="1" fill="none" opacity="0.4"/>
+      <path d="M80 95 Q90 90 100 95" stroke="#D4651E" stroke-width="1" fill="none" opacity="0.4"/>
+      <path d="M95 70 Q105 65 115 70" stroke="#D4651E" stroke-width="1" fill="none" opacity="0.3"/>
+      <path d="M95 85 Q105 80 115 85" stroke="#D4651E" stroke-width="1" fill="none" opacity="0.3"/>
+      <!-- Dollar near mouth -->
+      <text x="168" y="85" font-family="Rubik" font-size="18" font-weight="700" fill="#4ADE80" opacity="0.9">$</text>
+      <defs>
+        <linearGradient id="fishGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#FFB347" stop-opacity="0.6"/>
+          <stop offset="100%" stop-color="#EE7A30" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+    </svg>
+  </div>
+  <div class="splash-text">
+    <h1>פישגולד</h1>
+    <p>גייס משאבים עתיק ששוחה במים</p>
+  </div>
+  <div class="splash-loader"><div class="splash-loader-fill"></div></div>
+  <div class="splash-status" id="splash-status">קורא את המים...</div>
+  <div class="waves">
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+  </div>
+</div>
+
 <div class="demo">
   <span>DEMO</span>
   <button class="on" onclick="go('welcome')">פתיחה</button>
@@ -1289,8 +1526,18 @@ function send() {
   }, 1200);
 }
 
-// Init
-go('welcome');
+// Splash screen
+const splash = document.getElementById('splash');
+const splashStatus = document.getElementById('splash-status');
+const statusTexts = ['קורא את המים...', 'מחמם סנפירים...', 'מוכן לשחות.'];
+
+setTimeout(() => { splashStatus.textContent = statusTexts[1]; }, 900);
+setTimeout(() => { splashStatus.textContent = statusTexts[2]; }, 2000);
+setTimeout(() => {
+  splash.classList.add('hide');
+  setTimeout(() => splash.style.display = 'none', 600);
+  go('welcome');
+}, 2800);
 </script>
 </body>
 </html>
