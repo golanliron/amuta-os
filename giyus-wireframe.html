@@ -205,6 +205,43 @@ body {
   background: var(--fish-soft);
 }
 
+/* Locked / Empty State */
+.locked-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.locked-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin-bottom: 16px;
+  color: var(--ink-3);
+}
+
+.locked-state h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--ink);
+}
+
+.locked-state p {
+  font-size: 13px;
+  color: var(--ink-3);
+  line-height: 1.7;
+  max-width: 260px;
+}
+
 /* --- Tab 2: Opportunities --- */
 .opp-list {
   display: flex;
@@ -1040,10 +1077,37 @@ gantt: `
 `
 };
 
+// Empty states before org uploads documents
+const emptyStates = {
+org: `<div class="locked-state">
+  <div class="locked-icon">&#128100;</div>
+  <h3>עוד לא מכיר אותך</h3>
+  <p>תעלי מסמכים בצ'אט ואני אמלא את הכרטיס לבד</p>
+</div>`,
+opps: `<div class="locked-state">
+  <div class="locked-icon">&#128274;</div>
+  <h3>קודם צריך להכיר את הארגון</h3>
+  <p>ברגע שתעלי מסמכים ואדע מי אתם, אני אסרוק 36 מקורות ואמצא קולות קוראים שמתאימים בדיוק לכם</p>
+</div>`,
+gantt: `<div class="locked-state">
+  <div class="locked-icon">&#128197;</div>
+  <h3>לוח הזמנים ריק</h3>
+  <p>כשאמצא קולות קוראים מתאימים, הדדליינים יופיעו כאן</p>
+</div>`
+};
+
+let currentStage = 0; // 0=welcome, 1=uploaded, 2=scanned
+
 function switchTab(name) {
   document.querySelectorAll('.sb-tab').forEach(t => t.classList.remove('on'));
   event.target.classList.add('on');
-  SB.innerHTML = tabData[name];
+  if(currentStage === 0) {
+    SB.innerHTML = emptyStates[name];
+  } else if(currentStage === 1 && (name === 'opps' || name === 'gantt')) {
+    SB.innerHTML = emptyStates[name];
+  } else {
+    SB.innerHTML = tabData[name];
+  }
 }
 
 // ===== CHAT FLOWS =====
@@ -1133,16 +1197,25 @@ function go(name) {
   let msgs = [];
   for(let i = 0; i <= idx; i++) msgs = msgs.concat(F[order[i]]);
 
-  // Update sidebar based on scenario
-  if(idx >= 1) {
-    switchTabSilent('org');
-    document.querySelectorAll('.sb-tab').forEach(t => t.classList.remove('on'));
-    document.querySelectorAll('.sb-tab')[0].classList.add('on');
-  }
-  if(idx >= 2) {
-    switchTabSilent('opps');
-    document.querySelectorAll('.sb-tab').forEach(t => t.classList.remove('on'));
-    document.querySelectorAll('.sb-tab')[1].classList.add('on');
+  // Update sidebar based on scenario stage
+  const tabs = document.querySelectorAll('.sb-tab');
+  tabs.forEach(t => t.classList.remove('on'));
+
+  if(idx === 0) {
+    // Welcome: everything empty
+    currentStage = 0;
+    tabs[0].classList.add('on');
+    SB.innerHTML = emptyStates.org;
+  } else if(idx === 1) {
+    // Upload done: org filled, opps+gantt still locked
+    currentStage = 1;
+    tabs[0].classList.add('on');
+    SB.innerHTML = tabData.org;
+  } else {
+    // Scan+: everything unlocked
+    currentStage = 2;
+    tabs[1].classList.add('on');
+    SB.innerHTML = tabData.opps;
   }
 
   let lastChips = [];
@@ -1166,10 +1239,6 @@ function go(name) {
   });
 
   setTimeout(() => C.scrollTop = C.scrollHeight, 100);
-}
-
-function switchTabSilent(name) {
-  SB.innerHTML = tabData[name];
 }
 
 function send() {
@@ -1199,9 +1268,6 @@ function send() {
 }
 
 // Init
-switchTab.call(null, 'org');
-document.querySelectorAll('.sb-tab')[0].classList.add('on');
-SB.innerHTML = tabData.org;
 go('welcome');
 </script>
 </body>
