@@ -634,7 +634,9 @@ body {
 <div class="demo-bar">
   <span class="demo-label">תרחיש</span>
   <span class="version-tag">v4</span>
-  <button class="demo-btn active" onclick="go('welcome')">פתיחה</button>
+  <button class="demo-btn active" onclick="go('welcome')">הכרות</button>
+  <button class="demo-btn" onclick="go('profile')">פרופיל</button>
+  <button class="demo-btn" onclick="go('docs')">מסמכים</button>
   <button class="demo-btn" onclick="go('opps')">סריקה</button>
   <button class="demo-btn" onclick="go('deep')">ניתוח</button>
   <button class="demo-btn" onclick="go('write')">כתיבה</button>
@@ -673,7 +675,7 @@ const chatEl = document.getElementById('chat');
 const inputEl = document.getElementById('input');
 const chipsEl = document.getElementById('chips');
 
-const flows = {
+const flows_old_unused = {
 
 welcome: [
   { role:'bot', html:`
@@ -821,12 +823,43 @@ polish: [
 
 };
 
+const flows = {
+
+welcome: [
+  { role:'bot', html:'<p><strong>שלום, אני גיוס.</strong></p><p>אני סוכן AI שעוזר לעמותות למצוא קולות קוראים, לכתוב הגשות ולנהל את כל תהליך גיוס המשאבים.</p><p>בואי נתחיל. מה מספר העמותה שלך?</p>', chips:['580718847', 'אין לי מספר כרגע', 'מה אתה יודע לעשות?'] }
+],
+
+profile: [
+  { role:'user', html:'580718847' },
+  { role:'bot', html:'<p>מצאתי ברשם העמותות:</p><div class="draft-block"><div class="draft-label">פרטי העמותה</div><div class="draft-text"><strong>שם:</strong> הופה - תנועת נוער וצעירים<br><strong>ע.ר.:</strong> 580718847<br><strong>סטטוס:</strong> פעילה<br><strong>מחזור שנתי:</strong> 857,100 &#8362;<br><strong>ניהול תקין:</strong> תקף</div></div><p>מעולה. עכשיו אני צריך להבין אתכם קצת יותר. <strong>באיזה תחום אתם פועלים?</strong></p>', chips:['חינוך ונוער בסיכון', 'רווחה', 'בריאות', 'סביבה', 'תחום אחר'] }
+],
+
+docs: [
+  { role:'user', html:'חינוך ונוער בסיכון. אנחנו מלווים בני נוער 14-26 בסיכון לנשירה, עם מודל שנקרא רדאר 360' },
+  { role:'bot', html:'<p>הבנתי. סיכום מה שאני יודע עליכם:</p><div class="check-list"><div class="check-item"><span class="check-icon ok">&#10003;</span><span class="check-text">תחום: חינוך, נוער בסיכון, מניעת נשירה</span></div><div class="check-item"><span class="check-icon ok">&#10003;</span><span class="check-text">גילאים: 14-26</span></div><div class="check-item"><span class="check-icon ok">&#10003;</span><span class="check-text">מודל: רדאר 360</span></div><div class="check-item"><span class="check-icon ok">&#10003;</span><span class="check-text">מחזור: 857,100 &#8362;</span></div></div><p>כדי שאוכל לכתוב לכם הגשות חזקות, אני צריך <strong>ללמוד אתכם לעומק</strong>. יש לכם מסמכים שאפשר להעלות?</p><p>למשל: דוח מילולי, דוח כספי, דוח אימפקט, מצגת ארגון, תקנון.</p><p>פשוט גררו קבצים לתיבת ההודעה.</p>', chips:['העלאת קבצים', 'אין לי מסמכים כרגע', 'בוא נתחיל בלי מסמכים'] }
+],
+
+opps: [
+  { role:'user', html:'הנה הקבצים: דוח מילולי 2025, דוח כספי, דוח אימפקט, אישור ניהול תקין' },
+  { role:'bot', html:'<p>קיבלתי 4 מסמכים, קורא ומנתח...</p><div class="check-list"><div class="check-item"><span class="check-icon ok">&#10003;</span><span class="check-text">דוח מילולי 2025</span><span class="check-note">נקרא</span></div><div class="check-item"><span class="check-icon ok">&#10003;</span><span class="check-text">דוח כספי מבוקר</span><span class="check-note">נקרא</span></div><div class="check-item"><span class="check-icon ok">&#10003;</span><span class="check-text">דוח אימפקט 2025</span><span class="check-note">נקרא</span></div><div class="check-item"><span class="check-icon ok">&#10003;</span><span class="check-text">אישור ניהול תקין</span><span class="check-note">נקרא</span></div></div><p>עכשיו אני מכיר אתכם: 1,200 צעירים, 15 יישובים, 87% מניעת נשירה, מודל רדאר 360. מרשים.</p><p><strong>סרקתי 36 מקורות מימון. הנה 3 הזדמנויות שמתאימות לכם:</strong></p><div class="opp-card" onclick="go(\'deep\')"><div class="opp-row-1"><span class="opp-source">קרן רש"י</span><span class="opp-match high">92% התאמה</span></div><div class="opp-title">מענקים לתוכניות מניעת נשירה בפריפריה</div><div class="opp-row-2"><span class="opp-amount">&#8362;150,000</span><span class="opp-deadline urgent">&#9673; 5 ימים נותרו</span></div></div><div class="opp-card"><div class="opp-row-1"><span class="opp-source">משרד הרווחה</span><span class="opp-match high">87% התאמה</span></div><div class="opp-title">ליווי צעירים בוגרי מסגרות חוץ ביתיות</div><div class="opp-row-2"><span class="opp-amount">&#8362;280,000</span><span class="opp-deadline normal">18 יום</span></div></div><div class="opp-card"><div class="opp-row-1"><span class="opp-source">הקרן האירופית לנוער</span><span class="opp-match high">85% התאמה</span></div><div class="opp-title">העצמת נוער ושילוב חברתי</div><div class="opp-row-2"><span class="opp-amount">&euro;50,000</span><span class="opp-deadline normal">34 יום</span></div></div><p>הכי דחוף: <strong>קרן רש"י</strong> - 5 ימים לדדליין. רוצה שאצלול?</p>', chips:['ספר לי על קרן רש"י', 'כתוב לי הגשה לרש"י', 'מה עם משרד הרווחה?'] }
+],
+
+deep: [
+  { role:'user', html:'ספר לי על קרן רש"י' },
+  { role:'bot', html:'<p><strong>קרן רש"י - מניעת נשירה בפריפריה 2026</strong></p><p>קול קורא לעמותות הפועלות במניעת נשירת נוער באזורי פריפריה. דגש על חדשנות טכנולוגית ומדידת אימפקט.</p><p><strong>למה 92% התאמה:</strong></p><div class="check-list"><div class="check-item"><span class="check-icon ok">&#10003;</span><span class="check-text">מניעת נשירה = ליבת הפעילות שלכם</span></div><div class="check-item"><span class="check-icon ok">&#10003;</span><span class="check-text">פעילים בפריפריה (צפון, דרום, ירושלים)</span></div><div class="check-item"><span class="check-icon ok">&#10003;</span><span class="check-text">רדאר 360 = חדשנות טכנולוגית</span></div><div class="check-item"><span class="check-icon ok">&#10003;</span><span class="check-text">גודל תקציב תואם דרישות</span></div></div><p><strong>מה נדרש להגשה:</strong></p><div class="check-list"><div class="check-item"><span class="check-icon ok">&#10003;</span><span class="check-text">תיאור ארגון</span><span class="check-note">מוכן מהמסמכים</span></div><div class="check-item"><span class="check-icon ok">&#10003;</span><span class="check-text">ניסיון מוכח</span><span class="check-note">מוכן מהמסמכים</span></div><div class="check-item"><span class="check-icon pending">&#9998;</span><span class="check-text">תכנית עבודה</span><span class="check-note">אכתוב לך</span></div><div class="check-item"><span class="check-icon pending">&#9998;</span><span class="check-text">תקציב מפורט</span><span class="check-note">אכתוב לך</span></div><div class="check-item"><span class="check-icon ok">&#10003;</span><span class="check-text">אישור ניהול תקין</span><span class="check-note">מצורף</span></div><div class="check-item"><span class="check-icon ok">&#10003;</span><span class="check-text">דוח כספי מבוקר</span><span class="check-note">מצורף</span></div></div><p>4 מתוך 6 מוכן מהמסמכים שהעלית. צריך לכתוב רק תכנית ותקציב. תגידי <strong>"כתוב"</strong> ואני מתחיל.</p>', chips:['כתוב לי הגשה', 'כמה זמן ייקח?', 'הראה לי את הקול הקורא המלא'] }
+],
+
+write: flows_old_unused.write,
+polish: flows_old_unused.polish
+
+};
+
 function go(name) {
   chatEl.innerHTML = '';
   document.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('active'));
   if(event && event.target) event.target.classList.add('active');
 
-  const order = ['welcome','opps','deep','write','polish'];
+  const order = ['welcome','profile','docs','opps','deep','write','polish'];
   const idx = order.indexOf(name);
   let allMsgs = [];
   for(let i = 0; i <= idx; i++) {
