@@ -22,7 +22,8 @@
   --no: #DC2626;
   --no-soft: rgba(220,38,38,0.06);
   --wait: #CA8A04;
-  --r: 16px;
+  --r: 14px;
+  --sidebar: 370px;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -32,94 +33,522 @@ body {
   background: var(--bg);
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
+  height: 100vh;
+  overflow: hidden;
 }
 
-.app {
-  max-width: 760px;
-  margin: 0 auto;
-  min-height: 100vh;
-  background: var(--bg);
+/* ===== LAYOUT ===== */
+.shell {
+  display: flex;
+  height: 100vh;
+  direction: rtl;
 }
 
-/* ===== TOP BAR ===== */
-.top-bar {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  background: rgba(250,250,250,0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  padding: 14px 22px;
+/* ===== SIDEBAR ===== */
+.sidebar {
+  width: var(--sidebar);
+  background: white;
+  border-left: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.sb-head {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--line);
   display: flex;
   align-items: center;
-  gap: 14px;
-  border-bottom: 1px solid var(--line);
+  gap: 12px;
 }
 
-.fg-logo {
-  width: 48px;
-  height: 48px;
-  border-radius: 16px;
+.sb-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
   background: linear-gradient(135deg, #FFB347 0%, #EE7A30 50%, #D4651E 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 12px rgba(238,122,48,0.25);
-  position: relative;
-  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(238,122,48,0.25);
+  flex-shrink: 0;
 }
 
-/* Goldfish SVG Logo */
-.fg-logo svg {
-  width: 32px;
-  height: 32px;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
-}
+.sb-logo svg { width: 26px; height: 26px; }
 
-.fg-name { flex: 1; }
-
-.fg-name h1 {
-  font-size: 20px;
+.sb-title h1 {
+  font-size: 18px;
   font-weight: 700;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.3px;
+}
+
+.sb-title p {
+  font-size: 11px;
+  color: var(--ink-3);
+}
+
+/* Sidebar Tabs */
+.sb-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg);
+}
+
+.sb-tab {
+  flex: 1;
+  padding: 12px 8px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-3);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+  background: none;
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  font-family: 'Rubik', sans-serif;
+}
+
+.sb-tab:hover { color: var(--ink-2); }
+.sb-tab.on { color: var(--fish); border-bottom-color: var(--fish); background: white; }
+
+.sb-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+/* --- Tab 1: Org Profile --- */
+.org-card {
+  background: var(--bg);
+  border-radius: var(--r);
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.org-card .org-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ink-3);
+  letter-spacing: 0.3px;
+  margin-bottom: 3px;
+}
+
+.org-card .org-val {
+  font-size: 14px;
+  font-weight: 600;
   color: var(--ink);
 }
 
-.fg-name p {
-  font-size: 12px;
+.org-card .org-val.accent { color: var(--fish-deep); }
+
+.org-section {
+  font-size: 11px;
+  font-weight: 700;
   color: var(--ink-3);
-  font-weight: 400;
+  letter-spacing: 0.3px;
+  margin: 16px 0 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--line);
 }
 
-.fg-dots {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  border: 1px solid var(--line);
-  background: white;
+.org-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.org-docs {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.org-doc {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--bg);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+
+.org-doc .check { color: var(--yes); font-size: 14px; }
+
+.org-upload-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  font-size: 18px;
+  gap: 6px;
+  padding: 10px;
+  margin-top: 12px;
+  border: 1.5px dashed var(--line);
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
   color: var(--ink-3);
+  cursor: pointer;
+  transition: all 0.15s;
+  background: none;
+  font-family: 'Rubik', sans-serif;
+  width: 100%;
+}
+
+.org-upload-btn:hover {
+  border-color: var(--fish);
+  color: var(--fish);
+  background: var(--fish-soft);
+}
+
+/* --- Tab 2: Opportunities --- */
+.opp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.opp-card {
+  background: var(--bg);
+  border-radius: var(--r);
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+}
+
+.opp-card:hover {
+  background: var(--fish-soft);
+  box-shadow: 0 2px 12px rgba(238,122,48,0.08);
+}
+
+.opp-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.opp-card-from {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--fish-deep);
+  letter-spacing: 0.2px;
+}
+
+.opp-card-pct {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: var(--yes-soft);
+  color: var(--yes);
+}
+
+.opp-card h4 {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.opp-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.opp-card-sum {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+.opp-card-dl {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.opp-card-dl.hot { color: var(--no); }
+.opp-card-dl.warm { color: var(--wait); }
+.opp-card-dl.cool { color: var(--ink-3); }
+
+.opp-card-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.opp-action {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 7px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: white;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'Rubik', sans-serif;
+}
+
+.opp-action:hover { border-color: var(--fish); color: var(--fish); }
+.opp-action .icon { font-size: 14px; }
+
+.opp-send-all {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 11px;
+  margin-top: 10px;
+  border-radius: 10px;
+  background: var(--ink);
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-family: 'Rubik', sans-serif;
+  width: 100%;
   transition: all 0.15s;
 }
 
-.fg-dots:hover { border-color: var(--fish); color: var(--fish); }
+.opp-send-all:hover { background: var(--fish); }
 
-/* ===== CHAT ===== */
-.chat {
-  padding: 28px 20px 185px;
+/* --- Tab 3: Timeline / Gantt --- */
+.gantt-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.gantt-month {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.gantt-nav {
+  display: flex;
+  gap: 4px;
+}
+
+.gantt-nav button {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: white;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--ink-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Rubik', sans-serif;
+  transition: all 0.15s;
+}
+
+.gantt-nav button:hover { border-color: var(--fish); color: var(--fish); }
+
+.gantt-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 16px;
+}
+
+.gantt-day-label {
+  text-align: center;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ink-3);
+  padding: 4px 0;
+}
+
+.gantt-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-2);
+  position: relative;
+  cursor: default;
+}
+
+.gantt-day.today {
+  background: var(--ink);
+  color: white;
+  font-weight: 700;
+  border-radius: 50%;
+}
+
+.gantt-day.deadline {
+  background: var(--fish-soft);
+  color: var(--fish-deep);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.gantt-day.deadline.urgent {
+  background: var(--no-soft);
+  color: var(--no);
+}
+
+.gantt-day.deadline::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.gantt-day.past { color: var(--ink-3); opacity: 0.4; }
+
+.gantt-events {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 8px;
+}
+
+.gantt-event {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--bg);
+  border-radius: 10px;
+}
+
+.gantt-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+
+.gantt-dot.urgent { background: var(--no); }
+.gantt-dot.soon { background: var(--fish); }
+.gantt-dot.later { background: var(--ink-3); }
+
+.gantt-event-info { flex: 1; }
+
+.gantt-event-title {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.gantt-event-date {
+  font-size: 11px;
+  color: var(--ink-3);
+}
+
+.gantt-sync {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px;
+  margin-top: 14px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: white;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-2);
+  cursor: pointer;
+  font-family: 'Rubik', sans-serif;
+  width: 100%;
+  transition: all 0.15s;
+}
+
+.gantt-sync:hover { border-color: var(--fish); color: var(--fish); }
+.gantt-sync .g-icon { font-size: 16px; }
+
+/* ===== MAIN CHAT AREA ===== */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  position: relative;
+}
+
+.chat-head {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(250,250,250,0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chat-head-av {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #FFB347, #EE7A30);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-head-av svg { width: 20px; height: 20px; }
+
+.chat-head-info h2 {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.chat-head-info p {
+  font-size: 11px;
+  color: var(--yes);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.chat-head-info p::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--yes);
+  border-radius: 50%;
+}
+
+.chat {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
 }
 
 .msg {
   display: flex;
   gap: 12px;
-  max-width: 94%;
+  max-width: 88%;
   animation: fadeUp 0.3s cubic-bezier(0.16,1,0.3,1);
 }
 
@@ -132,9 +561,9 @@ body {
 .msg.user { align-self: flex-end; flex-direction: row-reverse; }
 
 .av {
-  width: 38px;
-  height: 38px;
-  border-radius: 14px;
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -144,24 +573,22 @@ body {
 
 .msg.bot .av {
   background: linear-gradient(135deg, #FFB347, #EE7A30);
-  border-radius: 14px;
 }
 
-.msg.bot .av svg { width: 20px; height: 20px; }
+.msg.bot .av svg { width: 18px; height: 18px; }
 
 .msg.user .av {
   background: var(--line);
   color: var(--ink-2);
-  font-size: 15px;
-  border-radius: 14px;
+  font-size: 14px;
 }
 
 .bubble { flex: 1; min-width: 0; }
 
 .bubble-inner {
-  font-size: 15px;
+  font-size: 14.5px;
   line-height: 1.8;
-  padding: 18px 22px;
+  padding: 16px 20px;
   border-radius: var(--r);
 }
 
@@ -178,93 +605,14 @@ body {
 }
 
 .bubble-inner strong { font-weight: 600; }
-.bubble-inner p { margin-bottom: 10px; }
+.bubble-inner p { margin-bottom: 8px; }
 .bubble-inner p:last-child { margin-bottom: 0; }
 
-/* ===== SIG ===== */
-.sig {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px dashed var(--line);
-  font-size: 12px;
-  color: var(--ink-3);
-}
-
-.sig svg { width: 14px; height: 14px; flex-shrink: 0; }
-
-/* ===== OPP CARDS ===== */
-.opp {
-  background: white;
-  border: 1px solid var(--line);
-  border-radius: var(--r);
-  padding: 20px;
-  margin: 10px 0;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.opp:hover {
-  border-color: var(--fish);
-  box-shadow: 0 8px 30px var(--fish-soft);
-  transform: translateY(-1px);
-}
-
-.opp-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 6px;
-}
-
-.opp-from {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--fish-deep);
-  letter-spacing: 0.3px;
-}
-
-.opp-pct {
-  font-size: 12px;
-  font-weight: 700;
-  padding: 2px 10px;
-  border-radius: 20px;
-  background: var(--yes-soft);
-  color: var(--yes);
-}
-
-.opp h3 {
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1.45;
-  margin-bottom: 14px;
-}
-
-.opp-foot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.opp-sum {
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-}
-
-.opp-dl { font-size: 12px; font-weight: 600; }
-.opp-dl.hot { color: var(--no); }
-.opp-dl.warm { color: var(--wait); }
-.opp-dl.cool { color: var(--ink-3); }
-
-/* ===== INFO BLOCK ===== */
+/* Info blocks in chat */
 .info-block {
-  background: white;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 18px 20px;
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 14px 16px;
   margin: 8px 0;
   position: relative;
   overflow: hidden;
@@ -281,374 +629,201 @@ body {
 }
 
 .info-block .ib-label {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.3px;
   color: var(--fish);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .info-block .ib-text {
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.85;
   color: var(--ink-2);
 }
 
 .info-block .ib-text strong { color: var(--ink); font-weight: 600; }
 
-/* ===== MEMORY BLOCK ===== */
-.mem-block {
-  background: white;
-  border: 1px solid var(--line);
-  border-radius: var(--r);
-  padding: 20px;
-  margin: 10px 0;
-  overflow: hidden;
-}
-
-.mem-head {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 14px;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--ink);
-}
-
-.mem-head svg { width: 18px; height: 18px; }
-
-.mem-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-}
-
-.mem-item {
-  padding: 10px 14px;
-  background: var(--bg);
-  border-radius: 10px;
-}
-
-.mem-item .label {
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--ink-3);
-  letter-spacing: 0.2px;
-  margin-bottom: 2px;
-}
-
-.mem-item .val {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--ink);
-}
-
-.mem-item .val.accent { color: var(--fish-deep); font-weight: 700; }
-
-.mem-updated {
-  margin-top: 10px;
-  font-size: 11px;
-  color: var(--ink-3);
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-/* ===== CHECKLIST ===== */
-.cl {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin: 10px 0;
-}
-
+/* Checklist in chat */
+.cl { display: flex; flex-direction: column; gap: 4px; margin: 8px 0; }
 .cl-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  background: var(--bg);
-  border-radius: 10px;
-  font-size: 14px;
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; background: var(--bg);
+  border-radius: 8px; font-size: 13px;
 }
-
 .cl-dot {
-  width: 24px;
-  height: 24px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  flex-shrink: 0;
-  font-weight: 700;
+  width: 22px; height: 22px; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; flex-shrink: 0; font-weight: 700;
 }
-
 .cl-dot.ok { background: var(--yes-soft); color: var(--yes); }
 .cl-dot.ai { background: var(--fish-soft); color: var(--fish); }
-
 .cl-text { flex: 1; font-weight: 500; }
-.cl-note { font-size: 12px; color: var(--ink-3); }
+.cl-note { font-size: 11px; color: var(--ink-3); }
 
-/* ===== UPLOAD ZONE ===== */
-.up-zone {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin: 14px 0;
-}
-
-.up-chip {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 14px 16px;
-  background: white;
-  border: 1.5px dashed var(--line);
-  border-radius: 14px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--ink-2);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.up-chip:hover {
-  border-color: var(--fish);
-  color: var(--fish);
-  background: var(--fish-soft);
-  border-style: solid;
-}
-
-.up-chip span { font-size: 18px; }
-
-/* ===== PROGRESS ===== */
+/* Progress */
 .prog {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  background: var(--bg);
-  border-radius: 10px;
-  margin: 10px 0;
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; background: var(--bg);
+  border-radius: 8px; margin: 8px 0;
 }
+.prog-bar { flex: 1; height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; }
+.prog-fill { height: 100%; background: linear-gradient(90deg, #FFB347, var(--fish)); border-radius: 2px; }
+.prog-txt { font-size: 12px; font-weight: 700; color: var(--fish); }
 
-.prog-bar {
-  flex: 1;
-  height: 4px;
-  background: var(--line);
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.prog-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #FFB347, var(--fish));
-  border-radius: 2px;
-}
-
-.prog-txt {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--fish);
-  white-space: nowrap;
-}
-
-/* ===== BUTTONS ===== */
+/* Download button */
 .dl-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 13px 28px;
-  background: var(--ink);
-  color: white;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  font-family: 'Rubik', sans-serif;
-  margin-top: 10px;
-  transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 24px; background: var(--ink); color: white;
+  border-radius: 10px; font-size: 13px; font-weight: 600;
+  border: none; cursor: pointer; font-family: 'Rubik', sans-serif;
+  margin-top: 8px; transition: all 0.15s;
 }
+.dl-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
 
-.dl-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 24px rgba(0,0,0,0.12);
-}
-
-/* ===== QUICK CHIPS ===== */
-.chip {
-  padding: 9px 16px;
-  border-radius: 10px;
-  border: 1px solid var(--line);
-  background: white;
-  color: var(--ink-2);
-  font-family: 'Rubik', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s;
-  white-space: nowrap;
-}
-
-.chip:hover {
-  border-color: var(--fish);
-  color: var(--fish);
-  background: var(--fish-soft);
-}
-
-/* ===== INPUT ===== */
+/* ===== INPUT AREA ===== */
 .input-wrap {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 760px;
-  padding: 10px 20px 22px;
-  background: linear-gradient(180deg, rgba(250,250,250,0) 0%, var(--bg) 30%);
-  z-index: 60;
+  padding: 12px 20px 18px;
+  border-top: 1px solid var(--line);
+  background: white;
 }
 
 .input-chips {
   display: flex;
-  gap: 6px;
+  gap: 5px;
   overflow-x: auto;
-  padding-bottom: 10px;
+  padding-bottom: 8px;
   scrollbar-width: none;
 }
 
 .input-chips::-webkit-scrollbar { display: none; }
 
+.chip {
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--ink-2);
+  font-family: 'Rubik', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.chip:hover { border-color: var(--fish); color: var(--fish); background: var(--fish-soft); }
+
 .input-box {
   display: flex;
   align-items: center;
-  gap: 10px;
-  background: white;
+  gap: 8px;
+  background: var(--bg);
   border: 1.5px solid var(--line);
-  border-radius: 16px;
-  padding: 5px 6px 5px 18px;
+  border-radius: 14px;
+  padding: 4px 6px 4px 16px;
   transition: all 0.2s;
-  box-shadow: 0 1px 8px rgba(0,0,0,0.04);
 }
 
 .input-box:focus-within {
   border-color: var(--fish);
-  box-shadow: 0 0 0 3px var(--fish-glow), 0 1px 8px rgba(0,0,0,0.04);
+  box-shadow: 0 0 0 3px var(--fish-glow);
+  background: white;
 }
 
 .input-box input {
-  flex: 1;
-  border: none;
-  background: none;
-  font-family: 'Rubik', sans-serif;
-  font-size: 15px;
-  color: var(--ink);
-  outline: none;
-  padding: 10px 0;
+  flex: 1; border: none; background: none;
+  font-family: 'Rubik', sans-serif; font-size: 14px;
+  color: var(--ink); outline: none; padding: 8px 0;
 }
 
 .input-box input::placeholder { color: var(--ink-3); }
 
 .input-box .att {
-  background: none;
-  border: none;
-  color: var(--ink-3);
-  font-size: 20px;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 10px;
-  transition: all 0.15s;
+  background: none; border: none; color: var(--ink-3);
+  font-size: 18px; cursor: pointer; padding: 6px;
+  border-radius: 8px; transition: all 0.15s;
 }
 
-.input-box .att:hover { color: var(--fish); background: var(--fish-soft); }
+.input-box .att:hover { color: var(--fish); }
 
 .input-box .go {
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
-  background: var(--ink);
-  border: none;
-  color: white;
-  font-size: 20px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.15s;
-  flex-shrink: 0;
+  width: 40px; height: 40px; border-radius: 12px;
+  background: var(--ink); border: none; color: white;
+  font-size: 18px; cursor: pointer; display: flex;
+  align-items: center; justify-content: center;
+  transition: all 0.15s; flex-shrink: 0;
 }
 
-.input-box .go:hover {
-  background: var(--fish);
-}
+.input-box .go:hover { background: var(--fish); }
 
 /* ===== TYPING ===== */
-.dots { display: flex; gap: 5px; padding: 4px 0; }
-.dots span {
-  width: 6px; height: 6px;
-  background: var(--fish);
-  border-radius: 50%;
-  animation: bounce 1.4s infinite;
-}
+.dots { display: flex; gap: 4px; padding: 4px 0; }
+.dots span { width: 5px; height: 5px; background: var(--fish); border-radius: 50%; animation: bounce 1.4s infinite; }
 .dots span:nth-child(2) { animation-delay: .15s; }
 .dots span:nth-child(3) { animation-delay: .3s; }
-@keyframes bounce {
-  0%,60%,100% { opacity:.3; transform:scale(.85); }
-  30% { opacity:1; transform:scale(1.1); }
-}
+@keyframes bounce { 0%,60%,100% { opacity:.3; transform:scale(.85); } 30% { opacity:1; transform:scale(1.1); } }
 
 /* ===== DEMO BAR ===== */
 .demo {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  background: var(--ink);
-  padding: 7px 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  z-index: 200;
+  position: fixed; top: 0; left: 0; right: 0;
+  background: var(--ink); padding: 6px 12px;
+  display: flex; align-items: center; justify-content: center;
+  gap: 4px; z-index: 200;
 }
-
-.demo span {
-  font-size: 9px;
-  color: var(--fish);
-  margin-left: 8px;
-  font-weight: 700;
-  letter-spacing: 2px;
-}
-
+.demo span { font-size: 9px; color: var(--fish); margin-left: 8px; font-weight: 700; letter-spacing: 2px; }
 .demo button {
-  padding: 4px 11px;
-  border-radius: 6px;
-  border: 1px solid rgba(255,255,255,0.06);
-  background: transparent;
-  color: rgba(255,255,255,0.35);
-  font-family: 'Rubik', sans-serif;
-  font-size: 11px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s;
+  padding: 4px 10px; border-radius: 5px;
+  border: 1px solid rgba(255,255,255,0.06); background: transparent;
+  color: rgba(255,255,255,0.35); font-family: 'Rubik', sans-serif;
+  font-size: 11px; font-weight: 500; cursor: pointer; transition: all 0.15s;
 }
-
 .demo button:hover { color: white; background: rgba(255,255,255,0.06); }
 .demo button.on { background: var(--fish); border-color: var(--fish); color: white; font-weight: 600; }
 
-.top-bar { margin-top: 34px; }
+.shell { margin-top: 32px; height: calc(100vh - 32px); }
+
+/* ===== MOBILE ===== */
+.sb-toggle {
+  display: none;
+  position: fixed;
+  bottom: 90px;
+  left: 16px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--fish);
+  color: white;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 100;
+  box-shadow: 0 4px 16px rgba(238,122,48,0.3);
+  align-items: center;
+  justify-content: center;
+  font-family: 'Rubik', sans-serif;
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    position: fixed;
+    top: 32px;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 400px;
+    z-index: 100;
+    transform: translateX(100%);
+    transition: transform 0.25s cubic-bezier(0.16,1,0.3,1);
+    box-shadow: -4px 0 24px rgba(0,0,0,0.1);
+  }
+  .sidebar.open { transform: translateX(0); }
+  .sb-toggle { display: flex; }
+  .main { width: 100%; }
+}
 
 ::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 2px; }
-
-@media (max-width:760px) {
-  .app, .input-wrap { max-width: 100%; }
-  .up-zone { grid-template-columns: 1fr; }
-  .mem-grid { grid-template-columns: 1fr; }
-}
 </style>
 </head>
 <body>
@@ -657,185 +832,273 @@ body {
   <span>DEMO</span>
   <button class="on" onclick="go('welcome')">פתיחה</button>
   <button onclick="go('upload')">העלאה</button>
-  <button onclick="go('memory')">זיכרון</button>
   <button onclick="go('scan')">סריקה</button>
   <button onclick="go('write')">כתיבה</button>
   <button onclick="go('fix')">שיפור</button>
 </div>
 
-<div class="app">
-  <div class="top-bar">
-    <div class="fg-logo">
-      <svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
-        <path d="M8 40 C8 40 2 28 10 18 L22 32 C30 16 46 10 62 14 C78 18 88 30 88 42 C88 56 76 68 60 68 C48 68 36 62 28 52 L10 62 C2 52 8 40 8 40Z" fill="white" opacity="0.95"/>
-        <circle cx="68" cy="36" r="4.5" fill="#B8510D"/>
-        <path d="M50 42 Q56 38 62 42 Q56 46 50 42Z" fill="#D4651E" opacity="0.4"/>
-      </svg>
+<button class="sb-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">&#9776;</button>
+
+<div class="shell">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-head">
+      <div class="sb-logo">
+        <svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 40 Q18 22 40 16 Q55 12 68 18 Q82 26 84 42 Q84 58 68 64 Q52 70 38 62 L18 72 Q12 58 18 40Z" fill="white" opacity="0.95"/>
+          <path d="M14 40 Q8 30 14 20 L22 34Z" fill="white" opacity="0.8"/>
+          <circle cx="65" cy="34" r="4" fill="#B8510D"/>
+          <path d="M48 44 Q56 40 64 44" stroke="white" stroke-width="2" fill="none" opacity="0.5"/>
+        </svg>
+      </div>
+      <div class="sb-title">
+        <h1>פישגולד</h1>
+        <p>גייס המשאבים שלך</p>
+      </div>
     </div>
-    <div class="fg-name">
-      <h1>פישגולד</h1>
-      <p>גייס המשאבים שלך</p>
+
+    <div class="sb-tabs">
+      <button class="sb-tab on" onclick="switchTab('org')">העמותה</button>
+      <button class="sb-tab" onclick="switchTab('opps')">קולות קוראים</button>
+      <button class="sb-tab" onclick="switchTab('gantt')">לוח זמנים</button>
     </div>
-    <div class="fg-dots">&#8943;</div>
+
+    <div class="sb-body" id="sb-body">
+      <!-- filled by JS -->
+    </div>
+  </aside>
+
+  <!-- ===== MAIN CHAT ===== -->
+  <div class="main">
+    <div class="chat-head">
+      <div class="chat-head-av">
+        <svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 40 Q18 22 40 16 Q55 12 68 18 Q82 26 84 42 Q84 58 68 64 Q52 70 38 62 L18 72 Q12 58 18 40Z" fill="white" opacity="0.95"/>
+          <path d="M14 40 Q8 30 14 20 L22 34Z" fill="white" opacity="0.8"/>
+          <circle cx="65" cy="34" r="4" fill="#B8510D"/>
+        </svg>
+      </div>
+      <div class="chat-head-info">
+        <h2>פישגולד</h2>
+        <p>מחובר</p>
+      </div>
+    </div>
+
+    <div class="chat" id="chat"></div>
+
+    <div class="input-wrap">
+      <div class="input-chips" id="chips"></div>
+      <div class="input-box">
+        <button class="att">&#128206;</button>
+        <input id="input" placeholder="תכתבי לפישגולד..." onkeydown="if(event.key==='Enter')send()">
+        <button class="go" onclick="send()">&#8593;</button>
+      </div>
+    </div>
   </div>
 
-  <div class="chat" id="chat"></div>
-
-  <div class="input-wrap">
-    <div class="input-chips" id="chips"></div>
-    <div class="input-box">
-      <button class="att">&#128206;</button>
-      <input id="input" placeholder="תכתבי לפישגולד..." onkeydown="if(event.key==='Enter')send()">
-      <button class="go" onclick="send()">&#8593;</button>
-    </div>
-  </div>
 </div>
 
 <script>
-const FISH_AV = `<div class="av"><svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg"><path d="M8 40 C8 40 2 28 10 18 L22 32 C30 16 46 10 62 14 C78 18 88 30 88 42 C88 56 76 68 60 68 C48 68 36 62 28 52 L10 62 C2 52 8 40 8 40Z" fill="white" opacity="0.95"/><circle cx="68" cy="36" r="4.5" fill="#B8510D"/><path d="M50 42 Q56 38 62 42 Q56 46 50 42Z" fill="#D4651E" opacity="0.4"/></svg></div>`;
-
-const MEM_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>`;
+const FISH_SVG = `<svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg"><path d="M18 40 Q18 22 40 16 Q55 12 68 18 Q82 26 84 42 Q84 58 68 64 Q52 70 38 62 L18 72 Q12 58 18 40Z" fill="white" opacity="0.95"/><path d="M14 40 Q8 30 14 20 L22 34Z" fill="white" opacity="0.8"/><circle cx="65" cy="34" r="4" fill="#B8510D"/></svg>`;
+const FISH_AV = `<div class="av">${FISH_SVG}</div>`;
 
 const C = document.getElementById('chat');
 const I = document.getElementById('input');
 const CH = document.getElementById('chips');
+const SB = document.getElementById('sb-body');
 
+// ===== SIDEBAR TABS =====
+const tabData = {
+org: `
+<div class="org-section">פרטי ארגון</div>
+<div class="org-grid">
+  <div class="org-card"><div class="org-label">שם</div><div class="org-val">עמותת הופה</div></div>
+  <div class="org-card"><div class="org-label">ע.ר.</div><div class="org-val">580718847</div></div>
+  <div class="org-card"><div class="org-label">תחום</div><div class="org-val">מניעת נשירה</div></div>
+  <div class="org-card"><div class="org-label">גילאים</div><div class="org-val">14-26</div></div>
+  <div class="org-card"><div class="org-label">מודל</div><div class="org-val accent">רדאר 360</div></div>
+  <div class="org-card"><div class="org-label">מוטבים</div><div class="org-val accent">1,500</div></div>
+  <div class="org-card"><div class="org-label">יישובים</div><div class="org-val">15</div></div>
+  <div class="org-card"><div class="org-label">מחזור</div><div class="org-val accent">950,000 &#8362;</div></div>
+  <div class="org-card"><div class="org-label">עובדים</div><div class="org-val">8 + 50 מנטורים</div></div>
+  <div class="org-card"><div class="org-label">הצלחה</div><div class="org-val accent">87%</div></div>
+  <div class="org-card"><div class="org-label">אזורים</div><div class="org-val">צפון, דרום, י-ם</div></div>
+  <div class="org-card"><div class="org-label">ניהול תקין</div><div class="org-val">תקף 2027</div></div>
+</div>
+<div class="org-section">מסמכים</div>
+<div class="org-docs">
+  <div class="org-doc"><span class="check">&#10003;</span> דוח מילולי 2025</div>
+  <div class="org-doc"><span class="check">&#10003;</span> דוח כספי מבוקר</div>
+  <div class="org-doc"><span class="check">&#10003;</span> דוח אימפקט</div>
+  <div class="org-doc"><span class="check">&#10003;</span> תקנון</div>
+  <div class="org-doc"><span class="check">&#10003;</span> אישור ניהול תקין</div>
+  <div class="org-doc"><span class="check">&#10003;</span> אתר hopa.org.il</div>
+</div>
+<button class="org-upload-btn">+ העלאת מסמך חדש</button>
+<div class="org-section">מענקים פעילים</div>
+<div class="org-docs">
+  <div class="org-doc"><span class="check">&#10003;</span> רשות החדשנות (250K)</div>
+  <div class="org-doc"><span class="check">&#10003;</span> מגה-אור (300K)</div>
+</div>
+`,
+
+opps: `
+<div class="opp-list">
+  <div class="opp-card">
+    <div class="opp-card-head"><span class="opp-card-from">קרן רש"י</span><span class="opp-card-pct">94%</span></div>
+    <h4>מניעת נשירה בפריפריה 2026</h4>
+    <div class="opp-card-meta"><span class="opp-card-sum">&#8362;150,000</span><span class="opp-card-dl hot">&#9679; 5 ימים</span></div>
+    <div class="opp-card-actions">
+      <button class="opp-action" onclick="alert('נשלח למייל')"><span class="icon">&#9993;</span> מייל</button>
+      <button class="opp-action" onclick="alert('נשלח לוואטסאפ')"><span class="icon">&#128172;</span> וואטסאפ</button>
+      <button class="opp-action" onclick="go('write')" style="color:var(--fish);border-color:var(--fish)"><span class="icon">&#9998;</span> כתוב הגשה</button>
+    </div>
+  </div>
+  <div class="opp-card">
+    <div class="opp-card-head"><span class="opp-card-from">משרד הרווחה</span><span class="opp-card-pct">88%</span></div>
+    <h4>ליווי צעירים בוגרי מסגרות חוץ ביתיות</h4>
+    <div class="opp-card-meta"><span class="opp-card-sum">&#8362;280,000</span><span class="opp-card-dl warm">18 יום</span></div>
+    <div class="opp-card-actions">
+      <button class="opp-action" onclick="alert('נשלח למייל')"><span class="icon">&#9993;</span> מייל</button>
+      <button class="opp-action" onclick="alert('נשלח לוואטסאפ')"><span class="icon">&#128172;</span> וואטסאפ</button>
+      <button class="opp-action"><span class="icon">&#9998;</span> כתוב הגשה</button>
+    </div>
+  </div>
+  <div class="opp-card">
+    <div class="opp-card-head"><span class="opp-card-from">הקרן האירופית לנוער</span><span class="opp-card-pct">85%</span></div>
+    <h4>Youth Empowerment & Social Integration</h4>
+    <div class="opp-card-meta"><span class="opp-card-sum">&euro;50,000</span><span class="opp-card-dl cool">34 יום</span></div>
+    <div class="opp-card-actions">
+      <button class="opp-action" onclick="alert('נשלח למייל')"><span class="icon">&#9993;</span> מייל</button>
+      <button class="opp-action" onclick="alert('נשלח לוואטסאפ')"><span class="icon">&#128172;</span> וואטסאפ</button>
+      <button class="opp-action"><span class="icon">&#9998;</span> כתוב הגשה</button>
+    </div>
+  </div>
+  <div class="opp-card">
+    <div class="opp-card-head"><span class="opp-card-from">קרן גנדיר</span><span class="opp-card-pct">79%</span></div>
+    <h4>חדשנות חינוכית בפריפריה</h4>
+    <div class="opp-card-meta"><span class="opp-card-sum">&#8362;200,000</span><span class="opp-card-dl cool">45 יום</span></div>
+    <div class="opp-card-actions">
+      <button class="opp-action" onclick="alert('נשלח למייל')"><span class="icon">&#9993;</span> מייל</button>
+      <button class="opp-action" onclick="alert('נשלח לוואטסאפ')"><span class="icon">&#128172;</span> וואטסאפ</button>
+      <button class="opp-action"><span class="icon">&#9998;</span> כתוב הגשה</button>
+    </div>
+  </div>
+</div>
+<button class="opp-send-all" onclick="alert('נשלח סיכום שבועי')">&#9993; שלח סיכום שבועי למייל</button>
+`,
+
+gantt: `
+<div class="gantt-header">
+  <span class="gantt-month">מאי 2026</span>
+  <div class="gantt-nav">
+    <button>&#8249;</button>
+    <button>&#8250;</button>
+  </div>
+</div>
+<div class="gantt-days">
+  <div class="gantt-day-label">א</div><div class="gantt-day-label">ב</div><div class="gantt-day-label">ג</div><div class="gantt-day-label">ד</div><div class="gantt-day-label">ה</div><div class="gantt-day-label">ו</div><div class="gantt-day-label">ש</div>
+  <div class="gantt-day past">27</div><div class="gantt-day past">28</div><div class="gantt-day past">29</div><div class="gantt-day past">30</div><div class="gantt-day past">1</div><div class="gantt-day past">2</div><div class="gantt-day past">3</div>
+  <div class="gantt-day today">4</div><div class="gantt-day">5</div><div class="gantt-day">6</div><div class="gantt-day">7</div><div class="gantt-day">8</div><div class="gantt-day deadline urgent" title="קרן רש&quot;י">9</div><div class="gantt-day">10</div>
+  <div class="gantt-day">11</div><div class="gantt-day">12</div><div class="gantt-day">13</div><div class="gantt-day">14</div><div class="gantt-day">15</div><div class="gantt-day">16</div><div class="gantt-day">17</div>
+  <div class="gantt-day">18</div><div class="gantt-day">19</div><div class="gantt-day">20</div><div class="gantt-day">21</div><div class="gantt-day deadline" title="משרד הרווחה">22</div><div class="gantt-day">23</div><div class="gantt-day">24</div>
+  <div class="gantt-day">25</div><div class="gantt-day">26</div><div class="gantt-day">27</div><div class="gantt-day">28</div><div class="gantt-day">29</div><div class="gantt-day">30</div><div class="gantt-day">31</div>
+</div>
+<div class="gantt-events">
+  <div class="gantt-event">
+    <div class="gantt-dot urgent"></div>
+    <div class="gantt-event-info">
+      <div class="gantt-event-title">קרן רש"י - מניעת נשירה</div>
+      <div class="gantt-event-date">9 במאי | 5 ימים | &#8362;150,000</div>
+    </div>
+  </div>
+  <div class="gantt-event">
+    <div class="gantt-dot soon"></div>
+    <div class="gantt-event-info">
+      <div class="gantt-event-title">משרד הרווחה - בוגרי מסגרות</div>
+      <div class="gantt-event-date">22 במאי | 18 יום | &#8362;280,000</div>
+    </div>
+  </div>
+  <div class="gantt-event">
+    <div class="gantt-dot later"></div>
+    <div class="gantt-event-info">
+      <div class="gantt-event-title">הקרן האירופית לנוער</div>
+      <div class="gantt-event-date">7 ביוני | 34 יום | &euro;50,000</div>
+    </div>
+  </div>
+  <div class="gantt-event">
+    <div class="gantt-dot later"></div>
+    <div class="gantt-event-info">
+      <div class="gantt-event-title">קרן גנדיר - חדשנות חינוכית</div>
+      <div class="gantt-event-date">18 ביוני | 45 יום | &#8362;200,000</div>
+    </div>
+  </div>
+</div>
+<button class="gantt-sync" onclick="alert('מסנכרן עם Google Calendar...')"><span class="g-icon">&#128197;</span> סנכרון עם Google Calendar</button>
+`
+};
+
+function switchTab(name) {
+  document.querySelectorAll('.sb-tab').forEach(t => t.classList.remove('on'));
+  event.target.classList.add('on');
+  SB.innerHTML = tabData[name];
+}
+
+// ===== CHAT FLOWS =====
 const F = {
 
 welcome: [
   { r:'bot', h:`<p><strong>שלום. אני פישגולד.</strong></p>
-<p>לא צ'אטבוט, לא "כלי AI". אני גייס משאבים. עשיתי את זה 20 שנה לפני שהפכתי לדיגיטלי, ואני עושה את זה עכשיו טוב יותר מכל יועץ שתשכרי.</p>
-<p>אני קורא קולות קוראים כמו שאנשים קוראים כותרות. אני יודע מה קרנות רוצות לשמוע, ומה גורם להן לזרוק בקשה אחרי שני משפטים.</p>
-<p><strong>בואי נתחיל. תעלי לי את כל מה שיש על הארגון.</strong></p>
-<div class="up-zone">
-<div class="up-chip"><span>&#128196;</span> קבצים (PDF, Word, Excel)</div>
-<div class="up-chip"><span>&#127760;</span> לינק לאתר הארגון</div>
-<div class="up-chip"><span>&#128194;</span> תיקיית Google Drive</div>
-<div class="up-chip"><span>&#128233;</span> הגשות קודמות</div>
-</div>
-<div class="sig"><svg viewBox="0 0 24 24" fill="none" stroke="#EE7A30" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg> כל מסמך שתעלי נשמר אצלי לצמיתות. אני לא שוכח.</div>` }
+<p>לא צ'אטבוט, לא "כלי AI". אני גייס משאבים. עשיתי את זה 20 שנה לפני שהפכתי לדיגיטלי, ואני עושה את זה טוב יותר מכל יועץ שתשכרי.</p>
+<p>אני יודע מה קרנות רוצות לשמוע, ומה גורם להן לזרוק בקשה אחרי שני משפטים.</p>
+<p><strong>תעלי לי את כל מה שיש על הארגון. ככל שאדע יותר, אכתוב יותר טוב.</strong></p>` }
 ],
 
 upload: [
-  { r:'user', h:'הנה: דוח מילולי 2025, דוח כספי, דוח אימפקט, תקנון, אישור ניהול תקין, ואתר hopa.org.il' },
-  { r:'bot', h:`<p>6 מקורות. קורא.</p>
+  { r:'user', h:'העליתי: דוח מילולי, דוח כספי, דוח אימפקט, תקנון, אישור ניהול תקין + לינק לאתר' },
+  { r:'bot', h:`<p>6 מקורות. קראתי הכל.</p>
 <div class="cl">
 <div class="cl-item"><span class="cl-dot ok">&#10003;</span><span class="cl-text">דוח מילולי 2025</span><span class="cl-note">42 עמ'</span></div>
 <div class="cl-item"><span class="cl-dot ok">&#10003;</span><span class="cl-text">דוח כספי מבוקר</span><span class="cl-note">נקרא</span></div>
 <div class="cl-item"><span class="cl-dot ok">&#10003;</span><span class="cl-text">דוח אימפקט</span><span class="cl-note">נקרא</span></div>
-<div class="cl-item"><span class="cl-dot ok">&#10003;</span><span class="cl-text">תקנון</span><span class="cl-note">נקרא</span></div>
-<div class="cl-item"><span class="cl-dot ok">&#10003;</span><span class="cl-text">אישור ניהול תקין</span><span class="cl-note">תקף</span></div>
+<div class="cl-item"><span class="cl-dot ok">&#10003;</span><span class="cl-text">תקנון + ניהול תקין</span><span class="cl-note">תקף</span></div>
 <div class="cl-item"><span class="cl-dot ok">&#10003;</span><span class="cl-text">hopa.org.il</span><span class="cl-note">14 דפים</span></div>
 </div>
-<p>טוב, קראתי הכל. הנה מה שאני יודע:</p>
-<div class="info-block">
-<div class="ib-label">כרטיס ארגון</div>
-<div class="ib-text">
-<strong>עמותת הופה</strong> | ע.ר. 580718847<br>
-חינוך, נוער בסיכון, מניעת נשירה | גילאי 14-26<br>
-מודל "רדאר 360" | 1,200+ צעירים | 15 יישובים<br>
-87% מניעת נשירה | מחזור 857K | ניהול תקין תקף
-</div>
-</div>
-<p>שאלה אחת: <strong>באילו אזורים אתם?</strong> ההבדל בין "ארצי" ל"פריפריה" שווה מאות אלפים.</p>`, chips:['פריפריה: צפון, דרום, ירושלים', 'ארצי', 'מרכז'] }
-],
-
-memory: [
-  { r:'user', h:'מה אתה יודע עלינו?' },
-  { r:'bot', h:`<p>הכל. זה מה שיש לי בראש:</p>
-<div class="mem-block">
-<div class="mem-head">${MEM_ICON} הזיכרון של פישגולד</div>
-<div class="mem-grid">
-<div class="mem-item"><span class="label">ע.ר.</span><span class="val">580718847</span></div>
-<div class="mem-item"><span class="label">תחום</span><span class="val">מניעת נשירה</span></div>
-<div class="mem-item"><span class="label">גילאים</span><span class="val">14-26</span></div>
-<div class="mem-item"><span class="label">מודל</span><span class="val accent">רדאר 360</span></div>
-<div class="mem-item"><span class="label">מוטבים</span><span class="val">1,200+</span></div>
-<div class="mem-item"><span class="label">יישובים</span><span class="val">15</span></div>
-<div class="mem-item"><span class="label">מחזור</span><span class="val accent">857,000 &#8362;</span></div>
-<div class="mem-item"><span class="label">עובדים</span><span class="val">8 + 50 מנטורים</span></div>
-<div class="mem-item"><span class="label">הצלחה</span><span class="val accent">87%</span></div>
-<div class="mem-item"><span class="label">ניהול תקין</span><span class="val">תקף 2027</span></div>
-<div class="mem-item"><span class="label">אזורים</span><span class="val">צפון, דרום, י-ם</span></div>
-<div class="mem-item"><span class="label">מענקים פעילים</span><span class="val">רשות חדשנות, מגה-אור</span></div>
-</div>
-<div class="mem-updated">&#8635; עודכן לאחרונה: 04/05/2026 | 6 מסמכים + אתר</div>
-</div>
-<p>כל פעם שתעלי מסמך חדש או תגידי לי שמשהו השתנה, אני מעדכן. אני לא שואל שאלות שאני כבר יודע את התשובה להן.</p>`, chips:['מחזור השתנה ל-950K', 'הוספנו 3 יישובים', 'תסרוק קולות קוראים'] },
-  { r:'user', h:'המחזור עלה ל-950K ויש לנו עכשיו 1,500 צעירים' },
-  { r:'bot', h:`<p>עדכנתי.</p>
-<div class="cl">
-<div class="cl-item"><span class="cl-dot ok">&#10003;</span><span class="cl-text">מחזור: 857K &#8594; <strong>950K</strong></span><span class="cl-note">+10.8%</span></div>
-<div class="cl-item"><span class="cl-dot ok">&#10003;</span><span class="cl-text">מוטבים: 1,200 &#8594; <strong>1,500</strong></span><span class="cl-note">+25%</span></div>
-</div>
-<p>גידול של 25% במוטבים עם 11% עלייה בתקציב. העלות לצעיר ירדה. <strong>אני משתמש בזה בהגשה הבאה.</strong></p>`, chips:['זהו', 'הוספנו 3 יישובים', 'גייסנו מנהלת פרויקטים'] }
+<p>עדכנתי את כרטיס הארגון בצד ימין. כל מה שאני יודע עליכם נמצא שם תמיד.</p>
+<p>שאלה אחת: <strong>באילו אזורים?</strong> ההבדל בין "ארצי" ל"פריפריה" שווה מאות אלפים.</p>`, chips:['פריפריה: צפון, דרום, ירושלים', 'ארצי'] }
 ],
 
 scan: [
-  { r:'user', h:'תסרוק קולות קוראים' },
-  { r:'bot', h:`<p>סרקתי 36 מקורות ב-5 שכבות: ממשלתי, קרנות פרטיות, בינלאומי, CSR, קהילתי.</p>
-<p>רוב הקולות לא רלוונטיים. מה שנשאר:</p>
-<div class="opp" onclick="go('write')">
-<div class="opp-head"><span class="opp-from">קרן רש"י</span><span class="opp-pct">94%</span></div>
-<h3>מניעת נשירה בפריפריה 2026</h3>
-<div class="opp-foot"><span class="opp-sum">&#8362;150,000</span><span class="opp-dl hot">&#9679; 5 ימים</span></div>
-</div>
-<div class="opp">
-<div class="opp-head"><span class="opp-from">משרד הרווחה</span><span class="opp-pct">88%</span></div>
-<h3>ליווי צעירים בוגרי מסגרות חוץ ביתיות</h3>
-<div class="opp-foot"><span class="opp-sum">&#8362;280,000</span><span class="opp-dl warm">18 יום</span></div>
-</div>
-<div class="opp">
-<div class="opp-head"><span class="opp-from">הקרן האירופית לנוער</span><span class="opp-pct">85%</span></div>
-<h3>Youth Empowerment & Social Integration</h3>
-<div class="opp-foot"><span class="opp-sum">&euro;50,000</span><span class="opp-dl cool">34 יום</span></div>
-</div>
-<p><strong>קרן רש"י.</strong> 94%, 5 ימים. הם רוצים בדיוק מה שיש לכם. אם לא מגישים עכשיו, זה כסף על הרצפה.</p>`, chips:['בוא נכתוב לרש"י', 'למה 94%?', 'ספר על משרד הרווחה'] }
+  { r:'user', h:'פריפריה: צפון, דרום וירושלים' },
+  { r:'bot', h:`<p>פריפריה. מצוין. סרקתי 36 מקורות ב-5 שכבות.</p>
+<p>רוב הקולות לא רלוונטיים. <strong>4 התאמות בצד ימין</strong> בלשונית "קולות קוראים". עם כפתור שליחה למייל או וואטסאפ לכל אחד.</p>
+<p>הדחוף: <strong>קרן רש"י, 5 ימים.</strong> 94% התאמה. הם רוצים בדיוק מה שיש לכם: פריפריה + חדשנות + מדידה.</p>
+<p>תסתכלי על לוח הזמנים - סימנתי את כל הדדליינים.</p>`, chips:['בוא נכתוב לרש"י', 'למה 94%?', 'שלח הכל למייל'] }
 ],
 
 write: [
   { r:'user', h:'בוא נכתוב לרש"י' },
-  { r:'bot', h:`<p>כותב. יש לי הכל.</p>
+  { r:'bot', h:`<p>כותב. יש לי הכל, לא צריך לשאול שאלות.</p>
 <div class="prog"><div class="prog-bar"><div class="prog-fill" style="width:100%"></div></div><span class="prog-txt">6/6</span></div>
-<div class="info-block">
-<div class="ib-label">1. תיאור הארגון</div>
-<div class="ib-text">עמותת הופה (ע.ר. 580718847) פועלת מאז 2023 בליווי בני נוער וצעירים בגילאי 14-26 בסיכון לנשירה. מודל "רדאר 360" משלב זיהוי מוקדם, התאמה אישית מ-600+ מענים, וליווי רציף. ב-2025: 1,500 צעירים, 15 יישובים, מחזור 950K.</div>
-</div>
-<div class="info-block">
-<div class="ib-label">2. ניסיון מוכח</div>
-<div class="ib-text">3 שנות פעילות, 2,400+ צעירים מצטבר. 87% מניעת נשירה (ארצי: 62%). עלות לצעיר: 633 &#8362; (ירידה 12%). שותפויות: רשות החדשנות (250K), מגה-אור (300K), משרד הרווחה.</div>
-</div>
-<div class="info-block">
-<div class="ib-label">3. תכנית עבודה</div>
-<div class="ib-text">12 חודשים, 3 שלבים: זיהוי (1-3), התערבות (4-9), ייצוב (10-12). יעד: 200 צעירים, 2 יישובי פריפריה חדשים.</div>
-</div>
-<div class="info-block">
-<div class="ib-label">4. תקציב</div>
-<div class="ib-text">150,000 &#8362;: כ"א 55% | הכשרות 18% | טכנולוגיה 14% | תפעול 8% | מדידה 5%</div>
-</div>
-<div class="info-block">
-<div class="ib-label">5. מדדי הצלחה</div>
-<div class="ib-text">200 צעירים, 85%+ מניעת נשירה, 2 יישובים, 30 מנטורים, דוח רבעוני.</div>
-</div>
-<div class="info-block">
-<div class="ib-label">6. מסמכים</div>
-<div class="ib-text">ניהול תקין &#10003; | דוח כספי &#10003; | תקנון &#10003; | דוח אימפקט &#10003;</div>
-</div>
-<p>שים לב: 1,500 צעירים, 950K, ועלות לצעיר 633 &#8362;. <strong>כל המספרים מעודכנים כי עדכנת אותי קודם.</strong></p>
-<button class="dl-btn" onclick="alert('מוריד PDF...')">&#8595; הורדת PDF להגשה</button>`, chips:['חזק סעיף 2', 'קצר סעיף 3', 'תרגם לאנגלית', 'שלח למייל'] }
+<div class="info-block"><div class="ib-label">1. תיאור הארגון</div><div class="ib-text">עמותת הופה (ע.ר. 580718847) פועלת מאז 2023 בליווי בני נוער וצעירים בגילאי 14-26 בסיכון לנשירה. מודל "רדאר 360": זיהוי מוקדם + 600 מענים + ליווי רציף. ב-2025: 1,500 צעירים, 15 יישובים, מחזור 950K.</div></div>
+<div class="info-block"><div class="ib-label">2. ניסיון מוכח</div><div class="ib-text">3 שנים, 2,400+ צעירים. 87% מניעת נשירה (ארצי: 62%). עלות לצעיר: 633 &#8362; (ירידה 12%). רשות החדשנות (250K), מגה-אור (300K), שותפות משרד הרווחה.</div></div>
+<div class="info-block"><div class="ib-label">3. תכנית עבודה</div><div class="ib-text">12 חודשים: זיהוי (1-3), התערבות (4-9), ייצוב (10-12). 200 צעירים, 2 יישובי פריפריה חדשים.</div></div>
+<div class="info-block"><div class="ib-label">4. תקציב</div><div class="ib-text">150,000 &#8362;: כ"א 55% | הכשרות 18% | טכנולוגיה 14% | תפעול 8% | מדידה 5%</div></div>
+<div class="info-block"><div class="ib-label">5. מדדי הצלחה</div><div class="ib-text">200 צעירים, 85%+ מניעת נשירה, 2 יישובים, 30 מנטורים.</div></div>
+<div class="info-block"><div class="ib-label">6. מסמכים</div><div class="ib-text">ניהול תקין &#10003; | דוח כספי &#10003; | תקנון &#10003; | אימפקט &#10003;</div></div>
+<p>כל המספרים מעודכנים מכרטיס הארגון.</p>
+<button class="dl-btn" onclick="alert('מוריד PDF...')">&#8595; PDF להגשה</button>`, chips:['חזק סעיף 2', 'קצר סעיף 3', 'תרגם לאנגלית'] }
 ],
 
 fix: [
   { r:'user', h:'חזק את סעיף 2' },
-  { r:'bot', h:`<div class="info-block">
-<div class="ib-label">2. ניסיון מוכח (מחוזק)</div>
-<div class="ib-text">הופה צברה 3 שנות פעילות בשטח עם תוצאות חריגות:<br><br>
-<strong>היקף:</strong> 2,400+ צעירים מצטבר, 1,500 בשנה האחרונה. 15 יישובים: באר שבע, קריית שמונה, ירושלים מזרח, נוף הגליל ועוד.<br><br>
-<strong>תוצאות:</strong> 87% מניעת נשירה (ארצי: 62%). 94% שביעות רצון. 78% מהבוגרים בתעסוקה/לימודים שנה אחרי. עלות לצעיר: 633 &#8362;, ירידה של 12%.<br><br>
-<strong>הכרה:</strong> רשות החדשנות (250K), מגה-אור (300K), שותפות משרד הרווחה. רדאר 360 = ראשון בישראל שמשלב AI לזיהוי צעירים בסיכון + 600 מענים.</div>
-</div>
-<p>שמות יישובים, נתון בוגרים, עלות לצעיר, הכרה. קרן רש"י תקרא את זה ותבין שאתם מביאים מספרים, לא מילים.</p>
-<button class="dl-btn" onclick="alert('מוריד PDF...')">&#8595; PDF מעודכן</button>`, chips:['מושלם', 'שני סעיף 3', 'תוסיף ציטוט משתתף', 'שלח למייל'] }
+  { r:'bot', h:`<div class="info-block"><div class="ib-label">2. ניסיון מוכח (מחוזק)</div><div class="ib-text">הופה צברה 3 שנות פעילות בשטח עם תוצאות חריגות:<br><br>
+<strong>היקף:</strong> 2,400+ צעירים, 1,500 בשנה האחרונה. 15 יישובים: באר שבע, קריית שמונה, ירושלים מזרח, נוף הגליל.<br><br>
+<strong>תוצאות:</strong> 87% מניעת נשירה (ארצי: 62%). 94% שביעות רצון. 78% בוגרים בתעסוקה/לימודים. עלות לצעיר: 633 &#8362;, ירידה 12%.<br><br>
+<strong>הכרה:</strong> רשות החדשנות (250K), מגה-אור (300K), שותפות משרד הרווחה. רדאר 360 = ראשון בישראל: AI לזיהוי צעירים + 600 מענים.</div></div>
+<p>שמות יישובים, נתון בוגרים, עלות לצעיר. קרן רש"י תראה מספרים, לא מילים.</p>
+<button class="dl-btn" onclick="alert('מוריד...')">&#8595; PDF מעודכן</button>`, chips:['מושלם', 'שני סעיף 3', 'שלח למייל'] }
 ]
 
 };
@@ -845,10 +1108,22 @@ function go(name) {
   document.querySelectorAll('.demo button').forEach(b => b.classList.remove('on'));
   if(event?.target) event.target.classList.add('on');
 
-  const order = ['welcome','upload','memory','scan','write','fix'];
+  const order = ['welcome','upload','scan','write','fix'];
   const idx = order.indexOf(name);
   let msgs = [];
   for(let i = 0; i <= idx; i++) msgs = msgs.concat(F[order[i]]);
+
+  // Update sidebar based on scenario
+  if(idx >= 1) {
+    switchTabSilent('org');
+    document.querySelectorAll('.sb-tab').forEach(t => t.classList.remove('on'));
+    document.querySelectorAll('.sb-tab')[0].classList.add('on');
+  }
+  if(idx >= 2) {
+    switchTabSilent('opps');
+    document.querySelectorAll('.sb-tab').forEach(t => t.classList.remove('on'));
+    document.querySelectorAll('.sb-tab')[1].classList.add('on');
+  }
 
   let lastChips = [];
   msgs.forEach((m,i) => {
@@ -871,6 +1146,10 @@ function go(name) {
   });
 
   setTimeout(() => C.scrollTop = C.scrollHeight, 100);
+}
+
+function switchTabSilent(name) {
+  SB.innerHTML = tabData[name];
 }
 
 function send() {
@@ -899,6 +1178,10 @@ function send() {
   }, 1200);
 }
 
+// Init
+switchTab.call(null, 'org');
+document.querySelectorAll('.sb-tab')[0].classList.add('on');
+SB.innerHTML = tabData.org;
 go('welcome');
 </script>
 </body>
