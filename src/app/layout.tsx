@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AnyDay - שכבת ניהול חכמה מעל Monday.com",
-  description:
-    "דשבורד חכם עם ניתוח AI לבורדים שלך ב-Monday.com. גרפים, תובנות, והצעות אוטומציה.",
+  title: "Fishgold - גייס משאבים עתיק ששוחה במים",
+  description: "צ'אטבוט AI לגיוס משאבים לעמותות. סריקת קולות קוראים, כתיבת הגשות, וזיכרון ארגוני.",
 };
 
 export default function RootLayout({
@@ -14,7 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="he" dir="rtl" className="h-full">
-      <body className="min-h-full bg-bg text-text font-dm antialiased">
+      <body className="min-h-full bg-bg text-text font-rubik antialiased">
         {children}
       </body>
     </html>

@@ -1,110 +1,142 @@
-import { NextRequest, NextResponse } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
+import { NextRequest } from 'next/server';
+import Anthropic from '@anthropic-ai/sdk';
+import { createAdminClient } from '@/lib/supabase/admin';
+import { FISHGOLD_SYSTEM_PROMPT, buildContext, buildOrgContext } from '@/lib/ai/fishgold';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-export async function POST(req: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    const { message, boardContext } = await req.json();
+    const { message, conversation_id, org_id, user_id } = await request.json();
 
-    if (!message) {
-      return NextResponse.json({ error: "חסרה שאלה" }, { status: 400 });
+    if (!message || !org_id || !user_id) {
+      return Response.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    const systemPrompt = `אתה AnyDay - מנוע AI שמבצע פעולות ישירות על Monday.com. אתה לא מסביר, אתה עושה.
+    const supabase = createAdminClient();
 
-## כלל ברזל:
-לעולם אל תגיד "אני לא יכול", "אי אפשר", "מצטער" או "אני ממליץ לך לעשות ב-Monday".
-אתה תמיד מציע פתרון ומבצע. אם הבקשה מחוץ ליכולות שלך (כמו שליחת מייל), תגיד מה אתה כן יכול לעשות ותעשה את זה.
+    // Fetch org profile for context
+    const { data: profile } = await supabase
+      .from('org_profiles')
+      .select('data')
+      .eq('org_id', org_id)
+      .single();
 
-## מה אתה עושה:
-1. **מנתח נתונים** - סטטיסטיקות, מגמות, צווארי בקבוק, תובנות מהבורד
-2. **בונה דוחות** - סיכומים מוכנים להנהלה, דוחות אימפקט, KPIs
-3. **מבצע פעולות ישירות** - שינוי סטטוסים, העברה לקבוצות, ארכיון
-4. **מזהה בעיות** - פריטים תקועים, עמודות ריקות, דפוסים חריגים
+    // RAG: text search for relevant chunks (no embeddings needed)
+    let ragContext = '';
+    try {
+      const { data: chunks } = await supabase
+        .from('document_chunks')
+        .select('content, metadata')
+        .eq('org_id', org_id)
+        .textSearch('content', message.split(' ').slice(0, 5).join(' & '), { type: 'plain' })
+        .limit(8);
 
-## סיכום בורד - חובה להיות עשיר:
-כשמבקשים סיכום, תן ניתוח מקיף שכולל:
-- מספרים: כמה פריטים, התפלגות לפי כל עמודת סטטוס (עם אחוזים)
-- מגמות: מה הסטטוס השכיח, מה נדיר, מה בולט
-- פירוט: שמות פריטים ספציפיים (לא סתם "כמה פריטים")
-- צווארי בקבוק: מה תקוע, מה ריק, מה דורש תשומת לב
-- טבלה של סטטוסים עם כמויות
-- המלצות קונקרטיות (לא כלליות)
-השתמש בכל הנתונים שיש לך - פריטים לדוגמה, עמודות, סטטוסים. אל תחסוך.
+      if (chunks?.length) {
+        ragContext = buildContext(chunks);
+      }
+    } catch {
+      // RAG is optional - continue without it
+    }
 
-## ביצוע אוטומציות - חובה!
-כשמשתמש מבקש לבצע כל פעולה על פריטים (שנה, העבר, מחק, ארכב, סמן, עדכן):
-1. תגיד "מבצע עכשיו!" בקצרה
-2. תוסיף בלוק פעולה בפורמט:
+    const orgContext = buildOrgContext(profile?.data ?? null);
+    const systemPrompt = FISHGOLD_SYSTEM_PROMPT + orgContext + ragContext;
 
-\`\`\`dayday-action
-{
-  "action": "change_status",
-  "conditionColumn": "column_id_from_board_data",
-  "conditionValues": ["value1"],
-  "actionConfig": {
-    "columnId": "target_column_id",
-    "newValue": "new_value"
-  },
-  "description": "תיאור"
-}
-\`\`\`
+    // Load conversation history
+    let chatMessages: { role: 'user' | 'assistant'; content: string }[] = [];
 
-פעולות זמינות:
-- **change_status**: שנה ערך בעמודת סטטוס. actionConfig: { columnId, newValue }
-- **move_to_group**: העבר פריטים לקבוצה. actionConfig: { groupId }
-- **archive**: העבר לארכיון. אין actionConfig
+    if (conversation_id) {
+      const { data: conv } = await supabase
+        .from('conversations')
+        .select('messages')
+        .eq('id', conversation_id)
+        .eq('org_id', org_id)
+        .single();
 
-## חשוב:
-- conditionColumn ו-columnId חייבים להיות ID של עמודה מנתוני הבורד (למשל "status" או "status_1")
-- conditionValues = ערכי הטקסט לסינון (למשל ["ממתין", "חדש"])
-- אם המשתמש לא ציין תנאי ספציפי, שאל אותו "על אילו פריטים?" עם האפשרויות מהבורד
-- השתמש בנתוני הבורד למטה כדי לזהות את ה-column IDs הנכונים
-
-## סגנון:
-- עברית, קצר וקולע
-- מספרים ונתונים קונקרטיים
-- כותרות (**כותרת**), מספור, רווחים
-- בטוח, פרואקטיבי, עושה - לא מסביר
-
-נתוני הבורד:
-שם: ${boardContext.boardName}
-מספר פריטים: ${boardContext.itemsCount}
-עמודות (id: title [type]): ${boardContext.columns}
-סטטוסים: ${boardContext.statusDistribution || "אין"}
-פריטים לדוגמה: ${boardContext.sampleItems || "אין"}`;
-
-    const response = await anthropic.messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: 4000,
-      system: systemPrompt,
-      messages: [{ role: "user", content: message }],
-    });
-
-    const textBlock = response.content.find(
-      (b): b is Anthropic.TextBlock => b.type === "text"
-    );
-
-    const fullReply = textBlock?.text || "לא הצלחתי לענות";
-
-    // Extract action block if present
-    const actionMatch = fullReply.match(/```dayday-action\s*([\s\S]*?)```/);
-    let actionData = null;
-    let cleanReply = fullReply;
-
-    if (actionMatch) {
-      try {
-        actionData = JSON.parse(actionMatch[1].trim());
-        cleanReply = fullReply.replace(/```dayday-action[\s\S]*?```/, "").trim();
-      } catch {
-        // JSON parse failed, ignore action
+      if (conv?.messages) {
+        chatMessages = (conv.messages as { role: string; content: string }[])
+          .slice(-20)
+          .map(m => ({
+            role: m.role as 'user' | 'assistant',
+            content: m.content,
+          }));
       }
     }
 
-    return NextResponse.json({ reply: cleanReply, action: actionData });
-  } catch (e: unknown) {
-    const msg = e instanceof Error ? e.message : "שגיאה";
-    return NextResponse.json({ error: msg }, { status: 500 });
+    chatMessages.push({ role: 'user', content: message });
+
+    // Stream response with Claude
+    const stream = anthropic.messages.stream({
+      model: 'claude-sonnet-4-20250514',
+      system: systemPrompt,
+      messages: chatMessages,
+      max_tokens: 2000,
+    });
+
+    const encoder = new TextEncoder();
+    let fullResponse = '';
+
+    const readable = new ReadableStream({
+      async start(controller) {
+        for await (const event of stream) {
+          if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
+            const text = event.delta.text;
+            fullResponse += text;
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text })}\n\n`));
+          }
+        }
+
+        // Save conversation after streaming completes
+        const now = new Date().toISOString();
+        const userMsg = { role: 'user', content: message, timestamp: now };
+        const assistantMsg = { role: 'assistant', content: fullResponse, timestamp: now };
+
+        let convId = conversation_id;
+
+        if (convId) {
+          const { data: existing } = await supabase
+            .from('conversations')
+            .select('messages')
+            .eq('id', convId)
+            .single();
+
+          const updatedMessages = [...(existing?.messages as unknown[] || []), userMsg, assistantMsg];
+
+          await supabase
+            .from('conversations')
+            .update({ messages: updatedMessages, updated_at: now })
+            .eq('id', convId);
+        } else {
+          const { data: newConv } = await supabase
+            .from('conversations')
+            .insert({
+              org_id,
+              user_id,
+              title: message.slice(0, 100),
+              messages: [userMsg, assistantMsg],
+            })
+            .select('id')
+            .single();
+
+          convId = newConv?.id;
+        }
+
+        controller.enqueue(
+          encoder.encode(`data: ${JSON.stringify({ done: true, conversation_id: convId })}\n\n`)
+        );
+        controller.close();
+      },
+    });
+
+    return new Response(readable, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+      },
+    });
+  } catch (error) {
+    console.error('Chat API error:', error);
+    return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
