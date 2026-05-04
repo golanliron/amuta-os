@@ -1,0 +1,1738 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Giyus - מערכת גיוס משאבים חכמה</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #6C5CE7;
+  --primary-light: #A29BFE;
+  --primary-dark: #5A4BD1;
+  --accent: #00B894;
+  --accent-light: #55EFC4;
+  --warning: #FDCB6E;
+  --danger: #E17055;
+  --bg: #F8F9FE;
+  --card: #FFFFFF;
+  --text: #2D3436;
+  --text-light: #636E72;
+  --text-muted: #B2BEC3;
+  --border: #E8ECF0;
+  --sidebar-width: 260px;
+  --topbar-height: 64px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Heebo', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ===== LAYOUT ===== */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  width: var(--sidebar-width);
+  background: linear-gradient(180deg, #2D3436 0%, #1E272E 100%);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.sidebar-logo {
+  padding: 24px 28px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.sidebar-logo .logo-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--primary);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 800;
+  color: white;
+}
+
+.sidebar-logo .logo-text {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.sidebar-logo .logo-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: -2px;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 15px;
+  color: rgba(255,255,255,0.6);
+  position: relative;
+}
+
+.nav-item:hover {
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.9);
+}
+
+.nav-item.active {
+  background: var(--primary);
+  color: white;
+  font-weight: 500;
+}
+
+.nav-item .nav-icon {
+  font-size: 20px;
+  width: 24px;
+  text-align: center;
+}
+
+.nav-item .badge {
+  position: absolute;
+  left: 12px;
+  background: var(--danger);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 10px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.sidebar-org {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.org-avatar {
+  width: 36px;
+  height: 36px;
+  background: var(--accent);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.org-info {
+  flex: 1;
+}
+
+.org-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.org-type {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ===== MAIN CONTENT ===== */
+.main-content {
+  flex: 1;
+  margin-right: var(--sidebar-width);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== TOP BAR ===== */
+.topbar {
+  height: var(--topbar-height);
+  background: white;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 32px;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.topbar-title {
+  font-size: 20px;
+  font-weight: 700;
+  flex: 1;
+}
+
+.topbar-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn {
+  padding: 8px 20px;
+  border-radius: 10px;
+  font-family: 'Heebo', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(108,92,231,0.3);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-light);
+  border: 1px solid var(--border);
+}
+
+.btn-ghost:hover {
+  background: var(--bg);
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 8px 16px;
+  width: 280px;
+}
+
+.search-box input {
+  border: none;
+  background: none;
+  font-family: 'Heebo', sans-serif;
+  font-size: 14px;
+  outline: none;
+  width: 100%;
+  color: var(--text);
+}
+
+/* ===== SCREEN TABS ===== */
+.screen-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px 0 8px;
+}
+
+.screen-tab {
+  padding: 10px 28px;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 2px solid var(--border);
+  background: white;
+  color: var(--text-light);
+  transition: all 0.3s;
+}
+
+.screen-tab.active {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 4px 16px rgba(108,92,231,0.25);
+}
+
+.screen-tab:hover:not(.active) {
+  border-color: var(--primary-light);
+  color: var(--primary);
+}
+
+/* ===== STATS ROW ===== */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  padding: 20px 32px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px 24px;
+  border: 1px solid var(--border);
+  transition: all 0.2s;
+}
+
+.stat-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+.stat-label {
+  font-size: 13px;
+  color: var(--text-light);
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+}
+
+.stat-value.accent { color: var(--primary); }
+.stat-value.green { color: var(--accent); }
+.stat-value.orange { color: var(--warning); }
+.stat-value.red { color: var(--danger); }
+
+.stat-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* ===== FILTER TABS ===== */
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 32px 16px;
+}
+
+.filter-tab {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: white;
+  color: var(--text-light);
+  transition: all 0.2s;
+}
+
+.filter-tab.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.filter-tab:hover:not(.active) {
+  border-color: var(--primary-light);
+}
+
+.filter-count {
+  font-size: 11px;
+  background: rgba(108,92,231,0.1);
+  color: var(--primary);
+  padding: 1px 6px;
+  border-radius: 8px;
+  margin-right: 4px;
+}
+
+.filter-tab.active .filter-count {
+  background: rgba(255,255,255,0.25);
+  color: white;
+}
+
+/* ===== FEED LIST ===== */
+.feed-container {
+  padding: 0 32px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.feed-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px 28px;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  cursor: pointer;
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+
+.feed-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: 0 8px 8px 0;
+  transition: all 0.2s;
+}
+
+.feed-card.match-high::before { background: var(--accent); }
+.feed-card.match-mid::before { background: var(--warning); }
+.feed-card.match-low::before { background: var(--text-muted); }
+
+.feed-card:hover {
+  border-color: var(--primary-light);
+  box-shadow: 0 8px 24px rgba(108,92,231,0.08);
+  transform: translateY(-2px);
+}
+
+.match-score {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 22px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.match-score span {
+  font-size: 10px;
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+.match-high .match-score { background: #E8F8F5; color: #00B894; }
+.match-mid .match-score { background: #FEF9E7; color: #F39C12; }
+.match-low .match-score { background: #F5F5F5; color: #B2BEC3; }
+
+.feed-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.feed-source {
+  font-size: 12px;
+  color: var(--primary);
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.source-badge {
+  background: rgba(108,92,231,0.08);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+}
+
+.feed-title {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.feed-desc {
+  font-size: 13px;
+  color: var(--text-light);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.feed-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+  min-width: 140px;
+}
+
+.feed-amount {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.feed-deadline {
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.deadline-ok { background: #E8F8F5; color: #00B894; }
+.deadline-soon { background: #FEF3CD; color: #D68910; }
+.deadline-urgent { background: #FADBD8; color: #E74C3C; }
+
+.feed-cta {
+  flex-shrink: 0;
+}
+
+.btn-start {
+  padding: 12px 24px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Heebo', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-start:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(108,92,231,0.3);
+}
+
+/* ===== SCREEN 2: EDITOR ===== */
+.screen { display: none; }
+.screen.active { display: block; }
+
+.editor-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  height: calc(100vh - var(--topbar-height) - 80px);
+  margin: 0 32px 32px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: white;
+}
+
+.editor-panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.editor-panel-right {
+  border-left: 1px solid var(--border);
+}
+
+.panel-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg);
+}
+
+.panel-title {
+  font-size: 15px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+/* Checklist */
+.checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.checklist-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--bg);
+  font-size: 14px;
+}
+
+.check-item.done {
+  background: #E8F8F5;
+  color: var(--accent);
+}
+
+.check-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.check-item.done .check-icon {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+/* Grant summary */
+.grant-summary {
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.grant-summary h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.grant-detail {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+
+.grant-detail:last-child { border: none; }
+.grant-detail .label { color: var(--text-light); }
+.grant-detail .value { font-weight: 600; }
+
+/* Editor area */
+.text-editor {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  min-height: 400px;
+}
+
+.editor-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.toolbar-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.toolbar-btn:hover {
+  background: white;
+  color: var(--primary);
+}
+
+.toolbar-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+  margin: 0 4px;
+}
+
+.editor-content {
+  padding: 20px 24px;
+  min-height: 350px;
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--text);
+  outline: none;
+}
+
+.editor-content p {
+  margin-bottom: 12px;
+}
+
+.editor-content .ai-suggestion {
+  background: rgba(108,92,231,0.06);
+  border-right: 3px solid var(--primary);
+  padding: 8px 16px;
+  border-radius: 0 8px 8px 0;
+  margin: 8px 0;
+  position: relative;
+}
+
+.ai-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--primary);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+
+/* AI Sidebar */
+.ai-sidebar {
+  border-top: 1px solid var(--border);
+  padding: 16px 24px;
+  background: rgba(108,92,231,0.02);
+}
+
+.ai-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ai-action-btn {
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--primary-light);
+  background: white;
+  color: var(--primary);
+  font-family: 'Heebo', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ai-action-btn:hover {
+  background: var(--primary);
+  color: white;
+}
+
+/* ===== SCREEN 3: ORGANIZATION ===== */
+.org-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  padding: 20px 32px 32px;
+}
+
+.org-card {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.org-card.full-width {
+  grid-column: 1 / -1;
+}
+
+.org-card-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.org-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.org-card-body {
+  padding: 24px;
+}
+
+/* Profile Fields */
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.profile-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field-label {
+  font-size: 12px;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+.field-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  padding: 10px 14px;
+  background: var(--bg);
+  border-radius: 10px;
+}
+
+/* Documents */
+.doc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.doc-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--bg);
+  border-radius: 12px;
+  transition: all 0.2s;
+}
+
+.doc-item:hover {
+  background: #EDE7F6;
+}
+
+.doc-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.doc-icon.pdf { background: #FADBD8; }
+.doc-icon.word { background: #D4E6F1; }
+.doc-icon.excel { background: #D5F5E3; }
+
+.doc-info {
+  flex: 1;
+}
+
+.doc-name {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.doc-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.doc-status {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+.doc-status.analyzed { background: #E8F8F5; color: var(--accent); }
+.doc-status.pending { background: #FEF3CD; color: #D68910; }
+
+.drop-zone {
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 32px;
+  text-align: center;
+  color: var(--text-muted);
+  margin-top: 12px;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.drop-zone:hover {
+  border-color: var(--primary-light);
+  background: rgba(108,92,231,0.02);
+  color: var(--primary);
+}
+
+.drop-zone-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.drop-zone-text {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Text Bank */
+.text-bank {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.text-snippet {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.text-snippet:hover {
+  border-color: var(--primary-light);
+  box-shadow: 0 2px 8px rgba(108,92,231,0.08);
+}
+
+.snippet-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 6px;
+}
+
+.snippet-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.snippet-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* History */
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+  background: var(--bg);
+  border-radius: 12px;
+}
+
+.history-status {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.history-status.approved { background: var(--accent); }
+.history-status.rejected { background: var(--danger); }
+.history-status.pending { background: var(--warning); }
+
+.history-info { flex: 1; }
+
+.history-name {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.history-detail {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.history-amount {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.history-amount.approved { color: var(--accent); }
+.history-amount.rejected { color: var(--text-muted); text-decoration: line-through; }
+
+/* ===== SCREEN INDICATOR ===== */
+.screen-label {
+  text-align: center;
+  padding: 24px 0 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.screen-label strong {
+  color: var(--primary);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(100%); }
+  .main-content { margin-right: 0; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .editor-layout { grid-template-columns: 1fr; height: auto; }
+  .org-grid { grid-template-columns: 1fr; }
+  .feed-card { flex-wrap: wrap; }
+  .feed-meta { flex-direction: row; min-width: auto; }
+  .profile-grid { grid-template-columns: 1fr; }
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* New tag */
+.new-tag {
+  background: var(--danger);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Editor back button */
+.editor-back {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 32px;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  font-family: 'Heebo', sans-serif;
+  font-size: 14px;
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.back-btn:hover {
+  background: var(--bg);
+  color: var(--primary);
+}
+
+.editor-grant-title {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.editor-grant-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--text-light);
+}
+
+.compatibility-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 32px;
+  margin: 0 32px 16px;
+  background: #E8F8F5;
+  border-radius: 12px;
+}
+
+.compat-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.compat-bar-track {
+  flex: 1;
+  height: 8px;
+  background: rgba(0,184,148,0.15);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.compat-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 4px;
+  width: 73%;
+}
+
+.compat-score {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+</style>
+</head>
+<body>
+
+<div class="app-layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">G</div>
+      <div>
+        <div class="logo-text">Giyus</div>
+        <div class="logo-sub">גיוס משאבים חכם</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-item active" onclick="showScreen('feed')">
+        <span class="nav-icon">&#9733;</span>
+        <span>הזדמנויות</span>
+        <span class="badge">7</span>
+      </div>
+      <div class="nav-item" onclick="showScreen('editor')">
+        <span class="nav-icon">&#9998;</span>
+        <span>הגשה פעילה</span>
+      </div>
+      <div class="nav-item" onclick="showScreen('org')">
+        <span class="nav-icon">&#9971;</span>
+        <span>הארגון שלי</span>
+      </div>
+      <div class="nav-item">
+        <span class="nav-icon">&#128202;</span>
+        <span>סטטיסטיקות</span>
+      </div>
+      <div class="nav-item">
+        <span class="nav-icon">&#9881;</span>
+        <span>הגדרות</span>
+      </div>
+    </nav>
+
+    <div class="sidebar-org">
+      <div class="org-avatar">&#1492;</div>
+      <div class="org-info">
+        <div class="org-name">עמותת הופה</div>
+        <div class="org-type">ע.ר. 580718847</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+
+    <!-- Screen Tabs -->
+    <div class="screen-tabs">
+      <div class="screen-tab active" onclick="showScreen('feed')">הזדמנויות חדשות</div>
+      <div class="screen-tab" onclick="showScreen('editor')">כתיבת הגשה</div>
+      <div class="screen-tab" onclick="showScreen('org')">הארגון שלי</div>
+    </div>
+
+    <!-- ==================== SCREEN 1: FEED ==================== -->
+    <div id="screen-feed" class="screen active">
+
+      <div class="screen-label"><strong>מסך 1</strong> &mdash; הפיד: מה חדש בשבילי</div>
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">הזדמנויות חדשות</div>
+          <div class="stat-value accent">7</div>
+          <div class="stat-sub">השבוע</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">סכום פוטנציאלי</div>
+          <div class="stat-value green">&#8362;1.2M</div>
+          <div class="stat-sub">ב-7 הזדמנויות פתוחות</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">הגשות בעבודה</div>
+          <div class="stat-value orange">3</div>
+          <div class="stat-sub">2 עם דדליין קרוב</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">דדליין הקרוב</div>
+          <div class="stat-value red">5 ימים</div>
+          <div class="stat-sub">קרן רש"י - חינוך</div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filter-row">
+        <div class="filter-tab active">הכל <span class="filter-count">7</span></div>
+        <div class="filter-tab">מתאים מאוד <span class="filter-count">3</span></div>
+        <div class="filter-tab">בטיפול <span class="filter-count">3</span></div>
+        <div class="filter-tab">נדחו</div>
+        <div style="flex:1"></div>
+        <div class="filter-tab">ממשלתי</div>
+        <div class="filter-tab">קרנות</div>
+        <div class="filter-tab">עסקי</div>
+      </div>
+
+      <!-- Feed Cards -->
+      <div class="feed-container">
+
+        <!-- Card 1 - High Match -->
+        <div class="feed-card match-high" onclick="showScreen('editor')">
+          <div class="match-score">
+            92
+            <span>התאמה</span>
+          </div>
+          <div class="feed-info">
+            <div class="feed-source">
+              <span class="source-badge">קרנות פרטיות</span>
+              קרן רש"י
+              <span class="new-tag">חדש</span>
+            </div>
+            <div class="feed-title">מענקים לתוכניות מניעת נשירה בפריפריה 2026</div>
+            <div class="feed-desc">קול קורא לעמותות הפועלות בתחום מניעת נשירת בני נוער מהמערכת החינוכית באזורי פריפריה. דגש על מתודולוגיות חדשניות ושימוש בטכנולוגיה.</div>
+          </div>
+          <div class="feed-meta">
+            <div class="feed-amount">&#8362;150,000</div>
+            <div class="feed-deadline deadline-urgent">5 ימים נותרו</div>
+          </div>
+          <div class="feed-cta">
+            <button class="btn-start">התחל הגשה</button>
+          </div>
+        </div>
+
+        <!-- Card 2 - High Match -->
+        <div class="feed-card match-high">
+          <div class="match-score">
+            87
+            <span>התאמה</span>
+          </div>
+          <div class="feed-info">
+            <div class="feed-source">
+              <span class="source-badge">ממשלתי</span>
+              משרד הרווחה
+            </div>
+            <div class="feed-title">תוכניות ליווי צעירים בוגרי מסגרות חוץ ביתיות</div>
+            <div class="feed-desc">מכרז להפעלת תוכניות ליווי וסיוע לצעירים בגילאי 18-26 שיצאו ממסגרות חוץ ביתיות. כולל מנטורינג, סיוע בדיור ותעסוקה.</div>
+          </div>
+          <div class="feed-meta">
+            <div class="feed-amount">&#8362;280,000</div>
+            <div class="feed-deadline deadline-soon">18 יום</div>
+          </div>
+          <div class="feed-cta">
+            <button class="btn-start">התחל הגשה</button>
+          </div>
+        </div>
+
+        <!-- Card 3 - High Match -->
+        <div class="feed-card match-high">
+          <div class="match-score">
+            85
+            <span>התאמה</span>
+          </div>
+          <div class="feed-info">
+            <div class="feed-source">
+              <span class="source-badge">בינלאומי</span>
+              European Youth Foundation
+              <span class="new-tag">חדש</span>
+            </div>
+            <div class="feed-title">Youth Empowerment and Social Inclusion Grant 2026</div>
+            <div class="feed-desc">Grants for NGOs working with at-risk youth on social inclusion, education access, and digital literacy. Priority for organizations using innovative tech solutions.</div>
+          </div>
+          <div class="feed-meta">
+            <div class="feed-amount">&euro;50,000</div>
+            <div class="feed-deadline deadline-ok">34 יום</div>
+          </div>
+          <div class="feed-cta">
+            <button class="btn-start">התחל הגשה</button>
+          </div>
+        </div>
+
+        <!-- Card 4 - Mid Match -->
+        <div class="feed-card match-mid">
+          <div class="match-score">
+            71
+            <span>התאמה</span>
+          </div>
+          <div class="feed-info">
+            <div class="feed-source">
+              <span class="source-badge">עסקי</span>
+              קרן ברלוביץ'
+            </div>
+            <div class="feed-title">תמיכה בפרויקטים חינוכיים קהילתיים</div>
+            <div class="feed-desc">מענקים לפרויקטים חינוכיים חדשניים בקהילה, עם דגש על שיתוף בין-מגזרי ומדידת אימפקט.</div>
+          </div>
+          <div class="feed-meta">
+            <div class="feed-amount">&#8362;100,000</div>
+            <div class="feed-deadline deadline-ok">42 יום</div>
+          </div>
+          <div class="feed-cta">
+            <button class="btn-start">התחל הגשה</button>
+          </div>
+        </div>
+
+        <!-- Card 5 - Mid Match -->
+        <div class="feed-card match-mid">
+          <div class="match-score">
+            64
+            <span>התאמה</span>
+          </div>
+          <div class="feed-info">
+            <div class="feed-source">
+              <span class="source-badge">ממשלתי</span>
+              רשות החדשנות
+            </div>
+            <div class="feed-title">מסלול חדשנות חברתית - טכנולוגיה לשירותים חברתיים</div>
+            <div class="feed-desc">מענקים לפיתוח פתרונות טכנולוגיים בתחום השירותים החברתיים. עד 75% מימון ממשלתי לפרויקטים חדשניים.</div>
+          </div>
+          <div class="feed-meta">
+            <div class="feed-amount">&#8362;500,000</div>
+            <div class="feed-deadline deadline-ok">56 יום</div>
+          </div>
+          <div class="feed-cta">
+            <button class="btn-start">התחל הגשה</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==================== SCREEN 2: EDITOR ==================== -->
+    <div id="screen-editor" class="screen">
+
+      <div class="screen-label"><strong>מסך 2</strong> &mdash; כתיבת הגשה: הכותב שלי</div>
+
+      <div class="editor-back">
+        <button class="back-btn" onclick="showScreen('feed')">&rarr; חזרה להזדמנויות</button>
+        <div>
+          <div class="editor-grant-title">מענקים לתוכניות מניעת נשירה בפריפריה 2026</div>
+          <div class="editor-grant-meta">
+            <span>קרן רש"י</span>
+            <span>&#8362;150,000</span>
+            <span>5 ימים נותרו</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="compatibility-bar">
+        <span class="compat-label">בדיקת תאימות</span>
+        <div class="compat-bar-track">
+          <div class="compat-bar-fill"></div>
+        </div>
+        <span class="compat-score">73% הושלם</span>
+      </div>
+
+      <div class="editor-layout">
+        <!-- Left Panel: Grant Requirements -->
+        <div class="editor-panel">
+          <div class="panel-header">
+            <div class="panel-title">&#128203; דרישות הקול הקורא</div>
+            <button class="btn btn-ghost" style="font-size:12px;">הצג PDF מלא</button>
+          </div>
+          <div class="panel-body">
+            <div class="grant-summary">
+              <h3>קרן רש"י - מניעת נשירה 2026</h3>
+              <div class="grant-detail">
+                <span class="label">סכום מקסימלי</span>
+                <span class="value">&#8362;150,000</span>
+              </div>
+              <div class="grant-detail">
+                <span class="label">תקופת מענק</span>
+                <span class="value">12 חודשים (אפשרות הארכה)</span>
+              </div>
+              <div class="grant-detail">
+                <span class="label">אזור גיאוגרפי</span>
+                <span class="value">פריפריה (צפון/דרום/ירושלים)</span>
+              </div>
+              <div class="grant-detail">
+                <span class="label">גודל עמותה מינימלי</span>
+                <span class="value">תקציב שנתי מעל &#8362;500K</span>
+              </div>
+            </div>
+
+            <div class="checklist">
+              <div class="checklist-title">צ'קליסט דרישות</div>
+              <div class="check-item done">
+                <div class="check-icon">&#10003;</div>
+                <span>תיאור הארגון ותחומי פעילות</span>
+              </div>
+              <div class="check-item done">
+                <div class="check-icon">&#10003;</div>
+                <span>ניסיון מוכח בתחום מניעת נשירה</span>
+              </div>
+              <div class="check-item done">
+                <div class="check-icon">&#10003;</div>
+                <span>תכנית עבודה מפורטת ל-12 חודשים</span>
+              </div>
+              <div class="check-item">
+                <div class="check-icon"></div>
+                <span>תקציב מפורט</span>
+              </div>
+              <div class="check-item">
+                <div class="check-icon"></div>
+                <span>מדדי הצלחה ומתודולוגיית מדידה</span>
+              </div>
+              <div class="check-item done">
+                <div class="check-icon">&#10003;</div>
+                <span>אישור ניהול תקין</span>
+              </div>
+              <div class="check-item">
+                <div class="check-icon"></div>
+                <span>דוח כספי מבוקר אחרון</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Panel: Editor -->
+        <div class="editor-panel editor-panel-right">
+          <div class="panel-header">
+            <div class="panel-title">&#9998; עורך ההגשה</div>
+            <div style="display:flex; gap:8px;">
+              <button class="btn btn-ghost" style="font-size:12px;">&#128190; שמור</button>
+              <button class="btn btn-primary" style="font-size:12px;">&#128196; ייצא PDF</button>
+            </div>
+          </div>
+          <div class="panel-body" style="padding:0;">
+            <div class="text-editor">
+              <div class="editor-toolbar">
+                <button class="toolbar-btn"><b>B</b></button>
+                <button class="toolbar-btn"><i>I</i></button>
+                <button class="toolbar-btn"><u>U</u></button>
+                <span class="toolbar-divider"></span>
+                <button class="toolbar-btn">H1</button>
+                <button class="toolbar-btn">H2</button>
+                <span class="toolbar-divider"></span>
+                <button class="toolbar-btn">&#8226;</button>
+                <button class="toolbar-btn">1.</button>
+                <span class="toolbar-divider"></span>
+                <button class="toolbar-btn" title="הוסף מבנק הטקסטים">&#128209;</button>
+                <button class="toolbar-btn" title="צרף קובץ">&#128206;</button>
+              </div>
+              <div class="editor-content" contenteditable="true">
+                <p><strong>1. תיאור הארגון</strong></p>
+                <div class="ai-suggestion">
+                  <div class="ai-badge">&#10024; AI כתב על סמך מסמכי הארגון</div>
+                  <p>עמותת הופה (ע.ר. 580718847) פועלת מאז 2023 בתחום ליווי בני נוער וצעירים בגילאי 14-26 הנמצאים בסיכון לנשירה מהמערכת החינוכית והחברתית. הארגון מפעיל מודל ייחודי בשם "רדאר 360" המשלב זיהוי מוקדם, התאמה אישית וליווי רציף.</p>
+                  <p>בשנת 2025 ליוותה הופה למעלה מ-1,200 צעירים ב-15 יישובים ברחבי הארץ, עם שיעור הצלחה של 87% במניעת נשירה.</p>
+                </div>
+                <p><strong>2. ניסיון מוכח</strong></p>
+                <p>הופה צברה ניסיון של 3 שנים בליווי צעירים בסיכון...</p>
+                <p><strong>3. תכנית עבודה</strong></p>
+                <p>התוכנית תפעל ב-12 חודשים בשלושה שלבים...</p>
+              </div>
+            </div>
+          </div>
+          <div class="ai-sidebar">
+            <div style="font-size:13px;font-weight:600;margin-bottom:10px;color:var(--primary);">&#10024; כלי AI</div>
+            <div class="ai-actions">
+              <button class="ai-action-btn">&#9997; שפר ניסוח</button>
+              <button class="ai-action-btn">&#128207; קצר</button>
+              <button class="ai-action-btn">&#128170; חזק טענה</button>
+              <button class="ai-action-btn">&#128202; הוסף נתון</button>
+              <button class="ai-action-btn">&#127760; תרגם לאנגלית</button>
+              <button class="ai-action-btn">&#9989; בדוק תאימות</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== SCREEN 3: ORGANIZATION ==================== -->
+    <div id="screen-org" class="screen">
+
+      <div class="screen-label"><strong>מסך 3</strong> &mdash; הארגון שלי: הזיכרון</div>
+
+      <div class="org-grid">
+
+        <!-- Profile Card -->
+        <div class="org-card">
+          <div class="org-card-header">
+            <div class="org-card-title">&#127970; פרופיל ארגון</div>
+            <button class="btn btn-ghost" style="font-size:12px;">&#9998; ערוך</button>
+          </div>
+          <div class="org-card-body">
+            <div class="profile-grid">
+              <div class="profile-field">
+                <div class="field-label">שם הארגון</div>
+                <div class="field-value">עמותת הופה</div>
+              </div>
+              <div class="profile-field">
+                <div class="field-label">מספר עמותה</div>
+                <div class="field-value">580718847</div>
+              </div>
+              <div class="profile-field">
+                <div class="field-label">תחומי פעילות</div>
+                <div class="field-value">חינוך, נוער בסיכון, מניעת נשירה</div>
+              </div>
+              <div class="profile-field">
+                <div class="field-label">אזור גיאוגרפי</div>
+                <div class="field-value">ארצי (דגש פריפריה)</div>
+              </div>
+              <div class="profile-field">
+                <div class="field-label">תקציב שנתי</div>
+                <div class="field-value">&#8362;857,100</div>
+              </div>
+              <div class="profile-field">
+                <div class="field-label">מספר עובדים</div>
+                <div class="field-value">8</div>
+              </div>
+              <div class="profile-field">
+                <div class="field-label">שנת הקמה</div>
+                <div class="field-value">2023</div>
+              </div>
+              <div class="profile-field">
+                <div class="field-label">ניהול תקין</div>
+                <div class="field-value" style="color:var(--accent);">&#10003; תקף עד 12/2026</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Documents Card -->
+        <div class="org-card">
+          <div class="org-card-header">
+            <div class="org-card-title">&#128194; מסמכים</div>
+            <button class="btn btn-primary" style="font-size:12px;">+ העלה מסמך</button>
+          </div>
+          <div class="org-card-body">
+            <div class="doc-list">
+              <div class="doc-item">
+                <div class="doc-icon pdf">&#128196;</div>
+                <div class="doc-info">
+                  <div class="doc-name">אישור ניהול תקין 2026</div>
+                  <div class="doc-meta">הועלה 15.01.2026 &bull; 245KB</div>
+                </div>
+                <span class="doc-status analyzed">&#10003; נסרק</span>
+              </div>
+              <div class="doc-item">
+                <div class="doc-icon pdf">&#128196;</div>
+                <div class="doc-info">
+                  <div class="doc-name">דוח כספי מבוקר 2025</div>
+                  <div class="doc-meta">הועלה 28.02.2026 &bull; 1.2MB</div>
+                </div>
+                <span class="doc-status analyzed">&#10003; נסרק</span>
+              </div>
+              <div class="doc-item">
+                <div class="doc-icon word">&#128196;</div>
+                <div class="doc-info">
+                  <div class="doc-name">דוח מילולי שנתי 2025</div>
+                  <div class="doc-meta">הועלה 01.03.2026 &bull; 3.4MB</div>
+                </div>
+                <span class="doc-status analyzed">&#10003; נסרק</span>
+              </div>
+              <div class="doc-item">
+                <div class="doc-icon pdf">&#128196;</div>
+                <div class="doc-info">
+                  <div class="doc-name">תקנון העמותה</div>
+                  <div class="doc-meta">הועלה 10.01.2026 &bull; 890KB</div>
+                </div>
+                <span class="doc-status analyzed">&#10003; נסרק</span>
+              </div>
+              <div class="doc-item">
+                <div class="doc-icon excel">&#128196;</div>
+                <div class="doc-info">
+                  <div class="doc-name">דוח אימפקט 2025</div>
+                  <div class="doc-meta">הועלה 05.03.2026 &bull; 2.1MB</div>
+                </div>
+                <span class="doc-status pending">&#9203; בסריקה</span>
+              </div>
+            </div>
+            <div class="drop-zone">
+              <div class="drop-zone-icon">&#128228;</div>
+              <div class="drop-zone-text">גררו מסמכים לכאן או לחצו להעלאה</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Text Bank -->
+        <div class="org-card">
+          <div class="org-card-header">
+            <div class="org-card-title">&#128209; בנק טקסטים</div>
+            <button class="btn btn-primary" style="font-size:12px;">+ טקסט חדש</button>
+          </div>
+          <div class="org-card-body">
+            <div class="text-bank">
+              <div class="text-snippet">
+                <div class="snippet-label">תיאור הארגון</div>
+                <div class="snippet-text">עמותת הופה פועלת מאז 2023 בתחום ליווי בני נוער וצעירים בגילאי 14-26 הנמצאים בסיכון לנשירה מהמערכת החינוכית. הארגון מפעיל מודל ייחודי בשם "רדאר 360"...</div>
+                <div class="snippet-meta">
+                  <span>שימושים: 12 הגשות</span>
+                  <span>עודכן 01.03.2026</span>
+                </div>
+              </div>
+              <div class="text-snippet">
+                <div class="snippet-label">מתודולוגיה</div>
+                <div class="snippet-text">מודל הרדאר 360 משלב 4 שלבים: שידור (זיהוי מוקדם), רמזור (סיווג רמת סיכון), התאמה (מיפוי מענים אישי), וגלים (ליווי רציף). המודל הוכיח יעילות של 87%...</div>
+                <div class="snippet-meta">
+                  <span>שימושים: 8 הגשות</span>
+                  <span>עודכן 15.02.2026</span>
+                </div>
+              </div>
+              <div class="text-snippet">
+                <div class="snippet-label">צוות מקצועי</div>
+                <div class="snippet-text">הצוות כולל 8 אנשי מקצוע: מנכ"לית בעלת MA בניהול חינוך ו-7 שנות ניסיון, מנהלת פרויקטים, 4 רכזי שטח ו-2 מנטורים. בנוסף, רשת של 50+ מנטורים מתנדבים...</div>
+                <div class="snippet-meta">
+                  <span>שימושים: 6 הגשות</span>
+                  <span>עודכן 20.02.2026</span>
+                </div>
+              </div>
+              <div class="text-snippet">
+                <div class="snippet-label">נתוני אימפקט</div>
+                <div class="snippet-text">בשנת 2025: ליווי 1,200+ צעירים, 15 יישובים, 600+ מענים במאגר, שיעור מניעת נשירה 87%, שביעות רצון משתתפים 94%.</div>
+                <div class="snippet-meta">
+                  <span>שימושים: 15 הגשות</span>
+                  <span>עודכן 05.03.2026</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- History -->
+        <div class="org-card">
+          <div class="org-card-header">
+            <div class="org-card-title">&#128197; היסטוריית הגשות</div>
+          </div>
+          <div class="org-card-body">
+            <div class="history-list">
+              <div class="history-item">
+                <div class="history-status approved"></div>
+                <div class="history-info">
+                  <div class="history-name">מגה-אור - רדאר 360</div>
+                  <div class="history-detail">הוגש 15.01.2026 &bull; אושר 20.02.2026</div>
+                </div>
+                <div class="history-amount approved">&#8362;300,000</div>
+              </div>
+              <div class="history-item">
+                <div class="history-status approved"></div>
+                <div class="history-info">
+                  <div class="history-name">משרד הרווחה - בוגרים</div>
+                  <div class="history-detail">הוגש 01.12.2025 &bull; אושר 15.01.2026</div>
+                </div>
+                <div class="history-amount approved">&#8362;180,000</div>
+              </div>
+              <div class="history-item">
+                <div class="history-status pending"></div>
+                <div class="history-info">
+                  <div class="history-name">קרן ברלוביץ' - חינוך</div>
+                  <div class="history-detail">הוגש 10.03.2026 &bull; ממתין לתשובה</div>
+                </div>
+                <div class="history-amount" style="color:var(--warning);">&#8362;100,000</div>
+              </div>
+              <div class="history-item">
+                <div class="history-status rejected"></div>
+                <div class="history-info">
+                  <div class="history-name">EU Youth - Social Inclusion</div>
+                  <div class="history-detail">הוגש 15.09.2025 &bull; נדחה 01.11.2025</div>
+                </div>
+                <div class="history-amount rejected">&euro;40,000</div>
+              </div>
+              <div class="history-item">
+                <div class="history-status approved"></div>
+                <div class="history-info">
+                  <div class="history-name">רשות החדשנות - טכנולוגיה חברתית</div>
+                  <div class="history-detail">הוגש 01.06.2025 &bull; אושר 15.08.2025</div>
+                </div>
+                <div class="history-amount approved">&#8362;250,000</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function showScreen(screen) {
+  // Hide all screens
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+
+  // Show selected screen
+  document.getElementById('screen-' + screen).classList.add('active');
+
+  // Update tabs
+  const tabs = document.querySelectorAll('.screen-tab');
+  tabs.forEach(t => t.classList.remove('active'));
+  const tabIndex = screen === 'feed' ? 0 : screen === 'editor' ? 1 : 2;
+  tabs[tabIndex].classList.add('active');
+
+  // Update nav
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navIndex = screen === 'feed' ? 0 : screen === 'editor' ? 1 : 2;
+  document.querySelectorAll('.nav-item')[navIndex].classList.add('active');
+
+  // Scroll to top
+  window.scrollTo(0, 0);
+}
+</script>
+
+</body>
+</html>
