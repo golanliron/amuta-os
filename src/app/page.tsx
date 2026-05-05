@@ -212,10 +212,10 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-bg overflow-hidden" dir="rtl">
-      {/* Floating bubbles background - subtle */}
+      {/* Floating bubbles background - very subtle, small */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[40%] left-[10%] w-24 h-24 rounded-full bg-accent float-bubble-2" />
-        <div className="absolute bottom-[20%] right-[60%] w-20 h-20 rounded-full bg-accent float-bubble-3" />
+        <div className="absolute top-[50%] left-[15%] w-10 h-10 rounded-full bg-accent/5 float-bubble-2" />
+        <div className="absolute bottom-[30%] right-[70%] w-8 h-8 rounded-full bg-accent/5 float-bubble-3" />
       </div>
 
       {/* Subtle dot pattern */}
@@ -239,6 +239,7 @@ export default function LandingPage() {
           <div className="hidden md:flex items-center gap-6">
             <a href="#why" className="text-sm text-text2 hover:text-accent transition-colors">למה Fishgold</a>
             <a href="#how" className="text-sm text-text2 hover:text-accent transition-colors">איך זה עובד</a>
+            <a href="#whatsapp" className="text-sm text-text2 hover:text-accent transition-colors">וואטסאפ</a>
             <a href="#pricing" className="text-sm text-text2 hover:text-accent transition-colors">מחירים</a>
             <button
               onClick={() => router.push('/dashboard')}
@@ -269,6 +270,7 @@ export default function LandingPage() {
           <div className="md:hidden mt-3 bg-surf border border-border rounded-2xl p-4 space-y-3 shadow-lg">
             <a href="#why" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">למה Fishgold</a>
             <a href="#how" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">איך זה עובד</a>
+            <a href="#whatsapp" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">וואטסאפ</a>
             <a href="#pricing" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">מחירים</a>
             <button
               onClick={() => { setMobileMenu(false); router.push('/dashboard'); }}
@@ -299,7 +301,7 @@ export default function LandingPage() {
         </h2>
 
         <p className="text-lg sm:text-xl text-text2 max-w-2xl mx-auto mb-12 leading-relaxed fade-up" style={{ animationDelay: '0.45s' }}>
-          לא בינה מלאכותית. דג זהב עתיק שחי מאות שנים בים של גיוס משאבים. אנחנו לא חברים — אני כאן בשביל לא לבזבז לך זמן. קרנות לא מחפשות חמודים, הן מחפשות ערך. יאללה, תשלחי חומרים.
+          מערכת גיוס משאבים חכמה לעמותות. מאתרת קולות קוראים, מתאימה לארגון שלך, וכותבת הגשות מלאות. 428 מקורות מימון, 75 קרנות, הכל במקום אחד.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 fade-up" style={{ animationDelay: '0.6s' }}>
@@ -531,6 +533,10 @@ export default function LandingPage() {
 
       {/* Stats with animated counters + swimming fish */}
       <RevealSection className="relative z-10 max-w-3xl mx-auto px-6 pb-20">
+        <p className="text-center text-sm text-accent font-medium mb-4 flex items-center justify-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-green animate-pulse" />
+          סורק קולות קוראים כל יום
+        </p>
         <div className="relative">
           {/* Swimming fish that appears when stats come into view */}
           <div className="absolute -top-6 left-0 right-0 pointer-events-none overflow-hidden h-12 z-10">
@@ -646,7 +652,7 @@ export default function LandingPage() {
       </section>
 
       {/* WhatsApp Bot section */}
-      <section className="relative z-10 max-w-5xl mx-auto px-6 pb-24">
+      <section id="whatsapp" className="relative z-10 max-w-5xl mx-auto px-6 pb-24">
         <RevealSection>
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-3">גם בוואטסאפ</h2>
           <p className="text-center text-muted mb-12 max-w-lg mx-auto">
@@ -765,8 +771,8 @@ export default function LandingPage() {
           <RevealSection type="reveal-scale" delay="stagger-1">
             <div className="bg-surf border-2 border-accent rounded-2xl p-8 hover:shadow-lg transition-all relative flex flex-col">
               <div className="mb-5 text-center">
-                <h3 className="font-bold text-xl mb-1">750₪ לחודש</h3>
-                <p className="text-sm text-muted">הכל כלול. בלי הגבלות. בלי הפתעות.</p>
+                <h3 className="font-bold text-xl mb-1">Goldfish</h3>
+                <p className="text-sm text-muted">חבילה אחת. הכל כלול. בלי הפתעות.</p>
               </div>
               <div className="text-center mb-6">
                 <span className="text-4xl font-extrabold" style={{ color: '#EE7A30' }}>750</span>
@@ -819,8 +825,8 @@ export default function LandingPage() {
         <div className="bg-surf border border-border rounded-3xl p-10 sm:p-14 border-glow relative overflow-hidden">
           <div className="absolute inset-0 opacity-[0.03]" style={{ background: 'radial-gradient(circle at center, #EE7A30, transparent 70%)' }} />
           <FishLogo size={56} className="swim mx-auto mb-6 relative" />
-          <h2 className="text-2xl sm:text-3xl font-bold mb-3 relative">750₪ בחודש. גיוס משאבים עם חוכמה של שנים בתחום.</h2>
-          <p className="text-sm text-muted2 mb-1 relative">דג עתיק שמוצא זהב בים.</p>
+          <h2 className="text-2xl sm:text-3xl font-bold mb-3 relative">750₪ בחודש. הדג שדג לך מענקים.</h2>
+          <p className="text-sm text-muted2 mb-1 relative">סורק, מתאים, כותב הגשות. כל יום, בלי לבזבז לך זמן.</p>
           <p className="text-muted mb-8 max-w-md mx-auto relative">
             בלי התחייבות. אפשר לבטל בכל רגע.
           </p>

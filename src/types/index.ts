@@ -24,6 +24,7 @@ export type DocumentCategory =
   | 'identity'
   | 'budget'
   | 'project'
+  | 'programs'
   | 'grant'
   | 'submission'
   | 'other';
