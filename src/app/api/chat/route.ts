@@ -110,7 +110,7 @@ async function fetchUrlContent(url: string): Promise<string | null> {
       // PDF/binary — try grants DB for the full description
       const grantData = await lookupGrantByUrl(url);
       if (grantData) return grantData;
-      return `[קובץ בינארי: ${contentType}. לא ניתן לקרוא PDF ישירות. אם יש לך מידע נוסף על קול הקורא, שתף אותו.]`;
+      return `[קובץ בינארי: ${contentType}. לא ניתן לקרוא PDF מלינק. בקש מהמשתמש להוריד את הקובץ ולהעלות אותו דרך כפתור ההעלאה, או להעתיק את הטקסט ולשלוח בצ'אט.]`;
     }
 
     const text = await res.text();
@@ -159,7 +159,7 @@ async function fetchUrls(message: string): Promise<FetchedUrl[]> {
         // SPA or minimal content — still return with note
         results.push({
           url,
-          content: `[האתר ${url} הוא אפליקציית SPA ולא ניתן לקרוא את התוכן שלו אוטומטית. התוכן שנקרא: "${content}". כדי ללמוד את הארגון, בקשי מהמשתמש להעלות מסמכים (תקנון, דוח כספי, תיאור פעילות) או לספר על הארגון בטקסט חופשי.]`,
+          content: `[הלינק ${url} לא נפתח כמו שצריך — כנראה אתר דינמי (SPA) או דף שדורש ניווט ידני. התוכן שנקרא: "${content.slice(0, 300)}". בקש מהמשתמש להוריד את המסמך כ-PDF ולהעלות, או להעתיק את הטקסט המלא ולשלוח בצ'אט. אל תנסה לכתוב הגשה בלי המידע המלא.]`,
         });
       }
     })
