@@ -67,8 +67,8 @@ export async function GET(req: NextRequest) {
     query = query.or(`name.ilike.%${search}%,description.ilike.%${search}%,contact_name.ilike.%${search}%`);
   }
 
-  // Load more when we need to score & filter
-  const { data: companies, error } = await query.limit(matchedOnly ? 954 : 200);
+  // Always load all companies for accurate matched count
+  const { data: companies, error } = await query.limit(954);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

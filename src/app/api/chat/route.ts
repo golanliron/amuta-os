@@ -582,12 +582,10 @@ async function findSpecificCompany(
   supabase: ReturnType<typeof createAdminClient>,
   userMessage: string
 ): Promise<string | null> {
-  // Extract potential company/fund names from message (3+ word segments or known patterns)
   const msg = userMessage.toLowerCase();
-  // Skip if message is too short or is a generic question
-  if (msg.length < 5) return null;
+  if (msg.length < 3) return null;
 
-  // Search companies whose name appears in the message
+  // Search companies whose name appears in the message OR message words appear in company name
   const { data: allCompanies } = await supabase
     .from('companies')
     .select('name, company_type, description, interests, donation_amount, contact_name, contact_email, contact_phone, contact_role, website')
@@ -595,13 +593,58 @@ async function findSpecificCompany(
 
   if (!allCompanies) return null;
 
-  // Find companies whose name appears in the user message (case insensitive)
+  // Extract meaningful words from message (3+ chars, skip common Hebrew words)
+  const stopWords = new Set(['של', 'את', 'על', 'עם', 'אני', 'הוא', 'היא', 'יש', 'אין', 'מה', 'איך', 'למה', 'כמה', 'איפה', 'חברה', 'חברת', 'קרן', 'ארגון', 'עמותה', 'תורם', 'תורמים', 'מידע', 'פרטים', 'לגבי', 'בנוגע', 'תספר', 'ספר', 'מכיר', 'מכירה']);
+  const msgWords = msg.split(/\s+/).filter(w => w.length >= 2 && !stopWords.has(w));
+
+  // Bidirectional matching: company name in message OR message words in company name
   const matches = allCompanies.filter(c => {
     const name = c.name.toLowerCase();
-    // Skip very short names that might cause false positives
-    if (name.length < 3) return false;
-    return msg.includes(name);
+    if (name.length < 2) return false;
+
+    // Direction 1: full company name appears in message
+    if (msg.includes(name)) return true;
+
+    // Direction 2: significant message words appear in company name
+    // Need at least one 3+ char word match
+    const nameWords = name.split(/[\s\-\.\/,]+/).filter(w => w.length >= 2);
+    for (const mw of msgWords) {
+      if (mw.length < 3) continue;
+      // Exact word match in name
+      if (nameWords.some(nw => nw === mw || nw.startsWith(mw) || mw.startsWith(nw))) return true;
+      // Substring match for longer words (4+ chars)
+      if (mw.length >= 4 && name.includes(mw)) return true;
+    }
+
+    // Direction 3: check description for the search terms too (partial name matches)
+    const desc = (c.description || '').toLowerCase();
+    for (const mw of msgWords) {
+      if (mw.length >= 4 && name.includes(mw.slice(0, 4))) return true;
+      if (mw.length >= 5 && desc.includes(mw)) {
+        // Only match via description if the word is very specific
+        if (nameWords.some(nw => nw.length >= 3 && msg.includes(nw))) return true;
+      }
+    }
+
+    return false;
   });
+
+  if (matches.length === 0) {
+    // Last resort: try ilike search on DB directly for each significant word
+    for (const word of msgWords) {
+      if (word.length < 3) continue;
+      const { data: dbMatch } = await supabase
+        .from('companies')
+        .select('name, company_type, description, interests, donation_amount, contact_name, contact_email, contact_phone, contact_role, website')
+        .eq('active', true)
+        .or(`name.ilike.%${word}%,description.ilike.%${word}%`)
+        .limit(5);
+      if (dbMatch?.length) {
+        matches.push(...dbMatch);
+        break;
+      }
+    }
+  }
 
   if (matches.length === 0) return null;
 
@@ -726,6 +769,54 @@ async function scanCompanies(
   }
 }
 
+// ===== Companies Index (always loaded) =====
+
+async function loadCompaniesIndex(
+  supabase: ReturnType<typeof createAdminClient>
+): Promise<string> {
+  try {
+    const { data: companies } = await supabase
+      .from('companies')
+      .select('name, company_type, description, interests, donation_amount, csr_rank')
+      .eq('active', true)
+      .order('name');
+
+    if (!companies?.length) return '';
+
+    // Group by type
+    const byType: Record<string, typeof companies> = {};
+    for (const c of companies) {
+      const t = c.company_type || 'other';
+      if (!byType[t]) byType[t] = [];
+      byType[t].push(c);
+    }
+
+    const typeLabels: Record<string, string> = {
+      fund: 'קרנות',
+      public: 'חברות ציבוריות',
+      private: 'חברות פרטיות',
+      business: 'עסקים',
+    };
+
+    // Build compact index with key details
+    const sections = Object.entries(byType).map(([type, comps]) => {
+      const label = typeLabels[type] || type;
+      const lines = comps.map(c => {
+        const parts = [c.name];
+        if (c.interests?.length) parts.push(`(${c.interests.slice(0, 3).join(', ')})`);
+        if (c.donation_amount) parts.push(`${(c.donation_amount / 1000).toFixed(0)}K₪`);
+        if (c.csr_rank) parts.push(`CSR#${c.csr_rank}`);
+        return parts.join(' ');
+      });
+      return `## ${label} (${comps.length})\n${lines.join(' | ')}`;
+    });
+
+    return `\n\n===== מאגר חברות וארגונים — ${companies.length} במאגר =====\nאתה מכיר את כל החברות האלה. כשמשתמש שואל על חברה — חפש במאגר הזה קודם!\n${sections.join('\n\n')}`;
+  } catch {
+    return '';
+  }
+}
+
 // ===== Sector Intelligence =====
 
 const SECTOR_KEYWORDS = ['מגזר שלישי', 'עמותות', 'מתחרים', 'מגמות', 'טרנדים', 'חדשות', 'סטארטאפ חברתי', 'אימפקט', 'CSR', 'פילנתרופיה', 'תרומות בישראל', 'קרנות בישראל', 'שוק', 'מגזר', 'תחרות', 'benchmarking', 'דוח מגזרי', 'נתוני שוק'];
@@ -834,8 +925,8 @@ export async function POST(request: NextRequest) {
     const urlContent = formatUrlsForMessage(fetchedUrls);
     const orgContext = buildOrgContext(profile?.data ?? null, org?.name ?? null);
 
-    // Load matched opportunities, companies, and sector intelligence in parallel
-    const [opportunityContext, companyContext, sectorContext] = await Promise.all([
+    // Load matched opportunities, companies, sector intelligence, and companies index in parallel
+    const [opportunityContext, companyContext, sectorContext, companiesIndex] = await Promise.all([
       scanOpportunities(
         supabase, org_id, profile?.data as Record<string, unknown> | null, org?.name ?? null, message
       ),
@@ -843,6 +934,7 @@ export async function POST(request: NextRequest) {
         supabase, profile?.data as Record<string, unknown> | null, org?.name ?? null, message
       ),
       loadSectorIntelligence(supabase, message),
+      loadCompaniesIndex(supabase),
     ]);
 
     // Tab-specific focus instructions
@@ -873,7 +965,7 @@ export async function POST(request: NextRequest) {
     };
     const tabFocus = (active_tab && TAB_FOCUS[active_tab]) || '';
 
-    const systemPrompt = FISHGOLD_SYSTEM_PROMPT + tabFocus + orgContext + docSummary + knowledge + rag + opportunityContext + companyContext + sectorContext;
+    const systemPrompt = FISHGOLD_SYSTEM_PROMPT + tabFocus + orgContext + docSummary + knowledge + rag + opportunityContext + companyContext + companiesIndex + sectorContext;
 
     // Load conversation history
     let chatMessages: { role: 'user' | 'assistant'; content: string }[] = [];
