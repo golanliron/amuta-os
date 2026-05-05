@@ -481,7 +481,7 @@ export default function LandingPage() {
           <div className="flex items-center justify-between px-5 py-3.5 border-b border-border bg-surf2/50">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-green animate-pulse" />
-              <span className="text-[13px] font-semibold">נמצאו 12 קולות קוראים שמתאימים לפעילות שלכם</span>
+              <span className="text-[13px] font-semibold">נמצאו 12 קולות קוראים ו-4 חברות שמתאימים לפרופיל הארגון שלכם</span>
             </div>
             <span className="text-[11px] text-muted">עודכן היום</span>
           </div>
@@ -527,7 +527,7 @@ export default function LandingPage() {
 
           {/* Footer */}
           <div className="px-5 py-3 border-t border-border bg-surf2/30 flex items-center justify-between">
-            <span className="text-[11px] text-muted">+ 8 קולות קוראים נוספים</span>
+            <span className="text-[11px] text-muted">+ 8 קולות קוראים ו-3 חברות נוספים</span>
             <button
               onClick={() => router.push('/dashboard')}
               className="text-[12px] font-medium text-accent hover:underline"
