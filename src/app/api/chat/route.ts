@@ -520,7 +520,7 @@ export async function POST(request: NextRequest) {
       model: 'claude-sonnet-4-20250514',
       system: systemPrompt,
       messages: chatMessages,
-      max_tokens: 2000,
+      max_tokens: 4096,
     });
 
     const encoder = new TextEncoder();

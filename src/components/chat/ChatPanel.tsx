@@ -78,8 +78,8 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
     e.target.style.height = Math.min(e.target.scrollHeight, 150) + 'px';
   };
 
-  const sendMessage = useCallback(async () => {
-    const text = input.trim();
+  const sendMessage = useCallback(async (externalText?: string) => {
+    const text = (externalText || input).trim();
     if (!text || isStreaming) return;
 
     const userMsg: ChatMessage = {
@@ -90,7 +90,7 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
     };
 
     setMessages(prev => [...prev, userMsg]);
-    setInput('');
+    if (!externalText) setInput('');
     setIsStreaming(true);
 
     if (inputRef.current) {
@@ -172,6 +172,16 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
       setIsStreaming(false);
     }
   }, [input, isStreaming, conversationId, orgId, userId]);
+
+  // Listen for "כתוב הגשה" events from sidebar
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const text = (e as CustomEvent).detail;
+      if (text) sendMessage(text);
+    };
+    window.addEventListener('fishgold:send', handler);
+    return () => window.removeEventListener('fishgold:send', handler);
+  }, [sendMessage]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -391,7 +401,7 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
 
           {/* Send button */}
           <button
-            onClick={sendMessage}
+            onClick={() => sendMessage()}
             disabled={!input.trim() || isStreaming}
             className="flex-shrink-0 p-2.5 rounded-xl bg-accent text-white hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >

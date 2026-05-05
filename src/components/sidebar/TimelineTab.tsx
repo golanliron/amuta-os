@@ -16,6 +16,7 @@ interface DeadlineItem {
   deadline: string;
   daysLeft: number;
   type: string | null;
+  url: string | null;
 }
 
 export default function TimelineTab({ stage, orgId }: TimelineTabProps) {
@@ -28,7 +29,7 @@ export default function TimelineTab({ stage, orgId }: TimelineTabProps) {
 
     supabase
       .from('opportunities')
-      .select('id, title, funder, deadline, type')
+      .select('id, title, funder, deadline, type, url')
       .eq('active', true)
       .not('deadline', 'is', null)
       .gte('deadline', new Date().toISOString().split('T')[0])
@@ -180,47 +181,70 @@ export default function TimelineTab({ stage, orgId }: TimelineTabProps) {
           {upcoming.length === 0 ? (
             <p className="text-[11px] text-muted2 text-center py-4">אין דדליינים בחודש הקרוב</p>
           ) : (
-            upcoming.map(item => (
-              <div
-                key={item.id}
-                className="flex items-center gap-2 py-2 px-2.5 rounded-lg hover:bg-surf2 transition-colors"
-              >
-                <span
-                  className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                    item.daysLeft <= 7
-                      ? 'bg-red-500'
-                      : item.daysLeft <= 14
-                      ? 'bg-amber-500'
-                      : 'bg-green-500'
-                  }`}
-                />
-                <div className="flex-1 min-w-0">
-                  <p className="text-[11px] font-medium truncate">{item.title}</p>
-                  {item.funder && (
-                    <p className="text-[9px] text-muted truncate">{item.funder}</p>
-                  )}
-                </div>
-                <div className="flex-shrink-0 text-left">
+            upcoming.map(item => {
+              const inner = (
+                <>
                   <span
-                    className={`text-[10px] font-semibold ${
+                    className={`w-2 h-2 rounded-full flex-shrink-0 ${
                       item.daysLeft <= 7
-                        ? 'text-red-500'
+                        ? 'bg-red-500'
                         : item.daysLeft <= 14
-                        ? 'text-amber-500'
-                        : 'text-muted'
+                        ? 'bg-amber-500'
+                        : 'bg-green-500'
                     }`}
-                  >
-                    {item.daysLeft} ימים
-                  </span>
-                  <p className="text-[9px] text-muted2">
-                    {new Date(item.deadline).toLocaleDateString('he-IL', {
-                      day: 'numeric',
-                      month: 'short',
-                    })}
-                  </p>
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[11px] font-medium truncate">{item.title}</p>
+                    {item.funder && (
+                      <p className="text-[9px] text-muted truncate">{item.funder}</p>
+                    )}
+                  </div>
+                  <div className="flex-shrink-0 text-left">
+                    <span
+                      className={`text-[10px] font-semibold ${
+                        item.daysLeft <= 7
+                          ? 'text-red-500'
+                          : item.daysLeft <= 14
+                          ? 'text-amber-500'
+                          : 'text-muted'
+                      }`}
+                    >
+                      {item.daysLeft} ימים
+                    </span>
+                    <p className="text-[9px] text-muted2">
+                      {new Date(item.deadline).toLocaleDateString('he-IL', {
+                        day: 'numeric',
+                        month: 'short',
+                      })}
+                    </p>
+                  </div>
+                </>
+              );
+
+              return item.url ? (
+                <a
+                  key={item.id}
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 py-2 px-2.5 rounded-lg hover:bg-surf2 transition-colors cursor-pointer"
+                >
+                  {inner}
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted flex-shrink-0">
+                    <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
+                    <polyline points="15 3 21 3 21 9" />
+                    <line x1="10" y1="14" x2="21" y2="3" />
+                  </svg>
+                </a>
+              ) : (
+                <div
+                  key={item.id}
+                  className="flex items-center gap-2 py-2 px-2.5 rounded-lg hover:bg-surf2 transition-colors"
+                >
+                  {inner}
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       </div>

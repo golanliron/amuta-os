@@ -30,9 +30,16 @@ const TYPE_COLORS: Record<OpportunityType, string> = {
   endowment: 'bg-amber-100 text-amber-700',
 };
 
+interface MatchScore {
+  opportunity_id: string;
+  score: number;
+  reasoning: string;
+}
+
 export default function OpportunitiesTab({ stage, orgId }: OpportunitiesTabProps) {
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
   const [taxonomy, setTaxonomy] = useState<TaxItem[]>([]);
+  const [matchScores, setMatchScores] = useState<Map<string, MatchScore>>(new Map());
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [showFilters, setShowFilters] = useState(false);
@@ -55,16 +62,34 @@ export default function OpportunitiesTab({ stage, orgId }: OpportunitiesTabProps
         if (data) setTaxonomy(data as TaxItem[]);
       });
 
-    // Load active opportunities
+    // Load active opportunities — exclude expired
+    const today = new Date().toISOString().split('T')[0];
     supabase
       .from('opportunities')
       .select('*')
       .eq('active', true)
+      .or(`deadline.is.null,deadline.gte.${today}`)
       .order('deadline', { ascending: true, nullsFirst: false })
       .then(({ data }) => {
         if (data) setOpportunities(data as unknown as Opportunity[]);
         setLoading(false);
       });
+
+    // Load match scores for this org
+    if (orgId) {
+      supabase
+        .from('matches')
+        .select('opportunity_id, score, reasoning')
+        .eq('org_id', orgId)
+        .gte('score', 50)
+        .then(({ data }) => {
+          if (data) {
+            const map = new Map<string, MatchScore>();
+            data.forEach(m => map.set(m.opportunity_id, m as MatchScore));
+            setMatchScores(map);
+          }
+        });
+    }
   }, []);
 
   const filtered = useMemo(() => {
@@ -210,7 +235,7 @@ export default function OpportunitiesTab({ stage, orgId }: OpportunitiesTabProps
             <p className="text-xs text-muted2 mt-1">נסי לשנות את החיפוש או הסינון</p>
           </div>
         ) : (
-          filtered.map(opp => <OpportunityCard key={opp.id} opp={opp} />)
+          filtered.map(opp => <OpportunityCard key={opp.id} opp={opp} match={matchScores.get(opp.id)} />)
         )}
       </div>
     </div>
@@ -231,7 +256,7 @@ function buildShareText(opp: Opportunity): string {
   return parts.join('\n');
 }
 
-function OpportunityCard({ opp }: { opp: Opportunity }) {
+function OpportunityCard({ opp, match }: { opp: Opportunity; match?: MatchScore }) {
   const [expanded, setExpanded] = useState(false);
   const [showShare, setShowShare] = useState(false);
 
@@ -252,11 +277,31 @@ function OpportunityCard({ opp }: { opp: Opportunity }) {
         : `${daysLeft} ימים`
       : null;
 
+  const matchColor = match
+    ? match.score >= 80 ? 'bg-green-100 text-green-700 border-green-200'
+    : match.score >= 60 ? 'bg-amber-100 text-amber-700 border-amber-200'
+    : 'bg-gray-100 text-gray-600 border-gray-200'
+    : '';
+
+  const handleWriteSubmission = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const detail = `תכתוב טיוטת הגשה לקול הקורא: "${opp.title}"${opp.funder ? ` של ${opp.funder}` : ''}${opp.deadline ? ` (דדליין: ${new Date(opp.deadline).toLocaleDateString('he-IL')})` : ''}${opp.description ? `\n\nתיאור הקול הקורא: ${opp.description.slice(0, 500)}` : ''}${opp.eligibility ? `\nתנאי סף: ${opp.eligibility}` : ''}`;
+    window.dispatchEvent(new CustomEvent('fishgold:send', { detail }));
+  };
+
   return (
     <div
-      className="bg-surf rounded-xl border border-border p-3 hover:border-accent/30 transition-colors cursor-pointer"
+      className={`bg-surf rounded-xl border p-3 hover:border-accent/30 transition-colors cursor-pointer ${match && match.score >= 80 ? 'border-green-200' : 'border-border'}`}
       onClick={() => setExpanded(!expanded)}
     >
+      {/* Match score badge */}
+      {match && (
+        <div className={`flex items-center gap-1.5 mb-2 px-2 py-1 rounded-lg border text-[10px] font-medium ${matchColor}`}>
+          <span>התאמה: {match.score}%</span>
+          <span className="font-normal opacity-75">— {match.reasoning}</span>
+        </div>
+      )}
+
       {/* Top row: title + type badge */}
       <div className="flex items-start justify-between gap-2 mb-1.5">
         <h4 className="text-[13px] font-semibold leading-snug flex-1 min-w-0 line-clamp-2">
@@ -359,10 +404,7 @@ function OpportunityCard({ opp }: { opp: Opportunity }) {
               </a>
             )}
             <button
-              onClick={e => {
-                e.stopPropagation();
-                // TODO: trigger submission writing flow
-              }}
+              onClick={handleWriteSubmission}
               className="flex-1 py-1.5 text-[10px] font-medium bg-accent text-white rounded-lg hover:opacity-90 transition-opacity"
             >
               כתוב הגשה
