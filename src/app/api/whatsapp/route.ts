@@ -6,19 +6,39 @@ import { FISHGOLD_SYSTEM_PROMPT, buildContext, buildOrgContext } from '@/lib/ai/
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-// Green API config (same provider as Hopa bot)
+// Meta Cloud API config
+const META_API_VERSION = 'v21.0';
+const META_PHONE_NUMBER_ID = process.env.META_PHONE_NUMBER_ID || '';
+const META_ACCESS_TOKEN = process.env.META_ACCESS_TOKEN || '';
+const META_VERIFY_TOKEN = process.env.META_VERIFY_TOKEN || 'fishgold_webhook_2026';
+
+// Legacy Green API config (fallback)
 const GREEN_API_URL = process.env.GREEN_API_URL || '';
 const GREEN_API_TOKEN = process.env.GREEN_API_TOKEN || '';
 const GREEN_API_INSTANCE = process.env.GREEN_API_INSTANCE || '';
 
-// ===== Webhook verification (GET) =====
+// Detect which provider is configured
+const USE_META = !!META_PHONE_NUMBER_ID && !!META_ACCESS_TOKEN;
+
+// ===== Webhook verification (GET) — Meta requires this =====
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const token = searchParams.get('token');
 
-  if (token === process.env.WHATSAPP_VERIFY_TOKEN) {
+  // Meta webhook verification
+  const mode = searchParams.get('hub.mode');
+  const token = searchParams.get('hub.verify_token');
+  const challenge = searchParams.get('hub.challenge');
+
+  if (mode === 'subscribe' && token === META_VERIFY_TOKEN) {
+    return new Response(challenge || '', { status: 200 });
+  }
+
+  // Legacy Green API verification
+  const legacyToken = searchParams.get('token');
+  if (legacyToken === process.env.WHATSAPP_VERIFY_TOKEN) {
     return Response.json({ status: 'verified' });
   }
+
   return Response.json({ error: 'Invalid token' }, { status: 403 });
 }
 
@@ -35,38 +55,55 @@ const QUICK_COMMANDS: Record<string, string> = {
   'תפריט': 'help',
 };
 
+// ===== Parse incoming message from either provider =====
+function parseIncomingMessage(body: Record<string, unknown>): { phone: string; text: string; senderName: string } | null {
+  // Try Meta Cloud API format
+  if (body.object === 'whatsapp_business_account') {
+    const entry = (body.entry as { changes: { value: { messages?: { from: string; text?: { body: string }; type: string }[]; contacts?: { profile?: { name: string } }[] } }[] }[])?.[0];
+    const change = entry?.changes?.[0];
+    const value = change?.value;
+    const message = value?.messages?.[0];
+
+    if (!message || message.type !== 'text') return null;
+
+    const phone = message.from || '';
+    const text = message.text?.body || '';
+    const senderName = value?.contacts?.[0]?.profile?.name || '';
+
+    return { phone, text, senderName };
+  }
+
+  // Try Green API format
+  const messageData = body.messageData as { typeMessage?: string; textMessageData?: { textMessage?: string }; extendedTextMessageData?: { text?: string } } | undefined;
+  const senderData = body.senderData as { chatId?: string; senderName?: string } | undefined;
+
+  if (!messageData || !senderData) return null;
+
+  const messageType = messageData.typeMessage;
+  if (messageType !== 'textMessage' && messageType !== 'extendedTextMessage') return null;
+
+  const phone = senderData.chatId?.replace('@c.us', '') || '';
+  const senderName = senderData.senderName || '';
+  const text = messageData.textMessageData?.textMessage ||
+               messageData.extendedTextMessageData?.text || '';
+
+  // Don't respond to group messages
+  if (senderData.chatId?.includes('@g.us')) return null;
+
+  return { phone, text, senderName };
+}
+
 // ===== Incoming message (POST) =====
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    // Green API webhook format
-    const messageData = body.messageData;
-    const senderData = body.senderData;
-
-    if (!messageData || !senderData) {
+    const parsed = parseIncomingMessage(body);
+    if (!parsed || !parsed.phone || !parsed.text) {
       return Response.json({ ok: true });
     }
 
-    // Only process text messages and extended text
-    const messageType = messageData.typeMessage;
-    if (messageType !== 'textMessage' && messageType !== 'extendedTextMessage') {
-      return Response.json({ ok: true });
-    }
-
-    const phone = senderData.chatId?.replace('@c.us', '') || '';
-    const senderName = senderData.senderName || '';
-    const text = messageData.textMessageData?.textMessage ||
-                 messageData.extendedTextMessageData?.text || '';
-
-    if (!phone || !text) {
-      return Response.json({ ok: true });
-    }
-
-    // Don't respond to group messages
-    if (senderData.chatId?.includes('@g.us')) {
-      return Response.json({ ok: true });
-    }
+    const { phone, text, senderName } = parsed;
 
     const supabase = createAdminClient();
 
@@ -223,7 +260,7 @@ export async function POST(request: NextRequest) {
       orgContext + ragContext + matchesContext;
 
     const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-haiku-4-5-20251001',
       system: systemPrompt,
       messages,
       max_tokens: 1500,
@@ -307,7 +344,6 @@ async function handleCommand(
 ) {
   switch (command) {
     case 'scan': {
-      // Trigger a scan for this org
       const baseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL
         ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
 
@@ -427,33 +463,62 @@ async function handleCommand(
   }
 }
 
-// ===== Send message via Green API =====
+// ===== Send message — supports both Meta Cloud API and Green API =====
 async function sendWhatsApp(phone: string, text: string) {
-  if (!GREEN_API_URL || !GREEN_API_INSTANCE || !GREEN_API_TOKEN) {
-    console.log('[WhatsApp] No Green API config, skipping send:', { phone, text: text.slice(0, 100) });
-    return;
-  }
-
-  // Split long messages (WhatsApp limit ~4096, but better to split at 1500)
   const chunks = splitMessage(text, 1500);
 
   for (const chunk of chunks) {
-    await fetch(
-      `${GREEN_API_URL}/waInstance${GREEN_API_INSTANCE}/sendMessage/${GREEN_API_TOKEN}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chatId: `${phone}@c.us`,
-          message: chunk,
-        }),
-      }
-    );
-    // Small delay between messages
+    if (USE_META) {
+      await sendViaMeta(phone, chunk);
+    } else if (GREEN_API_URL && GREEN_API_INSTANCE && GREEN_API_TOKEN) {
+      await sendViaGreenApi(phone, chunk);
+    } else {
+      console.log('[WhatsApp] No provider configured, skipping send:', { phone, text: chunk.slice(0, 100) });
+    }
+
     if (chunks.length > 1) {
       await new Promise(r => setTimeout(r, 800));
     }
   }
+}
+
+// Meta Cloud API send
+async function sendViaMeta(phone: string, text: string) {
+  const url = `https://graph.facebook.com/${META_API_VERSION}/${META_PHONE_NUMBER_ID}/messages`;
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${META_ACCESS_TOKEN}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      messaging_product: 'whatsapp',
+      to: phone,
+      type: 'text',
+      text: { body: text },
+    }),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    console.error('[Meta API] Send error:', res.status, err);
+  }
+}
+
+// Green API send (legacy fallback)
+async function sendViaGreenApi(phone: string, text: string) {
+  await fetch(
+    `${GREEN_API_URL}/waInstance${GREEN_API_INSTANCE}/sendMessage/${GREEN_API_TOKEN}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chatId: `${phone}@c.us`,
+        message: text,
+      }),
+    }
+  );
 }
 
 function splitMessage(text: string, maxLen: number): string[] {
@@ -467,7 +532,6 @@ function splitMessage(text: string, maxLen: number): string[] {
       parts.push(remaining);
       break;
     }
-    // Find a good split point (newline or space)
     let splitAt = remaining.lastIndexOf('\n', maxLen);
     if (splitAt < maxLen * 0.5) splitAt = remaining.lastIndexOf(' ', maxLen);
     if (splitAt < maxLen * 0.3) splitAt = maxLen;

@@ -5,6 +5,10 @@
     {
       "path": "/api/cron/scan-sources",
       "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/notify-matches",
+      "schedule": "0 7 * * *"
     }
   ]
 }
