@@ -285,7 +285,14 @@ function OpportunityCard({ opp, match }: { opp: Opportunity; match?: MatchScore 
 
   const handleWriteSubmission = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const detail = `תכתוב טיוטת הגשה לקול הקורא: "${opp.title}"${opp.funder ? ` של ${opp.funder}` : ''}${opp.deadline ? ` (דדליין: ${new Date(opp.deadline).toLocaleDateString('he-IL')})` : ''}${opp.description ? `\n\nתיאור הקול הקורא: ${opp.description.slice(0, 500)}` : ''}${opp.eligibility ? `\nתנאי סף: ${opp.eligibility}` : ''}`;
+    const parts = [`תכתוב טיוטת הגשה לקול הקורא: "${opp.title}"`];
+    if (opp.funder) parts.push(`מממן: ${opp.funder}`);
+    if (opp.deadline) parts.push(`דדליין: ${new Date(opp.deadline).toLocaleDateString('he-IL')}`);
+    if (opp.url) parts.push(`\nקישור לקול הקורא: ${opp.url}\nתקרא את הקול הקורא בלינק, תבין מה הם מבקשים, ותכתוב הצעה שעונה בדיוק על הדרישות שלהם.`);
+    if (opp.description) parts.push(`\nתיאור: ${opp.description.slice(0, 800)}`);
+    if (opp.eligibility) parts.push(`תנאי סף: ${opp.eligibility}`);
+    if (opp.how_to_apply) parts.push(`אופן הגשה: ${opp.how_to_apply}`);
+    const detail = parts.join('\n');
     window.dispatchEvent(new CustomEvent('fishgold:send', { detail }));
     // Close sidebar on mobile so user sees the chat
     window.dispatchEvent(new CustomEvent('fishgold:closeSidebar'));
