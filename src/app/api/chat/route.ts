@@ -685,55 +685,92 @@ function userAsksAboutCompanies(message: string): boolean {
   return COMPANY_KEYWORDS.some((kw) => message.includes(kw));
 }
 
+// Normalize Hebrew geresh/quotes to ASCII apostrophe for consistent search
+function normalizeApostrophes(text: string): string {
+  return text
+    .replace(/[\u05F3\u2018\u2019\u201A\u0060\u00B4]/g, "'")  // ׳ ' ' ‚ ` ´ → '
+    .replace(/[\u05F4\u201C\u201D\u201E]/g, '"');  // ״ " " „ → "
+}
+
 async function findSpecificCompany(
   supabase: ReturnType<typeof createAdminClient>,
   userMessage: string
 ): Promise<string | null> {
   if (userMessage.length < 3) return null;
 
+  // Normalize apostrophes/geresh for consistent matching
+  const normalizedMessage = normalizeApostrophes(userMessage);
+
   // Extract meaningful words (skip common Hebrew words)
   const stopWords = new Set(['של', 'את', 'על', 'עם', 'אני', 'הוא', 'היא', 'יש', 'אין', 'מה', 'איך', 'למה', 'כמה', 'איפה', 'חברה', 'חברת', 'קרן', 'ארגון', 'עמותה', 'תורם', 'תורמים', 'מידע', 'פרטים', 'לגבי', 'בנוגע', 'תספר', 'ספר', 'מכיר', 'מכירה', 'יודע', 'תגיד', 'בבקשה', 'לי', 'אם', 'גם', 'כל', 'אז', 'רק', 'עוד', 'כן', 'לא', 'או', 'הם', 'זה', 'זאת', 'היה', 'אבל', 'כמו', 'בין', 'אחרי', 'לפני', 'כדי', 'שלי', 'שלך', 'שלו', 'שלה', 'שלנו', 'שלהם']);
-  const msgWords = userMessage.split(/\s+/).filter(w => w.length >= 2 && !stopWords.has(w));
+  const msgWords = normalizedMessage.split(/\s+/).filter(w => w.length >= 2 && !stopWords.has(w));
   if (msgWords.length === 0) return null;
 
   const selectFields = 'name, company_type, description, interests, donation_amount, contact_name, contact_email, contact_phone, contact_role, website';
   const matches: { name: string; company_type: string; description: string | null; interests: string[] | null; donation_amount: number | null; contact_name: string | null; contact_email: string | null; contact_phone: string | null; contact_role: string | null; website: string | null }[] = [];
 
-  // Strategy 1: Search with multi-word phrases (most specific first)
-  // Try consecutive word pairs from the message
-  for (let i = 0; i < msgWords.length - 1 && matches.length === 0; i++) {
-    const phrase = `${msgWords[i]} ${msgWords[i + 1]}`;
+  // Helper: search company name with apostrophe variations
+  // DB may have ' (U+0027) while user types ׳ (U+05F3) or vice versa
+  async function searchName(phrase: string, limit = 5) {
     const { data } = await supabase
       .from('companies')
       .select(selectFields)
       .eq('active', true)
       .ilike('name', `%${phrase}%`)
-      .limit(5);
-    if (data?.length) matches.push(...data);
+      .limit(limit);
+    if (data?.length) return data;
+    // Try without any apostrophe (e.g. "צק פוינט" matches "צ'ק פוינט")
+    const stripped = phrase.replace(/['\u05F3\u2018\u2019`\u00B4]/g, '');
+    if (stripped !== phrase) {
+      const { data: d2 } = await supabase
+        .from('companies')
+        .select(selectFields)
+        .eq('active', true)
+        .ilike('name', `%${stripped}%`)
+        .limit(limit);
+      if (d2?.length) return d2;
+    }
+    return null;
+  }
+
+  // Strategy 0: Search with ALL words (including stopwords like "קרן") as full phrase
+  // This catches "קרן צ'ק פוינט", "חברת מגה אור", "עמותת עלם" etc.
+  const allWords = normalizedMessage.split(/\s+/).filter(w => w.length >= 2);
+  for (let len = Math.min(allWords.length, 4); len >= 2 && matches.length === 0; len--) {
+    for (let i = 0; i <= allWords.length - len && matches.length === 0; i++) {
+      const phrase = allWords.slice(i, i + len).join(' ');
+      if (phrase.length < 4) continue;
+      const found = await searchName(phrase);
+      if (found) matches.push(...found);
+    }
+  }
+
+  // Strategy 1: Search with word pairs (after stopword removal)
+  for (let i = 0; i < msgWords.length - 1 && matches.length === 0; i++) {
+    const phrase = `${msgWords[i]} ${msgWords[i + 1]}`;
+    const found = await searchName(phrase);
+    if (found) matches.push(...found);
   }
 
   // Strategy 2: Search each individual word in name
   if (matches.length === 0) {
     for (const word of msgWords) {
       if (word.length < 2) continue;
-      const { data } = await supabase
-        .from('companies')
-        .select(selectFields)
-        .eq('active', true)
-        .ilike('name', `%${word}%`)
-        .limit(8);
-      if (data?.length) {
-        matches.push(...data);
-        // If we found matches with this word, also check if there's a more specific match
-        // by intersecting with the next word
-        if (data.length > 3 && msgWords.length > 1) {
-          // Too many results — try narrowing with another word
+      const found = await searchName(word, 8);
+      if (found?.length) {
+        matches.push(...found);
+        // If too many results, narrow with another word
+        if (found.length > 3 && msgWords.length > 1) {
           const otherWords = msgWords.filter(w => w !== word && w.length >= 2);
           for (const other of otherWords) {
-            const narrowed = data.filter(c =>
-              c.name.includes(other) ||
-              (c.description || '').includes(other)
-            );
+            const normalOther = normalizeApostrophes(other);
+            const strippedOther = normalOther.replace(/'/g, '');
+            const narrowed = found.filter(c => {
+              const normName = normalizeApostrophes(c.name);
+              const normDesc = normalizeApostrophes(c.description || '');
+              return normName.includes(normalOther) || normName.includes(strippedOther) ||
+                normDesc.includes(normalOther) || normDesc.includes(strippedOther);
+            });
             if (narrowed.length > 0) {
               matches.length = 0;
               matches.push(...narrowed);
@@ -750,11 +787,12 @@ async function findSpecificCompany(
   if (matches.length === 0) {
     for (const word of msgWords) {
       if (word.length < 3) continue;
+      const stripped = word.replace(/['\u05F3\u2018\u2019`\u00B4]/g, '');
       const { data } = await supabase
         .from('companies')
         .select(selectFields)
         .eq('active', true)
-        .or(`name.ilike.%${word}%,description.ilike.%${word}%`)
+        .or(`name.ilike.%${word}%,description.ilike.%${word}%${stripped !== word ? `,name.ilike.%${stripped}%,description.ilike.%${stripped}%` : ''}`)
         .limit(5);
       if (data?.length) {
         matches.push(...data);
