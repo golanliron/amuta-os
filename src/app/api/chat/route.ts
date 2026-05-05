@@ -472,6 +472,110 @@ async function scanOpportunities(
   }
 }
 
+// ===== Company Scanning =====
+
+const COMPANY_KEYWORDS = ['חברות', 'חברה', 'תורמים', 'תורם', 'עסקים', 'קרנות', 'CSR', 'שותפות', 'שותפויות', 'מי תורם', 'למי לפנות', 'פנייה', 'מייל לחברה', 'נסח מייל', 'כתוב מייל', 'תרומות', 'גיוס מעסקים'];
+
+function userAsksAboutCompanies(message: string): boolean {
+  return COMPANY_KEYWORDS.some((kw) => message.includes(kw));
+}
+
+async function scanCompanies(
+  supabase: ReturnType<typeof createAdminClient>,
+  profileData: Record<string, unknown> | null,
+  orgName: string | null,
+  userMessage: string
+): Promise<string> {
+  if (!userAsksAboutCompanies(userMessage)) return '';
+
+  try {
+    // Get companies from DB
+    const { data: companies, error } = await supabase
+      .from('companies')
+      .select('id, name, company_type, description, interests, donation_amount, csr_rank, contact_name, contact_email, contact_phone, contact_role, website')
+      .eq('active', true)
+      .limit(954);
+
+    if (error || !companies?.length) return '';
+
+    // If org has a profile, find matching companies using AI
+    if (profileData && Object.keys(profileData).length >= 3) {
+      const focusAreas = (profileData.focus_areas as string[]) || [];
+      const mission = (profileData.mission as string) || '';
+      const regions = (profileData.regions as string[]) || [];
+      const orgText = [...focusAreas, mission, ...regions].join(' ').toLowerCase();
+
+      // Pre-filter: companies with overlapping interests or CSR
+      const candidates = companies.filter((c) => {
+        if (!c.interests?.length && !c.description) return false;
+        const companyText = [...(c.interests || []), c.description || ''].join(' ').toLowerCase();
+        // Check for keyword overlap
+        const orgWords = orgText.split(/\s+/).filter(w => w.length > 2);
+        return orgWords.some(w => companyText.includes(w)) || c.csr_rank;
+      });
+
+      // Take top candidates (prioritize funds and high CSR rank)
+      const sorted = candidates.sort((a, b) => {
+        if (a.company_type === 'fund' && b.company_type !== 'fund') return -1;
+        if (b.company_type === 'fund' && a.company_type !== 'fund') return 1;
+        return (a.csr_rank || 999) - (b.csr_rank || 999);
+      }).slice(0, 20);
+
+      if (sorted.length === 0) {
+        return `\n\n===== חברות וארגונים =====\nיש לי ${companies.length} חברות וארגונים במאגר, אבל לא מצאתי התאמות ברורות לפרופיל שלכם. תשאלו על סוג ספציפי (קרנות, עסקים, חברות ציבוריות) ואמצא.`;
+      }
+
+      // AI scoring for top candidates
+      const orgContext = buildOrgContext(profileData, orgName);
+      const compList = sorted.map((c, i) =>
+        `${i + 1}. "${c.name}" | סוג: ${c.company_type} | תחומי עניין: ${c.interests?.join(', ') || '-'} | תרומות: ${c.donation_amount ? `${(c.donation_amount / 1000).toFixed(0)}K` : '-'} | CSR: ${c.csr_rank || '-'}`
+      ).join('\n');
+
+      const res = await anthropic.messages.create({
+        model: 'claude-haiku-4-5-20251001',
+        system: `אתה מומחה גיוס משאבים. דרג כל חברה 1-10 לפי התאמה לארגון.
+קריטריונים: חפיפת תחומי עניין (40%), גודל תרומות (20%), דירוג CSR (20%), סוג חברה (20%).
+החזר JSON בלבד: [{"index": 1, "score": 8, "reasoning": "נימוק קצר", "approach_tip": "טיפ קצר איך לפנות"}]
+רק ציון 5 ומעלה. אם אין — מערך ריק [].`,
+        messages: [{ role: 'user', content: `${orgContext}\n\nחברות:\n${compList}` }],
+        max_tokens: 2000,
+      });
+
+      const raw = res.content[0].type === 'text' ? res.content[0].text : '[]';
+      const jsonMatch = raw.match(/```(?:json)?\s*([\s\S]*?)```/) || [null, raw];
+      let scored: { index: number; score: number; reasoning: string; approach_tip?: string }[] = [];
+      try {
+        scored = JSON.parse(jsonMatch[1]!.trim());
+      } catch {
+        return '';
+      }
+
+      const goodMatches = scored.filter((s) => s.score >= 5).slice(0, 8);
+      if (goodMatches.length === 0) return '';
+
+      const lines = goodMatches.map((item) => {
+        const c = sorted[item.index - 1];
+        if (!c) return null;
+        return `- ${c.name} (${c.company_type === 'fund' ? 'קרן' : c.company_type === 'public' ? 'ציבורית' : c.company_type === 'private' ? 'פרטית' : 'עסק'}, ציון: ${item.score}/10)${c.donation_amount ? ` | תרומות: ${(c.donation_amount / 1000).toFixed(0)}K ש"ח` : ''}${c.contact_name ? ` | איש קשר: ${c.contact_name}` : ''}${c.contact_email ? ` | ${c.contact_email}` : ''}\n  ${item.reasoning}${item.approach_tip ? `\n  טיפ לפנייה: ${item.approach_tip}` : ''}`;
+      }).filter(Boolean);
+
+      return `\n\n===== חברות מתאימות =====\nמצאתי ${lines.length} חברות/קרנות שכדאי לפנות אליהן (מתוך ${companies.length} במאגר):\n${lines.join('\n')}`;
+    }
+
+    // No profile — just provide stats
+    const typeCounts: Record<string, number> = {};
+    for (const c of companies) {
+      typeCounts[c.company_type] = (typeCounts[c.company_type] || 0) + 1;
+    }
+    const statsLine = Object.entries(typeCounts).map(([t, c]) => `${c} ${t === 'fund' ? 'קרנות' : t === 'public' ? 'ציבוריות' : t === 'private' ? 'פרטיות' : 'עסקים'}`).join(', ');
+
+    return `\n\n===== מאגר חברות =====\nיש לי ${companies.length} חברות וארגונים: ${statsLine}. כולם עם פרטי קשר מלאים. תעלו מסמכים על הארגון ואתאים לכם את החברות הכי רלוונטיות.`;
+  } catch (e) {
+    console.error('Company scan error:', e);
+    return '';
+  }
+}
+
 // ===== Main Handler =====
 
 export async function POST(request: NextRequest) {
@@ -507,12 +611,17 @@ export async function POST(request: NextRequest) {
     const urlContent = formatUrlsForMessage(fetchedUrls);
     const orgContext = buildOrgContext(profile?.data ?? null, org?.name ?? null);
 
-    // Load matched opportunities if profile exists (pass message for intent detection)
-    const opportunityContext = await scanOpportunities(
-      supabase, org_id, profile?.data as Record<string, unknown> | null, org?.name ?? null, message
-    );
+    // Load matched opportunities and companies if profile exists
+    const [opportunityContext, companyContext] = await Promise.all([
+      scanOpportunities(
+        supabase, org_id, profile?.data as Record<string, unknown> | null, org?.name ?? null, message
+      ),
+      scanCompanies(
+        supabase, profile?.data as Record<string, unknown> | null, org?.name ?? null, message
+      ),
+    ]);
 
-    const systemPrompt = FISHGOLD_SYSTEM_PROMPT + orgContext + knowledge + rag + opportunityContext;
+    const systemPrompt = FISHGOLD_SYSTEM_PROMPT + orgContext + knowledge + rag + opportunityContext + companyContext;
 
     // Load conversation history
     let chatMessages: { role: 'user' | 'assistant'; content: string }[] = [];
