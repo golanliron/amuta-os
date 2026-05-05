@@ -337,6 +337,54 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
                   className="w-full px-2 py-1 border border-border rounded-md bg-surf2 focus:border-accent focus:outline-none text-xs"
                 />
               </div>
+              <div className="pt-1 border-t border-border/30">
+                <p className="text-[10px] text-muted font-semibold mb-1">איש קשר</p>
+                <div className="space-y-1.5">
+                  <div>
+                    <label className="text-muted text-[10px]">שם איש קשר</label>
+                    <input
+                      type="text"
+                      defaultValue={(profile as Record<string, unknown>).contact_name as string || ''}
+                      onChange={e => setEditData(d => ({ ...d, contact_name: e.target.value }))}
+                      className="w-full px-2 py-1 border border-border rounded-md bg-surf2 focus:border-accent focus:outline-none text-xs"
+                      placeholder="שם מלא"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-muted text-[10px]">מייל</label>
+                    <input
+                      type="email"
+                      defaultValue={(profile as Record<string, unknown>).contact_email as string || ''}
+                      onChange={e => setEditData(d => ({ ...d, contact_email: e.target.value }))}
+                      className="w-full px-2 py-1 border border-border rounded-md bg-surf2 focus:border-accent focus:outline-none text-xs"
+                      dir="ltr"
+                      placeholder="email@org.co.il"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-muted text-[10px]">טלפון</label>
+                    <input
+                      type="tel"
+                      defaultValue={(profile as Record<string, unknown>).contact_phone as string || ''}
+                      onChange={e => setEditData(d => ({ ...d, contact_phone: e.target.value }))}
+                      className="w-full px-2 py-1 border border-border rounded-md bg-surf2 focus:border-accent focus:outline-none text-xs"
+                      dir="ltr"
+                      placeholder="050-000-0000"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-muted text-[10px]">אתר</label>
+                    <input
+                      type="url"
+                      defaultValue={(profile as Record<string, unknown>).website as string || ''}
+                      onChange={e => setEditData(d => ({ ...d, website: e.target.value }))}
+                      className="w-full px-2 py-1 border border-border rounded-md bg-surf2 focus:border-accent focus:outline-none text-xs"
+                      dir="ltr"
+                      placeholder="https://www.org.co.il"
+                    />
+                  </div>
+                </div>
+              </div>
               <button
                 onClick={() => { setEditing(false); setEditData({}); }}
                 className="text-[10px] text-muted hover:text-text"
@@ -351,6 +399,30 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
               )}
               {profile.mission && (
                 <p className="text-xs text-text2 mt-2 leading-relaxed">{profile.mission}</p>
+              )}
+
+              {/* Contact info */}
+              {((profile as Record<string, unknown>).contact_name || (profile as Record<string, unknown>).contact_email || (profile as Record<string, unknown>).contact_phone) && (
+                <div className="mt-3 pt-2 border-t border-border/30 space-y-1">
+                  {(profile as Record<string, unknown>).contact_name && (
+                    <div className="flex items-center gap-1.5 text-[11px] text-text2">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted2 flex-shrink-0"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                      {(profile as Record<string, unknown>).contact_name as string}
+                    </div>
+                  )}
+                  {(profile as Record<string, unknown>).contact_email && (
+                    <div className="flex items-center gap-1.5 text-[11px] text-text2">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted2 flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                      <a href={`mailto:${(profile as Record<string, unknown>).contact_email}`} className="hover:text-accent transition-colors" dir="ltr">{(profile as Record<string, unknown>).contact_email as string}</a>
+                    </div>
+                  )}
+                  {(profile as Record<string, unknown>).contact_phone && (
+                    <div className="flex items-center gap-1.5 text-[11px] text-text2">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted2 flex-shrink-0"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+                      <a href={`tel:${(profile as Record<string, unknown>).contact_phone}`} className="hover:text-accent transition-colors" dir="ltr">{(profile as Record<string, unknown>).contact_phone as string}</a>
+                    </div>
+                  )}
+                </div>
               )}
 
               {/* Key numbers */}
@@ -599,6 +671,55 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
         {driveStatus && (
           <p className="text-[10px] text-accent mt-1.5">{driveStatus}</p>
         )}
+      </div>
+
+      {/* Recommended official documents */}
+      <div className="rounded-xl border border-amber-300/50 bg-amber-50/30 dark:bg-amber-900/10 p-3">
+        <div className="flex items-center gap-2 mb-2">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-amber-600 flex-shrink-0">
+            <path d="M12 2L2 7l10 5 10-5-10-5z" />
+            <path d="M2 17l10 5 10-5" />
+            <path d="M2 12l10 5 10-5" />
+          </svg>
+          <h4 className="text-xs font-semibold text-amber-800 dark:text-amber-400">מסמכים רשמיים מומלצים</h4>
+        </div>
+        <p className="text-[10px] text-muted2 mb-2">
+          העלו את המסמכים האלה כדי ש-Fishgold יוכל לצרף אותם להגשות ולמסור לקרנות כשיבקשו.
+        </p>
+        <div className="space-y-1">
+          {[
+            { name: 'אישור סעיף 46 (פטור ממס)', key: 'section46', icon: '📋' },
+            { name: 'אישור ניהול תקין', key: 'proper_mgmt', icon: '✅' },
+            { name: 'אישור ניכוי מס במקור', key: 'tax_deduction', icon: '🧾' },
+            { name: 'תעודת רישום עמותה', key: 'registration', icon: '📄' },
+            { name: 'דוח כספי מבוקר אחרון', key: 'audited_report', icon: '📊' },
+            { name: 'פרוטוקול ועד מנהל', key: 'board_protocol', icon: '📝' },
+          ].map(item => {
+            const hasDoc = documents.some(d =>
+              d.filename?.toLowerCase().includes(item.key.replace(/_/g, ' ')) ||
+              d.filename?.includes(item.name.split('(')[0].trim()) ||
+              (d.category === 'budget' && item.key === 'audited_report') ||
+              (d.parsed_text && item.key === 'section46' && /סעיף 46/.test(d.parsed_text)) ||
+              (d.parsed_text && item.key === 'proper_mgmt' && /ניהול תקין/.test(d.parsed_text))
+            );
+            return (
+              <div key={item.key} className="flex items-center gap-2 text-[11px]">
+                <span className={`w-4 text-center ${hasDoc ? '' : 'grayscale opacity-50'}`}>{item.icon}</span>
+                <span className={`flex-1 ${hasDoc ? 'text-text' : 'text-muted'}`}>{item.name}</span>
+                {hasDoc ? (
+                  <span className="text-[9px] text-green-600 font-medium">✓ יש</span>
+                ) : (
+                  <button
+                    onClick={() => triggerUpload('identity')}
+                    className="text-[9px] text-accent hover:underline"
+                  >
+                    העלו
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       {/* Document categories */}

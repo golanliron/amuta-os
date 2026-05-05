@@ -75,6 +75,11 @@ export interface OrgProfileData {
   active_projects?: ProjectSummary[];
   existing_grants?: GrantSummary[];
   key_achievements?: string[];
+  // Contact info
+  contact_name?: string;
+  contact_email?: string;
+  contact_phone?: string;
+  website?: string;
 }
 
 export interface ProjectSummary {
