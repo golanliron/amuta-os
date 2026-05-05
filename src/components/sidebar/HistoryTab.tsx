@@ -1,0 +1,200 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import type { AppStage } from '@/types';
+import { createClient } from '@/lib/supabase/client';
+
+interface HistoryTabProps {
+  stage: AppStage;
+  orgId: string | null;
+}
+
+interface ConversationItem {
+  id: string;
+  title: string | null;
+  messages: { role: string; content: string }[];
+  created_at: string;
+  updated_at: string;
+}
+
+interface SubmissionItem {
+  id: string;
+  status: string;
+  version: number;
+  created_at: string;
+  submitted_at: string | null;
+  opportunity: { title: string; funder: string | null } | null;
+}
+
+export default function HistoryTab({ stage, orgId }: HistoryTabProps) {
+  const [conversations, setConversations] = useState<ConversationItem[]>([]);
+  const [submissions, setSubmissions] = useState<SubmissionItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [view, setView] = useState<'conversations' | 'submissions'>('conversations');
+
+  useEffect(() => {
+    if (!orgId) { setLoading(false); return; }
+    const supabase = createClient();
+
+    Promise.all([
+      supabase
+        .from('conversations')
+        .select('id, title, messages, created_at, updated_at')
+        .eq('org_id', orgId)
+        .order('updated_at', { ascending: false })
+        .limit(20),
+      supabase
+        .from('submissions')
+        .select('id, status, version, created_at, submitted_at, opportunity:opportunities(title, funder)')
+        .eq('org_id', orgId)
+        .order('created_at', { ascending: false })
+        .limit(20),
+    ]).then(([convRes, subRes]) => {
+      if (convRes.data) setConversations(convRes.data as ConversationItem[]);
+      if (subRes.data) setSubmissions(subRes.data as unknown as SubmissionItem[]);
+      setLoading(false);
+    });
+  }, [orgId]);
+
+  const getPreview = (conv: ConversationItem) => {
+    if (conv.title) return conv.title;
+    const firstUser = conv.messages?.find(m => m.role === 'user');
+    if (firstUser) return firstUser.content.slice(0, 60) + (firstUser.content.length > 60 ? '...' : '');
+    return 'שיחה חדשה';
+  };
+
+  const getTimeAgo = (dateStr: string) => {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 60) return `${mins} דק׳`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `${hours} שע׳`;
+    const days = Math.floor(hours / 24);
+    if (days < 7) return `${days} ימים`;
+    return new Date(dateStr).toLocaleDateString('he-IL', { day: 'numeric', month: 'short' });
+  };
+
+  const statusLabels: Record<string, { text: string; color: string }> = {
+    draft: { text: 'טיוטה', color: 'bg-gray-200 text-gray-700' },
+    review: { text: 'בבדיקה', color: 'bg-amber-100 text-amber-700' },
+    submitted: { text: 'הוגש', color: 'bg-blue-100 text-blue-700' },
+    approved: { text: 'אושר', color: 'bg-green-100 text-green-700' },
+    rejected: { text: 'נדחה', color: 'bg-red-100 text-red-700' },
+  };
+
+  const loadConversation = (convId: string) => {
+    window.dispatchEvent(new CustomEvent('fishgold:loadConversation', { detail: { conversationId: convId } }));
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      {/* Toggle */}
+      <div className="flex gap-1 bg-surf2 rounded-lg p-0.5">
+        <button
+          onClick={() => setView('conversations')}
+          className={`flex-1 py-1.5 text-[11px] font-medium rounded-md transition-colors ${
+            view === 'conversations' ? 'bg-bg text-text shadow-sm' : 'text-muted hover:text-text'
+          }`}
+        >
+          שיחות ({conversations.length})
+        </button>
+        <button
+          onClick={() => setView('submissions')}
+          className={`flex-1 py-1.5 text-[11px] font-medium rounded-md transition-colors ${
+            view === 'submissions' ? 'bg-bg text-text shadow-sm' : 'text-muted hover:text-text'
+          }`}
+        >
+          הגשות ({submissions.length})
+        </button>
+      </div>
+
+      {/* Conversations list */}
+      {view === 'conversations' && (
+        <div className="space-y-1">
+          {conversations.length === 0 ? (
+            <div className="text-center py-8">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="mx-auto text-muted2 mb-2">
+                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+              </svg>
+              <p className="text-xs text-muted2">עדיין אין שיחות</p>
+              <p className="text-[10px] text-muted2 mt-1">שלחו הודעה לפישגולד כדי להתחיל</p>
+            </div>
+          ) : (
+            conversations.map(conv => (
+              <button
+                key={conv.id}
+                onClick={() => loadConversation(conv.id)}
+                className="w-full text-right flex items-start gap-2.5 py-2.5 px-3 rounded-lg hover:bg-surf2 transition-colors group"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted2 mt-0.5 flex-shrink-0 group-hover:text-accent transition-colors">
+                  <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+                </svg>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[11px] font-medium truncate">{getPreview(conv)}</p>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span className="text-[9px] text-muted2">{getTimeAgo(conv.updated_at)}</span>
+                    <span className="text-[9px] text-muted2">{conv.messages?.length || 0} הודעות</span>
+                  </div>
+                </div>
+              </button>
+            ))
+          )}
+        </div>
+      )}
+
+      {/* Submissions list */}
+      {view === 'submissions' && (
+        <div className="space-y-1">
+          {submissions.length === 0 ? (
+            <div className="text-center py-8">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="mx-auto text-muted2 mb-2">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+              </svg>
+              <p className="text-xs text-muted2">עדיין אין הגשות</p>
+              <p className="text-[10px] text-muted2 mt-1">בקשו מפישגולד לכתוב הגשה</p>
+            </div>
+          ) : (
+            submissions.map(sub => {
+              const status = statusLabels[sub.status] || statusLabels.draft;
+              return (
+                <div
+                  key={sub.id}
+                  className="flex items-start gap-2.5 py-2.5 px-3 rounded-lg hover:bg-surf2 transition-colors"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted2 mt-0.5 flex-shrink-0">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                  </svg>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[11px] font-medium truncate">
+                      {sub.opportunity?.title || 'הגשה'}
+                    </p>
+                    {sub.opportunity?.funder && (
+                      <p className="text-[9px] text-muted2 truncate">{sub.opportunity.funder}</p>
+                    )}
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${status.color}`}>
+                        {status.text}
+                      </span>
+                      <span className="text-[9px] text-muted2">v{sub.version}</span>
+                      <span className="text-[9px] text-muted2">{getTimeAgo(sub.created_at)}</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      )}
+    </div>
+  );
+}

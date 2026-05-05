@@ -84,6 +84,12 @@ async function fetchUrls(message: string): Promise<FetchedUrl[]> {
       const content = await fetchUrlContent(url);
       if (content && content.length > 50) {
         results.push({ url, content });
+      } else if (content) {
+        // SPA or minimal content — still return with note
+        results.push({
+          url,
+          content: `[האתר ${url} הוא אפליקציית SPA ולא ניתן לקרוא את התוכן שלו אוטומטית. התוכן שנקרא: "${content}". כדי ללמוד את הארגון, בקשי מהמשתמש להעלות מסמכים (תקנון, דוח כספי, תיאור פעילות) או לספר על הארגון בטקסט חופשי.]`,
+        });
       }
     })
   );
@@ -213,8 +219,8 @@ async function learnFromUrls(
           { onConflict: 'org_id' }
         );
       }
-    } catch {
-      // Non-critical — continue without learning
+    } catch (err) {
+      console.error('learnFromUrls error for', url, ':', err instanceof Error ? err.message : err);
     }
   }
 }
@@ -337,7 +343,7 @@ async function scanOpportunities(
       // Load existing matches
       const { data: matches } = await supabase
         .from('matches')
-        .select('score, reasoning, opportunity_id, opportunities(title, deadline, funder, url)')
+        .select('score, reasoning, opportunity_id, opportunities(title, deadline, funder, url, description, amount_max)')
         .eq('org_id', orgId)
         .gte('score', 50)
         .order('score', { ascending: false })
@@ -345,8 +351,8 @@ async function scanOpportunities(
 
       if (matches && matches.length > 0) {
         const lines = matches.map((m) => {
-          const opp = m.opportunities as unknown as { title: string; deadline: string | null; funder: string | null };
-          return `- **${opp?.title}** (ציון: ${m.score}/100)${opp?.deadline ? ` | דדליין: ${opp.deadline}` : ''}${opp?.funder ? ` | ${opp.funder}` : ''}\n  ${m.reasoning}`;
+          const opp = m.opportunities as unknown as { title: string; deadline: string | null; funder: string | null; url: string | null; description: string | null; amount_max: number | null };
+          return `- **${opp?.title}** (ציון: ${m.score}/100)${opp?.deadline ? ` | דדליין: ${opp.deadline}` : ''}${opp?.funder ? ` | ${opp.funder}` : ''}${opp?.amount_max ? ` | עד ${(opp.amount_max / 1000).toFixed(0)}K ש"ח` : ''}${opp?.url ? ` | לינק: ${opp.url}` : ''}\n  ${m.reasoning}${opp?.description ? `\n  תיאור: ${opp.description.slice(0, 200)}` : ''}`;
         });
         return `\n\n===== הזדמנויות מתאימות =====\nמצאתי ${matches.length} קולות קוראים שמתאימים:\n${lines.join('\n')}`;
       }
@@ -433,7 +439,7 @@ async function scanOpportunities(
       const opp = filtered[item.index - 1];
       if (!opp) continue;
 
-      lines.push(`- **${opp.title}** (ציון: ${item.score}/10)${opp.deadline ? ` | דדליין: ${opp.deadline}` : ''}${opp.funder ? ` | ${opp.funder}` : ''}\n  ${item.reasoning}`);
+      lines.push(`- **${opp.title}** (ציון: ${item.score}/10)${opp.deadline ? ` | דדליין: ${opp.deadline}` : ''}${opp.funder ? ` | ${opp.funder}` : ''}${opp.url ? ` | לינק: ${opp.url}` : ''}\n  ${item.reasoning}${opp.description ? `\n  תיאור: ${opp.description.slice(0, 200)}` : ''}`);
 
       // Save to DB
       const { error: matchErr } = await supabase.from('matches').upsert(
@@ -520,7 +526,7 @@ export async function POST(request: NextRequest) {
       model: 'claude-sonnet-4-20250514',
       system: systemPrompt,
       messages: chatMessages,
-      max_tokens: 4096,
+      max_tokens: 8192,
     });
 
     const encoder = new TextEncoder();

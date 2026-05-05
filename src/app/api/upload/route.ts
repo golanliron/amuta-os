@@ -164,6 +164,61 @@ function chunkText(text: string, maxChars: number = 2000): string[] {
 
 export async function POST(request: NextRequest) {
   try {
+    const contentType = request.headers.get('content-type') || '';
+
+    // ===== JSON body: free-text or URL input =====
+    if (contentType.includes('application/json')) {
+      const { org_id, text, category, filename } = await request.json();
+      if (!org_id || !text) {
+        return Response.json({ error: 'Missing org_id or text' }, { status: 400 });
+      }
+
+      const supabase = createAdminClient();
+      const cat = category || 'identity';
+
+      // Classify + extract + summarize
+      const [aiCategory, metadata, summary] = await Promise.all([
+        cat === 'identity' ? Promise.resolve('identity') : classifyDocument(text),
+        extractStructuredData(text, cat),
+        summarizeDocument(text),
+      ]);
+
+      // Save as document
+      const { data: doc } = await supabase
+        .from('documents')
+        .insert({
+          org_id,
+          filename: filename || 'תיאור חופשי.txt',
+          file_type: 'txt',
+          storage_path: `${org_id}/text_${Date.now()}.txt`,
+          category: aiCategory,
+          parsed_text: text.slice(0, 50000),
+          metadata: { ...metadata, summary },
+          status: 'ready',
+        })
+        .select('id')
+        .single();
+
+      if (doc) {
+        // Save chunks for RAG
+        const chunks = chunkText(text);
+        for (const chunk of chunks) {
+          await supabase.from('document_chunks').insert({
+            document_id: doc.id,
+            org_id,
+            content: chunk,
+            metadata: { category: aiCategory, filename: filename || 'free_text' },
+          });
+        }
+      }
+
+      // Update org profile
+      await updateOrgProfile(supabase, org_id, aiCategory, metadata);
+
+      return Response.json({ document_id: doc?.id, category: aiCategory, summary, extracted_fields: metadata });
+    }
+
+    // ===== FormData: file upload =====
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
     const orgId = formData.get('org_id') as string;
