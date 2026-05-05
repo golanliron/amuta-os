@@ -229,12 +229,11 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
 
         // Send the upload summary to Fishgold so he can analyze it
         const fields = data.extracted_fields ? JSON.stringify(data.extracted_fields, null, 2) : '';
-        const chatPrompt = `[המשתמשת העלתה קובץ: "${file.name}"]
+        const chatPrompt = `[קובץ: "${file.name}" | קטגוריה: ${data.category || '?'}]
 סיכום: ${data.summary || 'לא זמין'}
-קטגוריה: ${data.category || 'לא ידוע'}
-נתונים שחולצו: ${fields || 'אין'}
+נתונים: ${fields || 'אין'}
 
-תגיב בקצרה: מה למדת מהקובץ? מה חדש נכנס לזיכרון? מה עוד חסר?`;
+תגיב ב-5 שורות מקסימום. שורה 1: מה זה. שורות 2-3: נתונים חדשים שנכנסו (מספרים בלבד). שורה 4: מה חסר. שורה 5: הצעה אחת לפעולה.`;
 
         try {
           const chatRes = await fetch('/api/chat', {
