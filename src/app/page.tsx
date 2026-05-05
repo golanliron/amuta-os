@@ -212,12 +212,11 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-bg overflow-hidden" dir="rtl">
-      {/* Floating bubbles background */}
+      {/* Floating bubbles background - subtle */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[10%] right-[15%] w-64 h-64 rounded-full bg-accent float-bubble-1" />
-        <div className="absolute top-[40%] left-[10%] w-48 h-48 rounded-full bg-accent float-bubble-2" />
-        <div className="absolute bottom-[20%] right-[60%] w-36 h-36 rounded-full bg-accent float-bubble-3" />
-        <div className="absolute top-[20%] left-[70%] w-20 h-20 rounded-full bg-accent float-bubble-2" style={{ animationDelay: '5s' }} />
+        <div className="absolute top-[10%] right-[15%] w-48 h-48 rounded-full bg-accent float-bubble-1" />
+        <div className="absolute top-[40%] left-[10%] w-32 h-32 rounded-full bg-accent float-bubble-2" />
+        <div className="absolute bottom-[20%] right-[60%] w-24 h-24 rounded-full bg-accent float-bubble-3" />
       </div>
 
       {/* Subtle dot pattern */}
@@ -852,10 +851,10 @@ export default function LandingPage() {
       {/* Floating fish - back to top */}
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className="fixed bottom-6 left-6 z-50 w-16 h-16 bg-[#F5E6D0] rounded-full shadow-lg hover:shadow-xl hover:scale-110 active:scale-95 transition-all flex items-center justify-center"
+        className="fixed bottom-6 left-6 z-50 w-20 h-20 bg-[#FFF3E0] border-2 border-accent/20 rounded-full shadow-lg hover:shadow-xl hover:scale-110 active:scale-95 transition-all flex items-center justify-center"
         aria-label="חזרה למעלה"
       >
-        <FishLogo size={36} />
+        <FishLogo size={44} />
       </button>
     </div>
   );
