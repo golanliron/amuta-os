@@ -10,32 +10,38 @@ export default function FishLogo({ size = 40, className = '' }: FishLogoProps) {
     <svg
       width={size}
       height={size}
-      viewBox="0 0 100 100"
+      viewBox="0 0 100 80"
       className={className}
       xmlns="http://www.w3.org/2000/svg"
     >
-      {/* Tail */}
-      <path d="M72,50 L92,30 L88,50 L92,70 Z" fill="#EE7A30" />
+      {/* Sleek body - modern geometric fish */}
+      <path
+        d="M12,40 C12,40 30,14 58,14 C78,14 88,28 88,40 C88,52 78,66 58,66 C30,66 12,40 12,40 Z"
+        fill="#EE7A30"
+        opacity="0.9"
+      />
 
-      {/* Body */}
-      <ellipse cx="48" cy="50" rx="30" ry="22" fill="white" stroke="#EE7A30" strokeWidth="3" />
+      {/* Tail - clean angular */}
+      <path d="M80,40 L96,24 L96,56 Z" fill="#EE7A30" opacity="0.7" />
 
-      {/* Dorsal fin */}
-      <path d="M40,28 L50,14 L58,28" fill="#EE7A30" opacity="0.8" />
+      {/* Subtle gradient overlay on body */}
+      <path
+        d="M12,40 C12,40 30,14 58,14 C78,14 88,28 88,40"
+        fill="none"
+        stroke="#F5A623"
+        strokeWidth="1"
+        opacity="0.4"
+      />
 
-      {/* Belly fin */}
-      <path d="M42,72 L48,82 L54,72" fill="#EE7A30" opacity="0.6" />
+      {/* Eye - minimal circle */}
+      <circle cx="34" cy="37" r="5" fill="white" opacity="0.95" />
+      <circle cx="33" cy="36" r="2.5" fill="#1A1A1A" />
 
-      {/* Eye */}
-      <circle cx="32" cy="45" r="7" fill="#EE7A30" opacity="0.15" />
-      <circle cx="30" cy="44" r="4" fill="#222" />
-      <circle cx="28.5" cy="42.5" r="1.5" fill="white" />
+      {/* Gill line - subtle */}
+      <path d="M44,28 Q46,40 44,52" fill="none" stroke="#D96A20" strokeWidth="1" opacity="0.3" />
 
-      {/* Mouth */}
-      <path d="M19,54 Q22,58 26,56" fill="none" stroke="#EE7A30" strokeWidth="2" strokeLinecap="round" />
-
-      {/* Gill */}
-      <path d="M40,38 Q42,50 40,62" fill="none" stroke="#EE7A30" strokeWidth="1.5" opacity="0.3" strokeLinecap="round" />
+      {/* Fin - one clean line */}
+      <path d="M50,14 L56,4 L62,14" fill="none" stroke="#EE7A30" strokeWidth="1.5" opacity="0.5" />
     </svg>
   );
 }
