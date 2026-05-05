@@ -39,7 +39,10 @@ export default function SidebarPanel({ stage, orgId, initialTab }: SidebarPanelP
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => {
+                setActiveTab(tab.id);
+                window.dispatchEvent(new CustomEvent('fishgold:activeTab', { detail: tab.id }));
+              }}
               className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-xs font-medium transition-colors relative cursor-pointer
                 ${activeTab === tab.id ? 'text-accent' : 'text-muted hover:text-text'}
               `}

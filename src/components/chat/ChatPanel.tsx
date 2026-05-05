@@ -178,6 +178,14 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
   sendMessageRef.current = sendMessage;
 
   const [activeTab, setActiveTab] = useState<string>('chat');
+  const [tabCta, setTabCta] = useState<string | null>(null);
+
+  const TAB_CTAS: Record<string, string> = {
+    business: 'לחצי על חברה או קרן מהרשימה ואנתח אותה. או בקשי ממני לנסח מייל פנייה.',
+    opportunities: 'בחרי קול קורא מהרשימה ואכתוב לך טיוטת הגשה. או הדביקי לינק לקול קורא חדש.',
+    org: 'שלחי חומרים, לינק לאתר, או כתבי על הארגון. ככל שאדע יותר, ההגשות יהיו חדות יותר.',
+    history: 'אפשר לחזור לכל שיחה קודמת ולהמשיך מאיפה שעצרנו.',
+  };
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -185,7 +193,15 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
       if (text) sendMessageRef.current(text);
     };
     const tabHandler = (e: Event) => {
-      setActiveTab((e as CustomEvent).detail || 'chat');
+      const tab = (e as CustomEvent).detail || 'chat';
+      setActiveTab(tab);
+      // Show contextual CTA for 8 seconds
+      if (TAB_CTAS[tab]) {
+        setTabCta(TAB_CTAS[tab]);
+        setTimeout(() => setTabCta(null), 8000);
+      } else {
+        setTabCta(null);
+      }
     };
     window.addEventListener('fishgold:send', handler);
     window.addEventListener('fishgold:activeTab', tabHandler);
@@ -197,10 +213,10 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
 
   const placeholderByTab: Record<string, string> = {
     chat: 'כתבי ל-Fishgold...',
-    org: 'קדימה, מחכה ממך לחומרים על העמותה',
-    opportunities: 'תכתבי לי על איזה קול קורא לעבוד',
-    timeline: 'כתבי ל-Fishgold...',
+    org: 'שלחי חומרים, לינק לאתר, או ספרי על הארגון...',
+    opportunities: 'על איזה קול קורא לעבוד? תכתבי שם או תדביקי לינק...',
     history: 'כתבי ל-Fishgold...',
+    business: 'שאלי על חברה, קרן, או בקשי ניסוח מייל פנייה...',
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -388,6 +404,17 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
         ))}
         <div ref={messagesEndRef} />
       </div>
+
+      {/* Tab context CTA */}
+      {tabCta && (
+        <div className="mx-4 mb-0 px-3 py-2 bg-accent/5 border border-accent/15 rounded-lg text-[11px] text-text2 leading-relaxed flex items-start gap-2 fade-up">
+          <FishLogo size={16} />
+          <span>{tabCta}</span>
+          <button onClick={() => setTabCta(null)} className="flex-shrink-0 text-muted hover:text-text ml-auto">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+          </button>
+        </div>
+      )}
 
       {/* Input area */}
       <div className="border-t border-border bg-bg2 p-4">
