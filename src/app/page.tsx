@@ -287,7 +287,7 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="relative z-10 max-w-4xl mx-auto px-6 pt-20 pb-12 text-center">
         <div className="absolute top-6 right-6 bg-accent/10 backdrop-blur-sm border border-accent/30 rounded-full px-4 py-1.5 text-xs text-accent font-medium fade-up shadow-sm">
-          97% מהעמותות מפספסות קולות קוראים. אתם לא חייבים.
+          9 מתוך 10 עמותות לא יודעות על קולות קוראים שמתאימים להן.
         </div>
         {/* Glow behind fish */}
         <div className="relative w-fit mx-auto mb-8 fade-up">
