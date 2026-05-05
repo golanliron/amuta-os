@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import type { Opportunity, OpportunityType } from '@/types';
-import { createClient } from '@/lib/supabase/client';
 
 interface TaxItem {
   id: number;
@@ -54,51 +53,19 @@ export default function OpportunitiesTab({ stage, orgId }: OpportunitiesTabProps
   const matchedCount = useMemo(() => matchScores.size, [matchScores]);
 
   useEffect(() => {
-    const supabase = createClient();
-
-    // Load taxonomy
-    supabase
-      .from('grant_taxonomy')
-      .select('*')
-      .order('label_he')
-      .then(({ data }) => {
-        if (data) setTaxonomy(data as TaxItem[]);
-      });
-
-    // Load active opportunities — fetch all active, filter expired client-side
-    const today = new Date().toISOString().split('T')[0];
-    supabase
-      .from('opportunities')
-      .select('*')
-      .eq('active', true)
-      .order('deadline', { ascending: true, nullsFirst: false })
-      .limit(200)
-      .then(({ data, error }) => {
-        if (error) {
-          console.error('Opportunities load error:', error);
-        }
-        if (data && data.length > 0) {
-          const filtered = data.filter((o: Record<string, unknown>) => !o.deadline || String(o.deadline) >= today);
-          setOpportunities(filtered as unknown as Opportunity[]);
+    fetch(`/api/opportunities${orgId ? `?org_id=${orgId}` : ''}`)
+      .then(r => r.json())
+      .then(({ taxonomy: tax, opportunities: opps, matches: m }) => {
+        if (tax) setTaxonomy(tax as TaxItem[]);
+        if (opps) setOpportunities(opps as Opportunity[]);
+        if (m && m.length > 0) {
+          const map = new Map<string, MatchScore>();
+          m.forEach((ms: MatchScore) => map.set(ms.opportunity_id, ms));
+          setMatchScores(map);
         }
         setLoading(false);
-      });
-
-    // Load match scores for this org
-    if (orgId) {
-      supabase
-        .from('matches')
-        .select('opportunity_id, score, reasoning')
-        .eq('org_id', orgId)
-        .gte('score', 50)
-        .then(({ data }) => {
-          if (data) {
-            const map = new Map<string, MatchScore>();
-            data.forEach(m => map.set(m.opportunity_id, m as MatchScore));
-            setMatchScores(map);
-          }
-        });
-    }
+      })
+      .catch(() => setLoading(false));
   }, []);
 
   const filtered = useMemo(() => {
