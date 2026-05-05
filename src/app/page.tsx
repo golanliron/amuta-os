@@ -773,7 +773,7 @@ export default function LandingPage() {
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-3">לחברות ועסקים</h2>
           <p className="text-center text-muted mb-12 max-w-lg mx-auto">
-            לא רק עמותות מחפשות מימון. גם מימון מחפש עמותות.
+            חברות שרוצות לעשות אימפקט חברתי יוכלו למצוא עמותות שמתאימות לחזון שלהן. הכל במקום אחד.
           </p>
         </RevealSection>
 
