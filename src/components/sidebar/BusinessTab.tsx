@@ -17,6 +17,7 @@ interface Company {
   contact_role: string | null;
   website: string | null;
   active: boolean;
+  relevance_score?: number;
 }
 
 const TYPE_LABELS: Record<string, string> = {
@@ -40,30 +41,40 @@ const TYPE_ICONS: Record<string, string> = {
   business: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4',
 };
 
-export default function BusinessTab() {
+interface BusinessTabProps {
+  stage?: string;
+  orgId?: string | null;
+}
+
+export default function BusinessTab({ orgId }: BusinessTabProps) {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [total, setTotal] = useState(0);
+  const [matchedCount, setMatchedCount] = useState(0);
   const [typeCounts, setTypeCounts] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [selectedType, setSelectedType] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const [matchedOnly, setMatchedOnly] = useState(true);
 
   useEffect(() => {
     loadCompanies();
-  }, [selectedType]);
+  }, [selectedType, matchedOnly, orgId]);
 
   const loadCompanies = async () => {
     setLoading(true);
     const params = new URLSearchParams();
     if (selectedType) params.set('type', selectedType);
     if (search) params.set('search', search);
+    if (orgId) params.set('org_id', orgId);
+    if (matchedOnly && orgId) params.set('matched', 'true');
 
     try {
       const res = await fetch(`/api/companies?${params}`);
       const data = await res.json();
       setCompanies(data.companies || []);
       setTotal(data.total || 0);
+      setMatchedCount(data.matchedCount || 0);
       setTypeCounts(data.typeCounts || {});
     } catch {
       // ignore
@@ -112,12 +123,40 @@ export default function BusinessTab() {
       <div className="p-3 border-b border-border space-y-2">
         {/* Stats banner */}
         <div className="bg-accent/5 border border-accent/15 rounded-xl px-3 py-2.5">
-          <div className="flex items-center gap-2 mb-1.5">
-            <div className="w-2 h-2 rounded-full bg-green animate-pulse" />
-            <span className="text-[12px] font-bold text-text">
-              {total} חברות וארגונים
-            </span>
+          <div className="flex items-center justify-between mb-1.5">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-green animate-pulse" />
+              <span className="text-[12px] font-bold text-text">
+                {total} חברות וארגונים
+              </span>
+            </div>
+            {matchedCount > 0 && (
+              <span className="text-[10px] text-accent font-medium">
+                {matchedCount} מותאמים
+              </span>
+            )}
           </div>
+          {/* Matched / All toggle */}
+          {orgId && (
+            <div className="flex rounded-lg border border-border overflow-hidden mb-1.5">
+              <button
+                onClick={() => setMatchedOnly(true)}
+                className={`flex-1 text-[10px] py-1 font-medium transition-colors ${
+                  matchedOnly ? 'bg-accent text-white' : 'bg-surf text-muted hover:text-text'
+                }`}
+              >
+                מותאמים לארגון ({matchedCount})
+              </button>
+              <button
+                onClick={() => setMatchedOnly(false)}
+                className={`flex-1 text-[10px] py-1 font-medium transition-colors ${
+                  !matchedOnly ? 'bg-accent text-white' : 'bg-surf text-muted hover:text-text'
+                }`}
+              >
+                כל החברות ({total})
+              </button>
+            </div>
+          )}
           <div className="flex flex-wrap gap-1">
             {Object.entries(typeCounts).map(([type, count]) => (
               <button

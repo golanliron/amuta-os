@@ -604,7 +604,7 @@ async function scanCompanies(
       // AI scoring for top candidates
       const orgContext = buildOrgContext(profileData, orgName);
       const compList = sorted.map((c, i) =>
-        `${i + 1}. "${c.name}" | סוג: ${c.company_type} | תחומי עניין: ${c.interests?.join(', ') || '-'} | תרומות: ${c.donation_amount ? `${(c.donation_amount / 1000).toFixed(0)}K` : '-'} | CSR: ${c.csr_rank || '-'}`
+        `${i + 1}. "${c.name}" | סוג: ${c.company_type} | תחומי עניין: ${c.interests?.join(', ') || '-'} | תרומות: ${c.donation_amount ? `${(c.donation_amount / 1000).toFixed(0)}K` : 'לא ידוע'} | CSR: ${c.csr_rank || 'לא ידוע'}${c.description ? ` | תיאור: ${c.description.slice(0, 150)}` : ''}`
       ).join('\n');
 
       const res = await anthropic.messages.create({

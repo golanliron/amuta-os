@@ -76,7 +76,7 @@ export default function SidebarPanel({ stage, orgId, initialTab }: SidebarPanelP
             <HistoryTab stage={stage} orgId={orgId} />
           </div>
         )}
-        {activeTab === 'business' && <BusinessTab />}
+        {activeTab === 'business' && <BusinessTab stage={stage} orgId={orgId} />}
       </div>
     </div>
   );
