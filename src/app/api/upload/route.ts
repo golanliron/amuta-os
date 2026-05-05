@@ -3,15 +3,44 @@ import Anthropic from '@anthropic-ai/sdk';
 import { createAdminClient } from '@/lib/supabase/admin';
 import pdfParse from 'pdf-parse';
 
-// PDF: use pdf-parse v1
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+// PDF: use pdf-parse v1, fallback to Claude vision
 async function parsePDF(buffer: Buffer): Promise<string> {
+  // Try pdf-parse first
   try {
     const result = await pdfParse(buffer);
-    return result.text || '';
+    if (result.text && result.text.trim().length > 20) {
+      return result.text;
+    }
   } catch (e) {
-    console.error('PDF parse error:', e);
-    return '';
+    console.error('PDF parse error, trying Claude fallback:', e);
   }
+
+  // Fallback: send PDF as base64 to Claude for OCR
+  try {
+    const base64 = buffer.toString('base64');
+    const res = await anthropic.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      messages: [{
+        role: 'user',
+        content: [
+          {
+            type: 'document',
+            source: { type: 'base64', media_type: 'application/pdf', data: base64 },
+          },
+          { type: 'text', text: 'חלץ את כל הטקסט מהמסמך הזה בעברית. החזר רק את הטקסט, בלי הסברים.' },
+        ],
+      }],
+      max_tokens: 8000,
+    });
+    const text = res.content[0].type === 'text' ? res.content[0].text : '';
+    if (text.length > 20) return text;
+  } catch (e) {
+    console.error('Claude PDF fallback error:', e);
+  }
+
+  return '';
 }
 
 // DOCX: mammoth works fine with dynamic import
@@ -21,8 +50,6 @@ async function parseDocx(buffer: Buffer): Promise<string> {
   const result = await extract({ buffer });
   return result.value || '';
 }
-
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 // ===== Text Extraction =====
 
