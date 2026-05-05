@@ -18,6 +18,11 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const saved = localStorage.getItem('fishgold_stage');
     if (saved) setStage(Number(saved) as AppStage);
+
+    // Listen for sidebar close events (from "כתוב הגשה" button)
+    const closeSidebar = () => setSidebarOpen(false);
+    window.addEventListener('fishgold:closeSidebar', closeSidebar);
+    return () => window.removeEventListener('fishgold:closeSidebar', closeSidebar);
   }, []);
 
   if (showSplash) {

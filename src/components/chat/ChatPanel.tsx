@@ -173,15 +173,18 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
     }
   }, [input, isStreaming, conversationId, orgId, userId]);
 
-  // Listen for "כתוב הגשה" events from sidebar
+  // Expose sendMessage to sidebar via window for cross-component communication
+  const sendMessageRef = useRef(sendMessage);
+  sendMessageRef.current = sendMessage;
+
   useEffect(() => {
     const handler = (e: Event) => {
       const text = (e as CustomEvent).detail;
-      if (text) sendMessage(text);
+      if (text) sendMessageRef.current(text);
     };
     window.addEventListener('fishgold:send', handler);
     return () => window.removeEventListener('fishgold:send', handler);
-  }, [sendMessage]);
+  }, []);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {

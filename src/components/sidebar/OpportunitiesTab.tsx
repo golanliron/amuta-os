@@ -287,6 +287,8 @@ function OpportunityCard({ opp, match }: { opp: Opportunity; match?: MatchScore 
     e.stopPropagation();
     const detail = `תכתוב טיוטת הגשה לקול הקורא: "${opp.title}"${opp.funder ? ` של ${opp.funder}` : ''}${opp.deadline ? ` (דדליין: ${new Date(opp.deadline).toLocaleDateString('he-IL')})` : ''}${opp.description ? `\n\nתיאור הקול הקורא: ${opp.description.slice(0, 500)}` : ''}${opp.eligibility ? `\nתנאי סף: ${opp.eligibility}` : ''}`;
     window.dispatchEvent(new CustomEvent('fishgold:send', { detail }));
+    // Close sidebar on mobile so user sees the chat
+    window.dispatchEvent(new CustomEvent('fishgold:closeSidebar'));
   };
 
   return (
