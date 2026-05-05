@@ -358,7 +358,7 @@ export default function LandingPage() {
             {/* Fishgold reply 1 */}
             <div className="flex justify-end gap-2">
               <div className="bg-surf2 border border-border rounded-2xl rounded-bl-sm px-4 py-3 max-w-[85%] text-sm leading-relaxed">
-                לא בינה מלאכותית. דג זהב עתיק. חי מאות שנים בין קרנות, ממשלות ותורמים. תשלחי חומרים — תקנון, דוחות, הגשות, מה שיש. שמעתי את זה כבר אלף פעם, אבל בואי נראה מה יש לך.
+                לא בינה מלאכותית. דג זהב עתיק. חי מאות שנים בין קרנות, ממשלות ותורמים. תשלחי חומרים. תקנון, דוחות, הגשות, מה שיש. שמעתי את זה כבר אלף פעם, אבל בואי נראה מה יש לך.
               </div>
               <div className="w-7 h-7 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0 mt-auto">
                 <FishLogo size={18} />
@@ -529,17 +529,25 @@ export default function LandingPage() {
         </div>
       </RevealSection>
 
-      {/* Stats with animated counters */}
+      {/* Stats with animated counters + swimming fish */}
       <RevealSection className="relative z-10 max-w-3xl mx-auto px-6 pb-20">
-        <div className="grid grid-cols-3 gap-4">
-          {STATS.map((s, i) => (
-            <div key={i} className={`text-center py-6 px-2 rounded-2xl bg-surf border border-border hover:border-accent/30 transition-all hover:shadow-md stagger-${i + 1}`}>
-              <div className="text-2xl sm:text-3xl font-extrabold" style={{ color: '#EE7A30' }}>
-                {s.prefix || ''}<AnimatedCounter target={s.number} suffix={s.suffix} />
-              </div>
-              <div className="text-xs sm:text-sm text-muted mt-1">{s.label}</div>
+        <div className="relative">
+          {/* Swimming fish that appears when stats come into view */}
+          <div className="absolute -top-6 left-0 right-0 pointer-events-none overflow-hidden h-12 z-10">
+            <div className="swim-across inline-block">
+              <FishLogo size={32} />
             </div>
-          ))}
+          </div>
+          <div className="grid grid-cols-3 gap-4">
+            {STATS.map((s, i) => (
+              <div key={i} className={`text-center py-6 px-2 rounded-2xl bg-surf border border-border hover:border-accent/30 transition-all hover:shadow-md stagger-${i + 1}`}>
+                <div className="text-2xl sm:text-3xl font-extrabold" style={{ color: '#EE7A30' }}>
+                  {s.prefix || ''}<AnimatedCounter target={s.number} suffix={s.suffix} />
+                </div>
+                <div className="text-xs sm:text-sm text-muted mt-1">{s.label}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </RevealSection>
 
@@ -774,6 +782,7 @@ export default function LandingPage() {
                   'לוח דדליינים + התראות מייל',
                   'סנכרון Google Calendar',
                   'צ׳אט ללא הגבלה',
+                  'וואטסאפ ישיר להתכתבות עם Fishgold',
                   'עד 5 משתמשים',
                   'חיבור Google Drive',
                   'דוחות גיוס חודשיים',
