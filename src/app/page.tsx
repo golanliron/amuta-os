@@ -747,42 +747,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Anti-section: what happens without Fishgold */}
-      <section className="relative z-10 max-w-4xl mx-auto px-6 pb-24">
-        <RevealSection>
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-3">מה קורה בלי Fishgold?</h2>
-          <p className="text-center text-muted mb-10 max-w-lg mx-auto">
-            המציאות של רוב העמותות בישראל
-          </p>
-        </RevealSection>
-
-        <RevealSection type="reveal-scale">
-          <div className="bg-surf border border-border rounded-2xl p-6 sm:p-8">
-            <div className="grid sm:grid-cols-2 gap-4">
-              {[
-                { icon: '🕐', text: 'מבזבזים 40+ שעות בחודש על חיפוש וכתיבה' },
-                { icon: '💸', text: 'מפספסים קולות קוראים ששווים מאות אלפי שקלים' },
-                { icon: '😩', text: 'נשחקים על הגשות שחוזרות "לא מתאים"' },
-                { icon: '📅', text: 'מגלים על דדליינים אחרי שעברו' },
-                { icon: '🔄', text: 'כותבים מחדש כל פעם כי אין מערכת שזוכרת' },
-                { icon: '🎯', text: 'מגישים לקרנות לא מתאימות ומבזבזים זמן' },
-              ].map((item, i) => (
-                <div key={i} className="flex items-start gap-3 py-2">
-                  <span className="text-lg">{item.icon}</span>
-                  <p className="text-[13px] text-text2 leading-relaxed">{item.text}</p>
-                </div>
-              ))}
-            </div>
-            <div className="mt-6 pt-5 border-t border-border text-center">
-              <p className="text-sm font-semibold text-accent">
-                עמותות שמגישות מעל 10 בקשות בשנה מגדילות את התקציב ב-35% בממוצע.
-              </p>
-              <p className="text-xs text-muted mt-1">Fishgold מאפשר להגיש 10+ בחודש, לא בשנה.</p>
-            </div>
-          </div>
-        </RevealSection>
-      </section>
-
       {/* Pricing */}
       <section id="pricing" className="relative z-10 max-w-5xl mx-auto px-6 pb-24">
         <RevealSection>
