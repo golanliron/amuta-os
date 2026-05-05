@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import SplashScreen from '@/components/SplashScreen';
 import FishLogo from '@/components/chat/FishLogo';
 import Link from 'next/link';
@@ -19,10 +19,86 @@ const MOBILE_TABS: { id: 'chat' | SidebarTab; label: string; icon: string }[] = 
   { id: 'history', label: 'היסטוריה', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
 ];
 
+function FeedbackModal({ onClose }: { onClose: () => void }) {
+  const [type, setType] = useState<'bug' | 'idea' | 'love' | 'other'>('idea');
+  const [text, setText] = useState('');
+  const [sent, setSent] = useState(false);
+  const ref = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => { ref.current?.focus(); }, []);
+
+  const send = async () => {
+    if (!text.trim()) return;
+    try {
+      const supabase = (await import('@/lib/supabase/client')).createClient();
+      await supabase.from('feedback').insert({
+        org_id: DEV_ORG_ID,
+        type,
+        message: text,
+      });
+    } catch { /* ignore */ }
+    setSent(true);
+    setTimeout(onClose, 1500);
+  };
+
+  const types = [
+    { key: 'bug' as const, label: 'בעיה', emoji: '🐛' },
+    { key: 'idea' as const, label: 'רעיון', emoji: '💡' },
+    { key: 'love' as const, label: 'אהבתי', emoji: '❤️' },
+    { key: 'other' as const, label: 'אחר', emoji: '📝' },
+  ];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm" onClick={onClose}>
+      <div className="bg-bg border border-border rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl" dir="rtl" onClick={e => e.stopPropagation()}>
+        {sent ? (
+          <div className="text-center py-8">
+            <p className="text-2xl mb-2">🐟</p>
+            <p className="font-bold">תודה. Fishgold שומע הכל.</p>
+          </div>
+        ) : (
+          <>
+            <h3 className="font-bold text-lg mb-1">כתבו ל-Goldfish</h3>
+            <p className="text-sm text-muted mb-4">בעיות, תלונות, דברים טובים, רעיונות. נעביר ל-Goldfish.</p>
+            <div className="flex gap-2 mb-4">
+              {types.map(t => (
+                <button
+                  key={t.key}
+                  onClick={() => setType(t.key)}
+                  className={`flex-1 py-2 rounded-xl text-sm font-medium transition-all ${type === t.key ? 'bg-accent text-white' : 'bg-surf2 hover:bg-surf2/80'}`}
+                >
+                  {t.emoji} {t.label}
+                </button>
+              ))}
+            </div>
+            <textarea
+              ref={ref}
+              value={text}
+              onChange={e => setText(e.target.value)}
+              placeholder="ספרו לנו..."
+              className="w-full p-3 border border-border rounded-xl bg-surf2 text-sm resize-none focus:border-accent focus:outline-none"
+              rows={4}
+            />
+            <div className="flex gap-2 mt-3">
+              <button onClick={send} className="flex-1 py-2.5 bg-accent text-white font-medium rounded-xl hover:bg-accent-hover transition-all">
+                שלח
+              </button>
+              <button onClick={onClose} className="px-4 py-2.5 border border-border rounded-xl hover:bg-surf2 transition-all text-sm">
+                ביטול
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function DashboardInner({ children }: { children: React.ReactNode }) {
   const [showSplash, setShowSplash] = useState(true);
   const [stage, setStage] = useState<AppStage>(0);
   const [mobileTab, setMobileTab] = useState<'chat' | SidebarTab>('chat');
+  const [showFeedback, setShowFeedback] = useState(false);
 
   // Broadcast active tab so ChatPanel can update placeholder
   const switchTab = (tab: 'chat' | SidebarTab) => {
@@ -52,7 +128,30 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
           <span className="font-semibold text-sm">Fishgold</span>
           <span className="text-xs text-muted hidden sm:inline">| מילה של דג זהב</span>
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          {/* Feedback */}
+          <button
+            onClick={() => setShowFeedback(true)}
+            className="text-[11px] text-muted hover:text-accent transition-colors px-2 py-1 rounded-lg hover:bg-surf2"
+            title="כתבו לנו"
+          >
+            💬 כתבו לנו
+          </button>
+          {/* Share */}
+          <button
+            onClick={() => {
+              if (navigator.share) {
+                navigator.share({ title: 'Fishgold', text: 'דג זהב עתיק שדג מענקים. מערכת גיוס חכמה לעמותות.', url: 'https://amuta-os.vercel.app' });
+              } else {
+                navigator.clipboard.writeText('https://amuta-os.vercel.app');
+                alert('הלינק הועתק!');
+              }
+            }}
+            className="text-[11px] text-muted hover:text-accent transition-colors px-2 py-1 rounded-lg hover:bg-surf2"
+            title="שתפו"
+          >
+            📤 שתפו
+          </button>
           <div className="w-7 h-7 rounded-full bg-accent text-white flex items-center justify-center text-xs font-bold">
             ל
           </div>
@@ -109,6 +208,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
           </div>
         </nav>
       </div>
+      {showFeedback && <FeedbackModal onClose={() => setShowFeedback(false)} />}
     </div>
   );
 }

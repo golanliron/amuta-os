@@ -228,7 +228,7 @@ export default function LandingPage() {
       />
 
       {/* Nav */}
-      <nav className="relative z-10 px-6 py-4 max-w-6xl mx-auto fade-up">
+      <nav className="sticky top-0 z-40 px-6 py-4 max-w-6xl mx-auto fade-up bg-bg/80 backdrop-blur-lg">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <FishLogo size={32} />
@@ -239,7 +239,7 @@ export default function LandingPage() {
           <div className="hidden md:flex items-center gap-6">
             <a href="#why" className="text-sm text-text2 hover:text-accent transition-colors">למה Fishgold</a>
             <a href="#how" className="text-sm text-text2 hover:text-accent transition-colors">איך זה עובד</a>
-            <a href="#whatsapp" className="text-sm text-text2 hover:text-accent transition-colors">וואטסאפ</a>
+            <a href="#whatsapp" className="text-sm text-text2 hover:text-accent transition-colors">גם בוואטסאפ שלך</a>
             <a href="#pricing" className="text-sm text-text2 hover:text-accent transition-colors">מחירים</a>
             <button
               onClick={() => router.push('/dashboard')}
@@ -270,7 +270,7 @@ export default function LandingPage() {
           <div className="md:hidden mt-3 bg-surf border border-border rounded-2xl p-4 space-y-3 shadow-lg">
             <a href="#why" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">למה Fishgold</a>
             <a href="#how" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">איך זה עובד</a>
-            <a href="#whatsapp" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">וואטסאפ</a>
+            <a href="#whatsapp" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">גם בוואטסאפ שלך</a>
             <a href="#pricing" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">מחירים</a>
             <button
               onClick={() => { setMobileMenu(false); router.push('/dashboard'); }}
@@ -302,7 +302,7 @@ export default function LandingPage() {
         <p className="text-sm text-muted mb-8 fade-up" style={{ animationDelay: '0.35s' }}>מילה של דג זהב.</p>
 
         <p className="text-lg sm:text-xl text-text2 max-w-2xl mx-auto mb-12 leading-relaxed fade-up" style={{ animationDelay: '0.45s' }}>
-          מערכת גיוס משאבים חכמה לעמותות. מאתרת קולות קוראים, מתאימה לארגון שלך, וכותבת הגשות מלאות. 428 מקורות מימון, 75 קרנות, הכל במקום אחד.
+          נשמה עתיקה. חשיבה חדה. סורק 428 מקורות מימון כל יום, מוצא מה מתאים לך, וכותב הגשות שקרנות אוהבות.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 fade-up" style={{ animationDelay: '0.6s' }}>
@@ -759,6 +759,20 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Coming soon - Organizations */}
+      <RevealSection className="relative z-10 max-w-3xl mx-auto px-6 pb-16" type="reveal-scale">
+        <div className="bg-surf border border-dashed border-accent/40 rounded-2xl p-6 text-center">
+          <div className="inline-flex items-center gap-2 bg-accent/10 text-accent text-xs font-bold px-3 py-1 rounded-full mb-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+            בקרוב
+          </div>
+          <h3 className="font-bold text-lg mb-1">ארגונים וחברות מוצאים אותך</h3>
+          <p className="text-sm text-muted max-w-md mx-auto">
+            קרנות, חברות עסקיות ותורמים יוכלו לחפש עמותות שמתאימות להם. לא רק אתם מחפשים מימון. גם המימון מחפש אתכם.
+          </p>
+        </div>
+      </RevealSection>
+
       {/* Pricing */}
       <section id="pricing" className="relative z-10 max-w-5xl mx-auto px-6 pb-24">
         <RevealSection>
@@ -814,6 +828,23 @@ export default function LandingPage() {
                     <polyline points="12 19 5 12 12 5" />
                   </svg>
                 </span>
+              </button>
+              <button
+                onClick={() => {
+                  if (navigator.share) {
+                    navigator.share({ title: 'Fishgold', text: 'דג זהב עתיק שדג מענקים מהמים. מערכת גיוס משאבים חכמה לעמותות.', url: 'https://amuta-os.vercel.app' });
+                  } else {
+                    navigator.clipboard.writeText('https://amuta-os.vercel.app');
+                    alert('הלינק הועתק!');
+                  }
+                }}
+                className="w-full py-3 border border-border text-text2 font-medium rounded-xl text-sm hover:bg-surf2 transition-all flex items-center justify-center gap-2 mt-2"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" />
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                </svg>
+                תהיה חבר. תעביר את Goldfish לחבר
               </button>
             </div>
           </RevealSection>

@@ -73,7 +73,25 @@ export default function OpportunitiesTab({ stage, orgId }: OpportunitiesTabProps
       .eq('active', true)
       .or(`deadline.is.null,deadline.gte.${today}`)
       .order('deadline', { ascending: true, nullsFirst: false })
-      .then(({ data }) => {
+      .then(({ data, error }) => {
+        if (error) {
+          console.error('Opportunities load error:', error);
+          // Fallback: try without or filter
+          supabase
+            .from('opportunities')
+            .select('*')
+            .eq('active', true)
+            .order('deadline', { ascending: true, nullsFirst: false })
+            .limit(100)
+            .then(({ data: fallbackData }) => {
+              if (fallbackData) {
+                const filtered = fallbackData.filter((o: Record<string, unknown>) => !o.deadline || String(o.deadline) >= today);
+                setOpportunities(filtered as unknown as Opportunity[]);
+              }
+              setLoading(false);
+            });
+          return;
+        }
         if (data) setOpportunities(data as unknown as Opportunity[]);
         setLoading(false);
       });
