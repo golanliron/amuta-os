@@ -31,7 +31,7 @@ const DOC_CATEGORIES: DocCategory[] = [
       </svg>
     ),
     examples: 'תקנון, מצגת היכרות, חזון ומשימה',
-    whyNeeded: 'פישגולד צריך להכיר את העמותה כדי לכתוב על מי אתם',
+    whyNeeded: 'Fishgold צריך להכיר את העמותה כדי לכתוב על מי אתם',
   },
   {
     key: 'programs',
@@ -44,7 +44,7 @@ const DOC_CATEGORIES: DocCategory[] = [
       </svg>
     ),
     examples: 'תיאורי תוכניות, מודל הפעלה, קהלי יעד',
-    whyNeeded: 'בלי זה פישגולד לא יודע מה העמותה עושה בפועל',
+    whyNeeded: 'בלי זה Fishgold לא יודע מה העמותה עושה בפועל',
   },
   {
     key: 'budget',
@@ -94,7 +94,7 @@ const DOC_CATEGORIES: DocCategory[] = [
       </svg>
     ),
     examples: 'בקשות מענק שהגשתם, מכתבי בקשה, דוחות לקרנות',
-    whyNeeded: 'פישגולד לומד מהסגנון שלכם וכותב בהתאם',
+    whyNeeded: 'Fishgold לומד מהסגנון שלכם וכותב בהתאם',
   },
 ];
 
@@ -323,7 +323,7 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
       {/* Knowledge completeness bar */}
       <div className="bg-surf rounded-xl border border-border p-4">
         <div className="flex items-center justify-between mb-2">
-          <h4 className="text-xs font-semibold">מה פישגולד יודע עליכם</h4>
+          <h4 className="text-xs font-semibold">מה Fishgold יודע עליכם</h4>
           <span className={`text-[11px] font-bold ${
             completeness >= 80 ? 'text-green-600' : completeness >= 40 ? 'text-amber-600' : 'text-red-500'
           }`}>
@@ -341,10 +341,10 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
         </div>
         <p className="text-[10px] text-muted2">
           {completeness >= 80
-            ? 'מצוין! פישגולד מכיר את הארגון לעומק ויכתוב הגשות מדויקות.'
+            ? 'מצוין! Fishgold מכיר את הארגון לעומק ויכתוב הגשות מדויקות.'
             : completeness >= 40
             ? 'טוב. ככל שתעלו יותר מסמכים — ההגשות יהיו מדויקות יותר.'
-            : 'העלו מסמכים כדי שפישגולד יכיר את הארגון ויוכל לכתוב הגשות.'}
+            : 'העלו מסמכים כדי שFishgold יכיר את הארגון ויוכל לכתוב הגשות.'}
         </p>
       </div>
 
@@ -358,7 +358,7 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
           <h4 className="text-xs font-semibold">ספרו על הארגון בטקסט חופשי</h4>
         </div>
         <p className="text-[10px] text-muted2 mb-2">
-          הדביקו תיאור, העתיקו מהאתר, או פשוט כתבו — פישגולד ילמד מזה.
+          הדביקו תיאור, העתיקו מהאתר, או פשוט כתבו — Fishgold ילמד מזה.
         </p>
         <textarea
           value={freeText}
@@ -392,7 +392,7 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
             disabled={savingText}
             className="mt-2 w-full py-1.5 text-[11px] font-medium bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors disabled:opacity-50"
           >
-            {savingText ? 'שומר...' : 'שמור — פישגולד ילמד את זה'}
+            {savingText ? 'שומר...' : 'שמור — Fishgold ילמד את זה'}
           </button>
         )}
       </div>
@@ -408,7 +408,7 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
           <h4 className="text-xs font-semibold">חיבור Google Drive</h4>
         </div>
         <p className="text-[10px] text-muted2 mb-2">
-          הדביקו קישור לתיקיית Drive משותפת — פישגולד יקרא את המסמכים משם.
+          הדביקו קישור לתיקיית Drive משותפת — Fishgold יקרא את המסמכים משם.
         </p>
         <div className="flex gap-1.5">
           <input

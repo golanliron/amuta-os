@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
       folder_id: folderId,
       files_found: filesImported,
       message: filesImported > 0
-        ? `נמצאו ${filesImported} קבצים ב-Drive. פישגולד מעבד אותם.`
+        ? `נמצאו ${filesImported} קבצים ב-Drive. Fishgold מעבד אותם.`
         : 'התיקייה חוברה. ודאו שהתיקייה משותפת (Share > Anyone with the link).',
     });
   } catch (error) {

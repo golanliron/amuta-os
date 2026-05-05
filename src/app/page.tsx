@@ -97,7 +97,7 @@ const STATS = [
 const ADVANTAGES = [
   {
     title: 'חוסך 90% מהזמן',
-    desc: 'מה שלוקח 3 שעות חיפוש + 2 ימי כתיבה, פישגולד עושה בדקות.',
+    desc: 'מה שלוקח 3 שעות חיפוש + 2 ימי כתיבה, Fishgold עושה בדקות.',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
         <circle cx="12" cy="12" r="10" />
@@ -107,7 +107,7 @@ const ADVANTAGES = [
   },
   {
     title: 'מכיר 75 מקורות מימון',
-    desc: 'ממשלתי, פרטי, בינלאומי, עסקי. פישגולד מכסה את כולם.',
+    desc: 'ממשלתי, פרטי, בינלאומי, עסקי. Fishgold מכסה את כולם.',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
         <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" />
@@ -116,7 +116,7 @@ const ADVANTAGES = [
   },
   {
     title: 'לא שוכח כלום',
-    desc: 'מעלים מסמך פעם אחת. פישגולד זוכר כל מספר, כל פרויקט, כל הישג.',
+    desc: 'מעלים מסמך פעם אחת. Fishgold זוכר כל מספר, כל פרויקט, כל הישג.',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
         <path d="M12 2L2 7l10 5 10-5-10-5z" />
@@ -191,7 +191,7 @@ const FEATURES = [
       </svg>
     ),
     title: 'מכיר את הארגון שלך',
-    desc: 'מעלים מסמכים פעם אחת. פישגולד זוכר הכל ויודע לשלוף כל נתון ברגע.',
+    desc: 'מעלים מסמכים פעם אחת. Fishgold זוכר הכל ויודע לשלוף כל נתון ברגע.',
   },
   {
     icon: (
@@ -202,7 +202,7 @@ const FEATURES = [
       </svg>
     ),
     title: 'מעיר אותך',
-    desc: 'דדליינים, דחיפות, הזדמנויות שעומדות לפוג. פישגולד לא מחכה שתשאלי.',
+    desc: 'דדליינים, דחיפות, הזדמנויות שעומדות לפוג. Fishgold לא מחכה שתשאלי.',
   },
 ];
 
@@ -240,7 +240,7 @@ export default function LandingPage() {
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-6">
-            <a href="#why" className="text-sm text-text2 hover:text-accent transition-colors">למה פישגולד</a>
+            <a href="#why" className="text-sm text-text2 hover:text-accent transition-colors">למה Fishgold</a>
             <a href="#how" className="text-sm text-text2 hover:text-accent transition-colors">איך זה עובד</a>
             <a href="#pricing" className="text-sm text-text2 hover:text-accent transition-colors">מחירים</a>
             <button
@@ -270,7 +270,7 @@ export default function LandingPage() {
         {/* Mobile menu */}
         {mobileMenu && (
           <div className="md:hidden mt-3 bg-surf border border-border rounded-2xl p-4 space-y-3 shadow-lg">
-            <a href="#why" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">למה פישגולד</a>
+            <a href="#why" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">למה Fishgold</a>
             <a href="#how" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">איך זה עובד</a>
             <a href="#pricing" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">מחירים</a>
             <button
@@ -456,7 +456,7 @@ export default function LandingPage() {
           {/* Fake input bar */}
           <div className="px-6 py-3 border-t border-border bg-surf flex items-center gap-2">
             <div className="flex-1 bg-surf2 rounded-xl px-4 py-2.5 text-[13px] text-muted2">
-              כתבו לפישגולד...
+              כתבו לFishgold...
             </div>
             <button
               onClick={() => router.push('/dashboard')}
@@ -549,7 +549,7 @@ export default function LandingPage() {
       {/* Advantages */}
       <section id="why" className="relative z-10 max-w-5xl mx-auto px-6 pb-24">
         <RevealSection>
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-3">למה פישגולד?</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-3">למה Fishgold?</h2>
           <p className="text-center text-muted mb-12 max-w-lg mx-auto">
             6 סיבות לתת לדג עתיק לעשות את העבודה
           </p>
@@ -586,7 +586,7 @@ export default function LandingPage() {
             {
               step: '1',
               title: 'מעלים מסמכים',
-              desc: 'תקנון, דוח כספי, תיאורי פרויקטים. פישגולד קורא, מנתח, וזוכר הכל.',
+              desc: 'תקנון, דוח כספי, תיאורי פרויקטים. Fishgold קורא, מנתח, וזוכר הכל.',
             },
             {
               step: '2',
@@ -596,7 +596,7 @@ export default function LandingPage() {
             {
               step: '3',
               title: 'לוחצים "כתוב הגשה"',
-              desc: 'פישגולד קורא את הקול הקורא, ומוציא טיוטה מלאה. תוך דקות.',
+              desc: 'Fishgold קורא את הקול הקורא, ומוציא טיוטה מלאה. תוך דקות.',
             },
           ].map((item, i) => (
             <RevealSection key={item.step} type="reveal-scale" delay={`stagger-${i + 1}`}>
@@ -618,7 +618,7 @@ export default function LandingPage() {
       {/* Features grid */}
       <section className="relative z-10 max-w-5xl mx-auto px-6 pb-24">
         <RevealSection>
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-12">מה פישגולד עושה</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-12">מה Fishgold עושה</h2>
         </RevealSection>
         <div className="grid sm:grid-cols-2 gap-5">
           {FEATURES.map((f, i) => (
@@ -645,7 +645,7 @@ export default function LandingPage() {
         <RevealSection>
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-3">גם בוואטסאפ</h2>
           <p className="text-center text-muted mb-12 max-w-lg mx-auto">
-            לא צריך לפתוח דפדפן. פישגולד עובד ישר מהוואטסאפ.
+            לא צריך לפתוח דפדפן. Fishgold עובד ישר מהוואטסאפ.
           </p>
         </RevealSection>
 
@@ -719,7 +719,7 @@ export default function LandingPage() {
                 {
                   icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>,
                   title: 'מתריע על הגשות דחופות',
-                  desc: 'דדליין עוד 5 ימים? פישגולד שולח הודעה. לא מחכה שתפתחי את המחשב.',
+                  desc: 'דדליין עוד 5 ימים? Fishgold שולח הודעה. לא מחכה שתפתחי את המחשב.',
                 },
                 {
                   icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /></svg>,
@@ -750,7 +750,7 @@ export default function LandingPage() {
       {/* Anti-section: what happens without Fishgold */}
       <section className="relative z-10 max-w-4xl mx-auto px-6 pb-24">
         <RevealSection>
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-3">מה קורה בלי פישגולד?</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-3">מה קורה בלי Fishgold?</h2>
           <p className="text-center text-muted mb-10 max-w-lg mx-auto">
             המציאות של רוב העמותות בישראל
           </p>
@@ -777,7 +777,7 @@ export default function LandingPage() {
               <p className="text-sm font-semibold text-accent">
                 עמותות שמגישות מעל 10 בקשות בשנה מגדילות את התקציב ב-35% בממוצע.
               </p>
-              <p className="text-xs text-muted mt-1">פישגולד מאפשר להגיש 10+ בחודש, לא בשנה.</p>
+              <p className="text-xs text-muted mt-1">Fishgold מאפשר להגיש 10+ בחודש, לא בשנה.</p>
             </div>
           </div>
         </RevealSection>

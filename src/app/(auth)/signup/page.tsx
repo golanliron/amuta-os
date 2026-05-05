@@ -60,7 +60,7 @@ export default function SignupPage() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <FishLogo size={64} className="mx-auto swim mb-3" />
-          <h1 className="text-2xl font-bold">הצטרפי לפישגולד</h1>
+          <h1 className="text-2xl font-bold">הצטרפי ל-Fishgold</h1>
           <p className="text-sm text-muted mt-1">חשבון חינמי. בלי כרטיס אשראי.</p>
         </div>
 

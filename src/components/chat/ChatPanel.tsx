@@ -396,7 +396,7 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
               value={input}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
-              placeholder="כתבי לפישגולד..."
+              placeholder="כתבי ל-Fishgold..."
               rows={1}
               className="w-full resize-none rounded-xl border border-border bg-surf px-4 py-3 pr-12 text-sm focus:outline-none focus:border-accent transition-colors"
             />
