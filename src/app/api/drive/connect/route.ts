@@ -1,16 +1,11 @@
 import { NextRequest } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 
-// Extract folder ID from various Google Drive URL formats
 function extractFolderId(url: string): string | null {
-  // https://drive.google.com/drive/folders/FOLDER_ID
   const folderMatch = url.match(/\/folders\/([a-zA-Z0-9_-]+)/);
   if (folderMatch) return folderMatch[1];
-
-  // https://drive.google.com/open?id=FOLDER_ID
   const idMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
   if (idMatch) return idMatch[1];
-
   return null;
 }
 
@@ -31,39 +26,64 @@ export async function POST(request: NextRequest) {
 
     const supabase = createAdminClient();
 
-    // Save Drive connection in org settings
-    const { data: org } = await supabase
-      .from('organizations')
-      .select('settings')
-      .eq('id', org_id)
+    // Save Drive link in org_profiles (always works)
+    const { data: existing } = await supabase
+      .from('org_profiles')
+      .select('data')
+      .eq('org_id', org_id)
       .single();
 
-    const settings = (org?.settings as Record<string, unknown>) || {};
-    settings.drive_folder_id = folderId;
-    settings.drive_url = drive_url;
-    settings.drive_connected_at = new Date().toISOString();
+    const current = (existing?.data as Record<string, unknown>) || {};
+    current.drive_folder_id = folderId;
+    current.drive_url = drive_url;
+    current.drive_connected_at = new Date().toISOString();
 
-    await supabase
-      .from('organizations')
-      .update({ settings })
-      .eq('id', org_id);
+    await supabase.from('org_profiles').upsert({
+      org_id,
+      data: current,
+      last_updated: new Date().toISOString(),
+    }, { onConflict: 'org_id' });
 
-    // Try to list files from the public folder (no OAuth needed for shared folders)
-    // This uses the Google Drive API with an API key for publicly shared folders
+    // Also save in organizations table if exists
+    try {
+      await supabase
+        .from('organizations')
+        .update({
+          settings: {
+            drive_folder_id: folderId,
+            drive_url,
+            drive_connected_at: new Date().toISOString(),
+          },
+        })
+        .eq('id', org_id);
+    } catch {
+      // OK if organizations table doesn't have this row
+    }
+
+    // Save as document reference for RAG context
+    await supabase.from('documents').insert({
+      org_id,
+      filename: 'Google Drive - תיקייה משותפת',
+      file_type: 'link',
+      storage_path: `drive://${folderId}`,
+      category: 'other',
+      parsed_text: `קישור Google Drive: ${drive_url}\nFolder ID: ${folderId}\nוודאו שהתיקייה משותפת כדי שFishgold יוכל לגשת.`,
+      metadata: { drive_folder_id: folderId, drive_url, type: 'drive_link' },
+      status: 'ready',
+    });
+
+    // Try to list files if we have Google API key
     const apiKey = process.env.GOOGLE_API_KEY;
     let filesImported = 0;
 
     if (apiKey) {
       try {
-        const listUrl = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents&key=${apiKey}&fields=files(id,name,mimeType,webContentLink)&pageSize=20`;
+        const listUrl = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents&key=${apiKey}&fields=files(id,name,mimeType)&pageSize=20`;
         const res = await fetch(listUrl);
 
         if (res.ok) {
           const data = await res.json();
-          const files = data.files || [];
-
-          for (const file of files) {
-            // Save each file as a document reference
+          for (const file of (data.files || [])) {
             await supabase.from('documents').insert({
               org_id,
               filename: file.name,
@@ -89,8 +109,8 @@ export async function POST(request: NextRequest) {
       folder_id: folderId,
       files_found: filesImported,
       message: filesImported > 0
-        ? `נמצאו ${filesImported} קבצים ב-Drive. Fishgold מעבד אותם.`
-        : 'התיקייה חוברה. ודאו שהתיקייה משותפת (Share > Anyone with the link).',
+        ? `נמצאו ${filesImported} קבצים. Fishgold מעבד.`
+        : 'קישור Drive נשמר. ודאו שהתיקייה משותפת (Anyone with the link).',
     });
   } catch (error) {
     console.error('Drive connect error:', error);

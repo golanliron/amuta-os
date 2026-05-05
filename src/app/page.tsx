@@ -301,7 +301,7 @@ export default function LandingPage() {
         </h2>
 
         <p className="text-lg sm:text-xl text-text2 max-w-2xl mx-auto mb-12 leading-relaxed fade-up" style={{ animationDelay: '0.45s' }}>
-          50 שנה בתחום. לפני שנולדת, כנראה. עכשיו אני דיגיטלי. אנחנו לא כאן בשביל להכיר או להיות חברים — אני כאן בשביל לא לבזבז לך זמן, ואת לא לי. קרנות לא מחפשות חמודים, הן מחפשות ערך. יאללה, תשלחי חומרים.
+          לא בינה מלאכותית. דג זהב עתיק שחי מאות שנים בים של גיוס משאבים. אנחנו לא חברים — אני כאן בשביל לא לבזבז לך זמן. קרנות לא מחפשות חמודים, הן מחפשות ערך. יאללה, תשלחי חומרים.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 fade-up" style={{ animationDelay: '0.6s' }}>
@@ -360,7 +360,7 @@ export default function LandingPage() {
             {/* Fishgold reply 1 */}
             <div className="flex justify-end gap-2">
               <div className="bg-surf2 border border-border rounded-2xl rounded-bl-sm px-4 py-3 max-w-[85%] text-sm leading-relaxed">
-                50 שנה בתחום. לפני שנולדת, כנראה. תשלחי לינק לאתר או תעלי מסמכים — תקנון, דוחות, הגשות, מה שיש. ככל שאדע יותר, הזהב שנמצא יהיה יותר מדויק. יאללה.
+                לא בינה מלאכותית. דג זהב עתיק. חי מאות שנים בין קרנות, ממשלות ותורמים. תשלחי חומרים — תקנון, דוחות, הגשות, מה שיש. שמעתי את זה כבר אלף פעם, אבל בואי נראה מה יש לך.
               </div>
               <div className="w-7 h-7 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0 mt-auto">
                 <FishLogo size={18} />
@@ -851,10 +851,10 @@ export default function LandingPage() {
       {/* Floating fish - back to top */}
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className="fixed bottom-6 left-6 z-50 w-12 h-12 bg-accent text-white rounded-full shadow-lg hover:shadow-xl hover:scale-110 active:scale-95 transition-all flex items-center justify-center"
+        className="fixed bottom-6 left-6 z-50 w-16 h-16 bg-[#F5E6D0] rounded-full shadow-lg hover:shadow-xl hover:scale-110 active:scale-95 transition-all flex items-center justify-center"
         aria-label="חזרה למעלה"
       >
-        <FishLogo size={24} />
+        <FishLogo size={36} />
       </button>
     </div>
   );

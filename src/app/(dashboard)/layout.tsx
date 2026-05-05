@@ -37,7 +37,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
         <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
           <FishLogo size={28} />
           <span className="font-semibold text-sm">Fishgold</span>
-          <span className="text-xs text-muted hidden sm:inline">| גייס משאבים עתיק</span>
+          <span className="text-xs text-muted hidden sm:inline">| דג זהב עתיק שדג מענקים מהמים</span>
         </Link>
         <div className="flex items-center gap-3">
           {/* Mobile sidebar toggle */}

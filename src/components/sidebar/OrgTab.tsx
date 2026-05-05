@@ -109,6 +109,7 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
   const [savingText, setSavingText] = useState(false);
   const [driveUrl, setDriveUrl] = useState('');
   const [connectingDrive, setConnectingDrive] = useState(false);
+  const [driveStatus, setDriveStatus] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const loadData = () => {
@@ -186,7 +187,9 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
 
   // Group documents by category
   const docsByCategory = documents.reduce<Record<string, FgDoc[]>>((acc, doc) => {
-    const cat = doc.category || 'other';
+    let cat = doc.category || 'other';
+    // Map DB categories to display categories
+    if (cat === 'project') cat = 'programs';
     if (!acc[cat]) acc[cat] = [];
     acc[cat].push(doc);
     return acc;
@@ -424,14 +427,22 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
               if (!orgId || !driveUrl.trim()) return;
               setConnectingDrive(true);
               try {
-                await fetch('/api/drive/connect', {
+                const res = await fetch('/api/drive/connect', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ org_id: orgId, drive_url: driveUrl.trim() }),
                 });
-                setDriveUrl('');
-                loadData();
-              } catch {}
+                const data = await res.json();
+                if (res.ok) {
+                  setDriveStatus(data.message || 'Drive חובר בהצלחה');
+                  setDriveUrl('');
+                  loadData();
+                } else {
+                  setDriveStatus(data.error || 'שגיאה בחיבור');
+                }
+              } catch {
+                setDriveStatus('שגיאה בחיבור ל-Drive');
+              }
               setConnectingDrive(false);
             }}
             disabled={connectingDrive || !driveUrl.trim()}
@@ -440,6 +451,9 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
             {connectingDrive ? '...' : 'חבר'}
           </button>
         </div>
+        {driveStatus && (
+          <p className="text-[10px] text-accent mt-1.5">{driveStatus}</p>
+        )}
       </div>
 
       {/* Document categories */}
