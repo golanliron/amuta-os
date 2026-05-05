@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import FishLogo from '@/components/chat/FishLogo';
 
 // ===== Scroll reveal hook =====
@@ -207,6 +208,7 @@ const FEATURES = [
 
 export default function LandingPage() {
   const router = useRouter();
+  const [mobileMenu, setMobileMenu] = useState(false);
 
   return (
     <div className="min-h-screen bg-bg overflow-hidden" dir="rtl">
@@ -229,17 +231,54 @@ export default function LandingPage() {
       />
 
       {/* Nav */}
-      <nav className="relative z-10 flex items-center justify-between px-6 py-4 max-w-6xl mx-auto fade-up">
-        <div className="flex items-center gap-2">
-          <FishLogo size={32} />
-          <span className="font-bold text-lg tracking-tight">Fishgold</span>
+      <nav className="relative z-10 px-6 py-4 max-w-6xl mx-auto fade-up">
+        <div className="flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <FishLogo size={32} />
+            <span className="font-bold text-lg tracking-tight">Fishgold</span>
+          </Link>
+
+          {/* Desktop nav */}
+          <div className="hidden md:flex items-center gap-6">
+            <a href="#how" className="text-sm text-text2 hover:text-accent transition-colors">איך זה עובד</a>
+            <a href="#pricing" className="text-sm text-text2 hover:text-accent transition-colors">מחירים</a>
+            <button
+              onClick={() => router.push('/dashboard')}
+              className="px-5 py-2 bg-accent text-white text-sm font-medium rounded-xl hover:bg-accent-hover transition-all hover:scale-105 active:scale-95"
+            >
+              כניסה למערכת
+            </button>
+          </div>
+
+          {/* Mobile hamburger */}
+          <button
+            onClick={() => setMobileMenu(!mobileMenu)}
+            className="md:hidden p-2 rounded-xl hover:bg-surf2 transition-colors"
+            aria-label="תפריט"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              {mobileMenu ? (
+                <><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></>
+              ) : (
+                <><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" /></>
+              )}
+            </svg>
+          </button>
         </div>
-        <button
-          onClick={() => router.push('/dashboard')}
-          className="px-5 py-2 bg-accent text-white text-sm font-medium rounded-xl hover:bg-accent-hover transition-all hover:scale-105 active:scale-95"
-        >
-          כניסה למערכת
-        </button>
+
+        {/* Mobile menu */}
+        {mobileMenu && (
+          <div className="md:hidden mt-3 bg-surf border border-border rounded-2xl p-4 space-y-3 shadow-lg">
+            <a href="#how" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">איך זה עובד</a>
+            <a href="#pricing" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">מחירים</a>
+            <button
+              onClick={() => { setMobileMenu(false); router.push('/dashboard'); }}
+              className="w-full py-2.5 bg-accent text-white text-sm font-medium rounded-xl hover:bg-accent-hover transition-all"
+            >
+              כניסה למערכת
+            </button>
+          </div>
+        )}
       </nav>
 
       {/* Hero */}
@@ -261,7 +300,7 @@ export default function LandingPage() {
         </h2>
 
         <p className="text-lg sm:text-xl text-text2 max-w-2xl mx-auto mb-12 leading-relaxed fade-up" style={{ animationDelay: '0.45s' }}>
-          עובד בשבילך. לומד על הארגון שלך. 50 שנה של ניסיון — יודע איך כותבים הכי טוב שיש.
+          סורק מאות קולות קוראים. כותב הגשות חדות. זוכר כל מספר בארגון שלך — ולא הולך לישון.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 fade-up" style={{ animationDelay: '0.6s' }}>
@@ -802,10 +841,14 @@ export default function LandingPage() {
                 <p className="text-[11px] text-muted">לעמותות שמגישות ברצינות</p>
               </div>
               <div className="mb-1">
-                <span className="text-3xl font-extrabold" style={{ color: '#EE7A30' }}>149</span>
+                <span className="text-3xl font-extrabold" style={{ color: '#EE7A30' }}>750</span>
                 <span className="text-sm text-muted mr-1">₪ / חודש</span>
               </div>
-              <p className="text-[11px] text-muted mb-5">או 1,430₪ לשנה (חיסכון 20%)</p>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-sm text-muted line-through">1,200₪</span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-green/10 text-green">מחיר היכרות</span>
+              </div>
+              <p className="text-[11px] text-muted mb-5">או 7,500₪ לשנה (חיסכון 17%)</p>
               <ul className="space-y-2.5 text-[13px] text-text2 mb-6 flex-1">
                 {[
                   'כל קולות הקוראים (428+)',
@@ -847,10 +890,10 @@ export default function LandingPage() {
                 <p className="text-[11px] text-muted">לארגונים גדולים ורשתות</p>
               </div>
               <div className="mb-1">
-                <span className="text-3xl font-extrabold">399</span>
+                <span className="text-3xl font-extrabold">1,490</span>
                 <span className="text-sm text-muted mr-1">₪ / חודש</span>
               </div>
-              <p className="text-[11px] text-muted mb-5">או 3,830₪ לשנה (חיסכון 20%)</p>
+              <p className="text-[11px] text-muted mb-5">או 14,900₪ לשנה (חיסכון 17%)</p>
               <ul className="space-y-2.5 text-[13px] text-text2 mb-6 flex-1">
                 {[
                   'הכל מתוכנית מקצועי',
@@ -904,7 +947,7 @@ export default function LandingPage() {
         <div className="bg-surf border border-border rounded-3xl p-10 sm:p-14 border-glow relative overflow-hidden">
           <div className="absolute inset-0 opacity-[0.03]" style={{ background: 'radial-gradient(circle at center, #EE7A30, transparent 70%)' }} />
           <FishLogo size={56} className="swim mx-auto mb-6 relative" />
-          <h2 className="text-2xl sm:text-3xl font-bold mb-3 relative">149₪ בחודש. גיוס משאבים אוטומטי.</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold mb-3 relative">750₪ בחודש. גיוס משאבים אוטומטי.</h2>
           <p className="text-muted mb-2 max-w-md mx-auto relative">
             14 ימי ניסיון חינם — בלי כרטיס אשראי, בלי התחייבות.
           </p>
@@ -929,12 +972,15 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="relative z-10 border-t border-border py-8 px-6">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <FishLogo size={20} />
             <span className="text-sm font-medium">Fishgold</span>
             <span className="text-xs text-muted">| גייס משאבים דיגיטלי</span>
+          </Link>
+          <div className="flex items-center gap-4">
+            <Link href="/privacy" className="text-xs text-muted2 hover:text-accent transition-colors">מדיניות פרטיות</Link>
+            <p className="text-xs text-muted2">&copy; {new Date().getFullYear()} Fishgold. כל הזכויות שמורות.</p>
           </div>
-          <p className="text-xs text-muted2">&copy; {new Date().getFullYear()} Fishgold. כל הזכויות שמורות.</p>
         </div>
       </footer>
     </div>
