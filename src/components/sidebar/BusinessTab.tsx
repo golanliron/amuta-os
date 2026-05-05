@@ -56,6 +56,7 @@ export default function BusinessTab({ orgId }: BusinessTabProps) {
   const [selectedType, setSelectedType] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [matchedOnly, setMatchedOnly] = useState(true);
+  const [minRelevance, setMinRelevance] = useState<'' | '40' | '60' | '80'>('');
 
   useEffect(() => {
     loadCompanies();
@@ -82,18 +83,33 @@ export default function BusinessTab({ orgId }: BusinessTabProps) {
     setLoading(false);
   };
 
-  // Client-side search filtering (for instant feedback)
+  // Client-side search + relevance filtering
   const filtered = useMemo(() => {
-    if (!search) return companies;
-    const q = search.toLowerCase();
-    return companies.filter(
-      (c) =>
-        c.name.toLowerCase().includes(q) ||
-        c.description?.toLowerCase().includes(q) ||
-        c.contact_name?.toLowerCase().includes(q) ||
-        c.interests?.some((i) => i.toLowerCase().includes(q))
-    );
-  }, [companies, search]);
+    let result = companies;
+    if (minRelevance) {
+      const min = Number(minRelevance);
+      result = result.filter(c => (c.relevance_score || 0) >= min);
+    }
+    if (search) {
+      const q = search.toLowerCase();
+      result = result.filter(
+        (c) =>
+          c.name.toLowerCase().includes(q) ||
+          c.description?.toLowerCase().includes(q) ||
+          c.contact_name?.toLowerCase().includes(q) ||
+          c.interests?.some((i) => i.toLowerCase().includes(q))
+      );
+    }
+    return result;
+  }, [companies, search, minRelevance]);
+
+  // Count companies by relevance level
+  const relevanceCounts = useMemo(() => {
+    const high = companies.filter(c => (c.relevance_score || 0) >= 80).length;
+    const medium = companies.filter(c => (c.relevance_score || 0) >= 60 && (c.relevance_score || 0) < 80).length;
+    const low = companies.filter(c => (c.relevance_score || 0) >= 40 && (c.relevance_score || 0) < 60).length;
+    return { high, medium, low };
+  }, [companies]);
 
   const handleAskFishgold = (company: Company) => {
     const typeLabel = TYPE_LABELS[company.company_type] || company.company_type;
@@ -131,7 +147,7 @@ export default function BusinessTab({ orgId }: BusinessTabProps) {
     window.dispatchEvent(new CustomEvent('fishgold:closeSidebar'));
   };
 
-  const activeFilters = [selectedType].filter(Boolean).length;
+  const activeFilters = [selectedType, minRelevance].filter(Boolean).length;
 
   if (loading && companies.length === 0) {
     return (
@@ -196,6 +212,36 @@ export default function BusinessTab({ orgId }: BusinessTabProps) {
               </button>
             ))}
           </div>
+          {/* Relevance level filter */}
+          {matchedOnly && matchedCount > 0 && (
+            <div className="flex gap-1 pt-1">
+              <span className="text-[9px] text-muted2 self-center ml-1">התאמה:</span>
+              <button
+                onClick={() => setMinRelevance(minRelevance === '80' ? '' : '80')}
+                className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors ${
+                  minRelevance === '80' ? 'bg-green-600 text-white' : 'bg-green-50 text-green-700 hover:bg-green-100'
+                }`}
+              >
+                גבוהה ({relevanceCounts.high})
+              </button>
+              <button
+                onClick={() => setMinRelevance(minRelevance === '60' ? '' : '60')}
+                className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors ${
+                  minRelevance === '60' ? 'bg-amber-500 text-white' : 'bg-amber-50 text-amber-700 hover:bg-amber-100'
+                }`}
+              >
+                בינונית ({relevanceCounts.medium})
+              </button>
+              <button
+                onClick={() => setMinRelevance(minRelevance === '40' ? '' : '40')}
+                className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors ${
+                  minRelevance === '40' ? 'bg-gray-500 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                נמוכה ({relevanceCounts.low})
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Search */}
@@ -226,9 +272,9 @@ export default function BusinessTab({ orgId }: BusinessTabProps) {
           <span className="text-[10px] text-muted">
             {filtered.length} מתוך {total}
           </span>
-          {selectedType && (
+          {activeFilters > 0 && (
             <button
-              onClick={() => setSelectedType('')}
+              onClick={() => { setSelectedType(''); setMinRelevance(''); }}
               className="text-[10px] text-accent hover:underline"
             >
               נקה סינון
@@ -282,11 +328,22 @@ function CompanyCard({
         <h4 className="text-[13px] font-semibold leading-snug flex-1 min-w-0 line-clamp-2">
           {company.name}
         </h4>
-        <span
-          className={`flex-shrink-0 text-[9px] px-1.5 py-0.5 rounded-full font-medium ${typeColor}`}
-        >
-          {typeLabel}
-        </span>
+        <div className="flex items-center gap-1 flex-shrink-0">
+          {company.relevance_score != null && company.relevance_score >= 20 && (
+            <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold ${
+              company.relevance_score >= 80 ? 'bg-green-100 text-green-700' :
+              company.relevance_score >= 60 ? 'bg-amber-100 text-amber-700' :
+              'bg-gray-100 text-gray-600'
+            }`}>
+              {company.relevance_score}%
+            </span>
+          )}
+          <span
+            className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${typeColor}`}
+          >
+            {typeLabel}
+          </span>
+        </div>
       </div>
 
       {/* Contact name + role */}
