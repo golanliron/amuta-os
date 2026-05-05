@@ -5,6 +5,28 @@ import FishLogo from './FishLogo';
 import type { ChatMessage } from '@/types';
 import { FISHGOLD_WELCOME, getRandomLoadingPhrase } from '@/lib/ai/fishgold';
 
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+  const copy = () => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+  return (
+    <button
+      onClick={copy}
+      className="opacity-0 group-hover:opacity-100 transition-opacity absolute top-2 left-2 p-1.5 rounded-lg bg-bg/80 hover:bg-surf2 border border-border text-muted hover:text-accent"
+      title="העתק"
+    >
+      {copied ? (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12" /></svg>
+      ) : (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" /></svg>
+      )}
+    </button>
+  );
+}
+
 const TAB_QUICK_ACTIONS: Record<string, { label: string; prompt: string }[]> = {
   opportunities: [
     { label: '🔍 סרוק קולות קוראים', prompt: 'סרוק בשבילי קולות קוראים פתוחים שמתאימים לארגון' },
@@ -183,7 +205,7 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
         const updated = [...prev];
         const last = updated[updated.length - 1];
         if (last.role === 'assistant' && !last.content) {
-          last.content = 'משהו השתבש. נסי שוב.';
+          last.content = 'משהו השתבש. נסו שוב.';
         }
         return updated;
       });
@@ -247,11 +269,11 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
   }, [orgId]);
 
   const placeholderByTab: Record<string, string> = {
-    chat: 'כתבי ל-Fishgold...',
-    org: 'שלחי חומרים, לינק לאתר, או ספרי על הארגון...',
-    opportunities: 'על איזה קול קורא לעבוד? תכתבי שם או תדביקי לינק...',
-    history: 'כתבי ל-Fishgold...',
-    business: 'שאלי על חברה, קרן, או בקשי ניסוח מייל פנייה...',
+    chat: 'כתבו ל-Fishgold...',
+    org: 'שלחו חומרים, לינק לאתר, או ספרו על הארגון...',
+    opportunities: 'על איזה קול קורא לעבוד? כתבו שם או הדביקו לינק...',
+    history: 'כתבו ל-Fishgold...',
+    business: 'שאלו על חברה, קרן, או בקשו ניסוח מייל פנייה...',
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -291,7 +313,7 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
           const errorMsg: ChatMessage = {
             id: crypto.randomUUID(),
             role: 'assistant',
-            content: data.error || `לא הצלחתי לקרוא את "${file.name}". נסי פורמט אחר.`,
+            content: data.error || `לא הצלחתי לקרוא את "${file.name}". נסו פורמט אחר.`,
             timestamp: new Date().toISOString(),
           };
           setMessages(prev => [...prev, errorMsg]);
@@ -381,7 +403,7 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
         const errorMsg: ChatMessage = {
           id: crypto.randomUUID(),
           role: 'assistant',
-          content: `לא הצלחתי לקרוא את "${file.name}". נסי שוב או העלי בפורמט אחר.`,
+          content: `לא הצלחתי לקרוא את "${file.name}". נסו שוב או העלו בפורמט אחר.`,
           timestamp: new Date().toISOString(),
         };
         setMessages(prev => [...prev, errorMsg]);
@@ -391,8 +413,30 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
     e.target.value = '';
   };
 
+  const startNewChat = () => {
+    setMessages([{
+      id: 'welcome',
+      role: 'assistant',
+      content: FISHGOLD_WELCOME,
+      timestamp: new Date().toISOString(),
+    }]);
+    setConversationId(null);
+    setInput('');
+  };
+
   return (
     <div className="flex flex-col h-full">
+      {/* Chat header with new chat button */}
+      <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-bg2/50 flex-shrink-0">
+        <span className="text-xs text-muted">Fishgold Chat</span>
+        <button
+          onClick={startNewChat}
+          className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] text-muted hover:text-accent hover:bg-surf2 rounded-lg transition-colors"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+          שיחה חדשה
+        </button>
+      </div>
       {/* Messages area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((msg) => (
@@ -418,12 +462,15 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
 
             {/* Bubble */}
             <div
-              className={`max-w-[75%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+              className={`max-w-[75%] rounded-2xl px-4 py-3 text-sm leading-relaxed relative group ${
                 msg.role === 'user'
                   ? 'bg-accent text-white rounded-br-sm'
                   : 'bg-surf border border-border rounded-bl-sm'
               }`}
             >
+              {msg.role === 'assistant' && msg.content && msg.id !== 'welcome' && msg.id !== 'memory-separator' && (
+                <CopyButton text={msg.content} />
+              )}
               <div className="whitespace-pre-wrap">{msg.content}</div>
               {msg.role === 'assistant' && isStreaming && msg === messages[messages.length - 1] && !msg.content && (
                 <div className="flex items-center gap-2 py-1">

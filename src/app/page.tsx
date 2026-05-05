@@ -203,25 +203,26 @@ const FEATURES = [
       </svg>
     ),
     title: 'מעיר אותך',
-    desc: 'דדליינים, דחיפות, הזדמנויות שעומדות לפוג. Fishgold לא מחכה שתשאלי.',
+    desc: 'דדליינים, דחיפות, הזדמנויות שעומדות לפוג. Fishgold לא מחכה שתשאלו.',
   },
 ];
 
 export default function LandingPage() {
   const router = useRouter();
   const [mobileMenu, setMobileMenu] = useState(false);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setShowBackToTop(window.scrollY > 400);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   return (
     <div className="min-h-screen bg-bg overflow-hidden" dir="rtl">
-      {/* Floating bubbles background - very subtle, small */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[50%] left-[15%] w-10 h-10 rounded-full bg-accent/5 float-bubble-2" />
-        <div className="absolute bottom-[30%] right-[70%] w-8 h-8 rounded-full bg-accent/5 float-bubble-3" />
-      </div>
-
-      {/* Subtle dot pattern */}
+      {/* Subtle dot pattern - static, no GPU cost */}
       <div
-        className="fixed inset-0 opacity-[0.02] pointer-events-none"
+        className="absolute inset-0 opacity-[0.02] pointer-events-none"
         style={{
           backgroundImage: 'radial-gradient(#EE7A30 1px, transparent 1px)',
           backgroundSize: '40px 40px',
@@ -229,7 +230,7 @@ export default function LandingPage() {
       />
 
       {/* Nav */}
-      <nav className="sticky top-0 z-40 px-6 py-4 max-w-6xl mx-auto fade-up bg-bg/80 backdrop-blur-lg">
+      <nav className="sticky top-0 z-40 px-6 py-4 max-w-6xl mx-auto fade-up bg-bg/90 md:bg-bg/80 md:backdrop-blur-lg">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <FishLogo size={32} />
@@ -268,7 +269,7 @@ export default function LandingPage() {
 
         {/* Mobile menu */}
         {mobileMenu && (
-          <div className="md:hidden mt-3 bg-surf border border-border rounded-2xl p-4 space-y-3 shadow-lg">
+          <div className="md:hidden mt-3 bg-surf border border-border rounded-2xl p-4 space-y-3 shadow-lg fade-up">
             <a href="#why" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">למה Fishgold</a>
             <a href="#how" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">איך זה עובד</a>
             <a href="#whatsapp" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">גם בוואטסאפ שלך</a>
@@ -303,7 +304,7 @@ export default function LandingPage() {
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight mb-2 shimmer-text fade-up" style={{ animationDelay: '0.3s' }}>
           דג זהב שדג מענקים מהמים
         </h2>
-        <p className="text-sm text-muted mb-8 fade-up" style={{ animationDelay: '0.35s' }}>מילה של דג זהב.</p>
+        <p className="text-sm text-muted mb-8 fade-up" style={{ animationDelay: '0.35s' }}>מערכת AI לגיוס משאבים לעמותות</p>
 
         <p className="text-lg sm:text-xl text-text2 max-w-2xl mx-auto mb-12 leading-relaxed fade-up" style={{ animationDelay: '0.45s' }}>
           מכיר את הארגון שלך בעל פה. סורק מאות קולות קוראים כל יום. יודע בדיוק מה מתאים לך. וכותב הגשות שקרנות לא יכולות לסרב להן.
@@ -365,7 +366,7 @@ export default function LandingPage() {
             {/* Fishgold reply 1 */}
             <div className="flex justify-end gap-2">
               <div className="bg-surf2 border border-border rounded-2xl rounded-bl-sm px-4 py-3 max-w-[85%] text-sm leading-relaxed">
-                לא בינה מלאכותית. דג זהב עתיק. חי מאות שנים בין קרנות, ממשלות ותורמים. תשלחי חומרים. תקנון, דוחות, הגשות, מה שיש. שמעתי את זה כבר אלף פעם, אבל בואי נראה מה יש לך.
+                לא בינה מלאכותית. דג זהב עתיק. חי מאות שנים בין קרנות, ממשלות ותורמים. תשלחו חומרים. תקנון, דוחות, הגשות, מה שיש. שמעתי את זה כבר אלף פעם, אבל בואו נראה מה יש לכם.
               </div>
               <div className="w-7 h-7 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0 mt-auto">
                 <FishLogo size={18} />
@@ -431,7 +432,7 @@ export default function LandingPage() {
                     </div>
                     <div>
                       <span className="font-semibold text-[13px]">מעיר</span>
-                      <span className="text-muted text-[13px]"> דדליינים ודחיפות. לא מחכה שתשאלי</span>
+                      <span className="text-muted text-[13px]"> דדליינים ודחיפות. לא מחכה שתשאלו</span>
                     </div>
                   </div>
                 </div>
@@ -735,7 +736,7 @@ export default function LandingPage() {
                 {
                   icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>,
                   title: 'מתריע על הגשות דחופות',
-                  desc: 'דדליין עוד 5 ימים? Fishgold שולח הודעה. לא מחכה שתפתחי את המחשב.',
+                  desc: 'דדליין עוד 5 ימים? Fishgold שולח הודעה. לא מחכה שתפתחו את המחשב.',
                 },
                 {
                   icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /></svg>,
@@ -858,7 +859,7 @@ export default function LandingPage() {
             <div className="bg-surf border-2 border-accent rounded-2xl p-8 hover:shadow-lg transition-all relative flex flex-col">
               <div className="mb-5 text-center">
                 <h3 className="font-bold text-xl mb-1">Goldfish</h3>
-                <p className="text-sm text-muted">מילה של דג זהב.</p>
+                <p className="text-sm text-muted">תוכנית אחת. הכל כלול.</p>
               </div>
               <div className="text-center mb-6">
                 <span className="text-4xl font-extrabold" style={{ color: '#EE7A30' }}>750</span>
@@ -915,7 +916,7 @@ export default function LandingPage() {
                   <circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" />
                   <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
                 </svg>
-                תהיה חבר. תעביר את Goldfish לחבר
+                אהבתם? תעבירו לחבר
               </button>
             </div>
           </RevealSection>
@@ -965,13 +966,13 @@ export default function LandingPage() {
         </div>
       </footer>
 
-      {/* Floating fish - back to top */}
+      {/* Floating fish - back to top (appears after scroll) */}
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className="fixed bottom-6 left-6 z-50 w-20 h-20 bg-[#FFF3E0] border-2 border-accent/20 rounded-full shadow-lg hover:shadow-xl hover:scale-110 active:scale-95 transition-all flex items-center justify-center"
+        className={`fixed bottom-6 left-6 z-50 w-14 h-14 bg-accent/10 border border-accent/20 rounded-full shadow-md hover:shadow-lg hover:scale-110 active:scale-95 transition-all flex items-center justify-center ${showBackToTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}
         aria-label="חזרה למעלה"
       >
-        <FishLogo size={44} />
+        <FishLogo size={32} />
       </button>
     </div>
   );

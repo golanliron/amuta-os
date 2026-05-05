@@ -32,6 +32,18 @@
   --color-muted: #6B7280;
   --color-muted2: #9CA3AF;
 
+  /* Type badges - semantic */
+  --color-type-kok: #F59E0B;
+  --color-type-kok-bg: rgba(245,158,11,0.1);
+  --color-type-fund: #8B5CF6;
+  --color-type-fund-bg: rgba(139,92,246,0.1);
+  --color-type-gov: #3B82F6;
+  --color-type-gov-bg: rgba(59,130,246,0.1);
+  --color-type-csr: #10B981;
+  --color-type-csr-bg: rgba(16,185,129,0.1);
+  --color-type-intl: #EC4899;
+  --color-type-intl-bg: rgba(236,72,153,0.1);
+
   /* Font */
   --font-rubik: 'Rubik', sans-serif;
 }
@@ -182,3 +194,12 @@ body {
 .stagger-4 { animation-delay: 0.4s; }
 .stagger-5 { animation-delay: 0.5s; }
 .stagger-6 { animation-delay: 0.6s; }
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

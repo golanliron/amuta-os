@@ -46,7 +46,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
       className={`fixed inset-0 z-50 flex flex-col items-center justify-center transition-opacity duration-500 ${
         fading ? 'opacity-0' : 'opacity-100'
       }`}
-      style={{ background: '#FAFAFA' }}
+      style={{ background: 'var(--color-bg)' }}
     >
       {/* Subtle background pattern */}
       <div
@@ -71,12 +71,12 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
       {/* Title - clean typography */}
       <h1
         className="text-4xl font-bold mb-1 tracking-tight"
-        style={{ color: '#1A1A1A' }}
+        style={{ color: 'var(--color-text)' }}
       >
         Fishgold
       </h1>
       <p className="text-sm text-muted mb-10 font-light">
-        גייס משאבים שמוצא זהב בים
+מילה של דג זהב
       </p>
 
       {/* Progress bar - thin and elegant */}

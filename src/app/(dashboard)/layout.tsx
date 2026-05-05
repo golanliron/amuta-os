@@ -13,9 +13,9 @@ const DEV_USER_ID = 'dev-user';
 
 const MOBILE_TABS: { id: 'chat' | SidebarTab; label: string; icon: string }[] = [
   { id: 'chat', label: 'צ\'אט', icon: 'M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z' },
-  { id: 'opportunities', label: 'קולות קוראים', icon: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z' },
-  { id: 'org', label: 'העמותה', icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' },
-  { id: 'history', label: 'היסטוריה', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
+  { id: 'opportunities', label: 'קוראים', icon: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z' },
+  { id: 'org', label: 'הארגון', icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' },
+  { id: 'history', label: 'שיחות', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
   { id: 'business', label: 'חברות', icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4' },
 ];
 
@@ -120,11 +120,12 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="h-screen flex flex-col fade-in">
-      {/* Top bar */}
-      <header className="flex items-center justify-between px-4 py-2 border-b border-border bg-bg2 flex-shrink-0">
+    <div className="h-dvh flex flex-col fade-in">
+      {/* Top bar with brand accent */}
+      <header className="flex items-center justify-between px-4 py-2 border-b border-border bg-bg2 flex-shrink-0 relative">
+        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-l from-accent via-accent/40 to-transparent" />
         <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <FishLogo size={28} />
+          <FishLogo size={28} className="swim" />
           <span className="font-semibold text-sm">Fishgold</span>
           <span className="text-xs text-muted hidden sm:inline">| מילה של דג זהב</span>
         </Link>
@@ -196,12 +197,12 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
                   ${mobileTab === tab.id ? 'text-accent' : 'text-muted'}
                 `}
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={mobileTab === tab.id ? "2.5" : "2"} strokeLinecap="round" strokeLinejoin="round">
                   <path d={tab.icon} />
                 </svg>
-                <span className="text-[9px] font-medium">{tab.label}</span>
+                <span className={`text-[10px] ${mobileTab === tab.id ? 'font-bold' : 'font-medium'}`}>{tab.label}</span>
                 {mobileTab === tab.id && (
-                  <span className="absolute top-0 inset-x-3 h-0.5 bg-accent rounded-full" />
+                  <span className="absolute top-0 inset-x-4 h-[3px] bg-accent rounded-full" />
                 )}
               </button>
             ))}
