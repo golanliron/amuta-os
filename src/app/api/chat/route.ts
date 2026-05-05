@@ -26,6 +26,60 @@ function stripHtml(html: string): string {
     .trim();
 }
 
+async function lookupGrantByUrl(url: string): Promise<string | null> {
+  try {
+    const grantsDb = createGrantsClient();
+    const { data: grant } = await grantsDb
+      .from('grants')
+      .select('title, description, funder, deadline, amount, categories, target_populations, regions, eligibility, url')
+      .eq('url', url)
+      .single();
+
+    if (grant) {
+      return [
+        `[מידע על קול קורא מהמאגר]`,
+        `כותרת: ${grant.title}`,
+        grant.funder ? `גוף מממן: ${grant.funder}` : '',
+        grant.deadline ? `דדליין: ${grant.deadline}` : '',
+        grant.amount ? `סכום: עד ${(grant.amount / 1000).toFixed(0)}K ש"ח` : '',
+        grant.categories?.length ? `קטגוריות: ${grant.categories.join(', ')}` : '',
+        grant.target_populations?.length ? `אוכלוסיות: ${grant.target_populations.join(', ')}` : '',
+        grant.regions?.length ? `אזורים: ${grant.regions.join(', ')}` : '',
+        grant.eligibility ? `תנאי זכאות: ${grant.eligibility}` : '',
+        grant.description ? `תיאור מלא: ${grant.description}` : '',
+      ].filter(Boolean).join('\n');
+    }
+
+    // Try partial URL match (some URLs have tracking params)
+    const baseUrl = url.split('?')[0];
+    const { data: partialMatch } = await grantsDb
+      .from('grants')
+      .select('title, description, funder, deadline, amount, categories, target_populations, regions, eligibility, url')
+      .ilike('url', `%${baseUrl.slice(-60)}%`)
+      .limit(1)
+      .single();
+
+    if (partialMatch) {
+      return [
+        `[מידע על קול קורא מהמאגר]`,
+        `כותרת: ${partialMatch.title}`,
+        partialMatch.funder ? `גוף מממן: ${partialMatch.funder}` : '',
+        partialMatch.deadline ? `דדליין: ${partialMatch.deadline}` : '',
+        partialMatch.amount ? `סכום: עד ${(partialMatch.amount / 1000).toFixed(0)}K ש"ח` : '',
+        partialMatch.categories?.length ? `קטגוריות: ${partialMatch.categories.join(', ')}` : '',
+        partialMatch.target_populations?.length ? `אוכלוסיות: ${partialMatch.target_populations.join(', ')}` : '',
+        partialMatch.regions?.length ? `אזורים: ${partialMatch.regions.join(', ')}` : '',
+        partialMatch.eligibility ? `תנאי זכאות: ${partialMatch.eligibility}` : '',
+        partialMatch.description ? `תיאור מלא: ${partialMatch.description}` : '',
+      ].filter(Boolean).join('\n');
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 async function fetchUrlContent(url: string): Promise<string | null> {
   try {
     const controller = new AbortController();
@@ -43,12 +97,20 @@ async function fetchUrlContent(url: string): Promise<string | null> {
 
     clearTimeout(timeout);
 
-    if (!res.ok) return `[שגיאה: ${res.status} ${res.statusText}]`;
+    if (!res.ok) {
+      // Try grants DB fallback
+      const grantData = await lookupGrantByUrl(url);
+      if (grantData) return grantData;
+      return `[שגיאה: ${res.status} ${res.statusText}]`;
+    }
 
     const contentType = res.headers.get('content-type') || '';
 
     if (contentType.match(/image|video|audio|octet-stream|pdf|zip/)) {
-      return `[קובץ בינארי: ${contentType}]`;
+      // PDF/binary — try grants DB for the full description
+      const grantData = await lookupGrantByUrl(url);
+      if (grantData) return grantData;
+      return `[קובץ בינארי: ${contentType}. לא ניתן לקרוא PDF ישירות. אם יש לך מידע נוסף על קול הקורא, שתף אותו.]`;
     }
 
     const text = await res.text();
@@ -59,11 +121,19 @@ async function fetchUrlContent(url: string): Promise<string | null> {
 
     if (contentType.includes('html')) {
       const cleaned = stripHtml(text);
+      // If HTML is too short (SPA/empty), try grants DB
+      if (cleaned.length < 200) {
+        const grantData = await lookupGrantByUrl(url);
+        if (grantData) return grantData;
+      }
       return cleaned.slice(0, 12000);
     }
 
     return text.slice(0, 12000);
   } catch (e) {
+    // Network error — try grants DB fallback
+    const grantData = await lookupGrantByUrl(url);
+    if (grantData) return grantData;
     return `[לא הצלחתי לקרוא את הלינק: ${e instanceof Error ? e.message : 'שגיאה'}]`;
   }
 }
