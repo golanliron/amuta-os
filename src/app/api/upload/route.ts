@@ -1,37 +1,15 @@
 import { NextRequest } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { createAdminClient } from '@/lib/supabase/admin';
-// PDF: try pdf-parse first (robust), fallback to pdfjs-dist
-async function parsePDF(buffer: Buffer): Promise<string> {
-  // Method 1: pdf-parse (simpler, more reliable)
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const pdfParse = require('pdf-parse') as (buf: Buffer) => Promise<{ text: string }>;
-    const result = await pdfParse(buffer);
-    if (result.text && result.text.trim().length > 10) {
-      return result.text;
-    }
-  } catch (e) {
-    console.error('pdf-parse failed, trying pdfjs:', e);
-  }
+import pdfParse from 'pdf-parse';
 
-  // Method 2: pdfjs-dist fallback
+// PDF: use pdf-parse v1
+async function parsePDF(buffer: Buffer): Promise<string> {
   try {
-    const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
-    const doc = await pdfjs.getDocument({ data: new Uint8Array(buffer) }).promise;
-    const pages: string[] = [];
-    for (let i = 1; i <= doc.numPages; i++) {
-      const page = await doc.getPage(i);
-      const content = await page.getTextContent();
-      const text = (content.items as { str?: string }[])
-        .filter((item) => item && typeof item.str === 'string')
-        .map((item) => item.str!)
-        .join(' ');
-      pages.push(text);
-    }
-    return pages.join('\n\n');
+    const result = await pdfParse(buffer);
+    return result.text || '';
   } catch (e) {
-    console.error('pdfjs-dist also failed:', e);
+    console.error('PDF parse error:', e);
     return '';
   }
 }
