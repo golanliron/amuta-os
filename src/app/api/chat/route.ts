@@ -3,6 +3,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { createGrantsClient } from '@/lib/supabase/grants-db';
 import { FISHGOLD_SYSTEM_PROMPT, FISHGOLD_GRANT_EXPERTISE, FISHGOLD_SECTOR_KNOWLEDGE, buildContext, buildOrgContext } from '@/lib/ai/fishgold';
+import pdfParse from 'pdf-parse';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -106,21 +107,79 @@ async function fetchWithJinaReader(url: string): Promise<string | null> {
   }
 }
 
+// Parse PDF buffer with pdf-parse + Claude OCR fallback
+async function parsePdfBuffer(buffer: Buffer): Promise<string> {
+  try {
+    const result = await pdfParse(buffer);
+    if (result.text && result.text.trim().length > 20) {
+      return result.text;
+    }
+  } catch (e) {
+    console.error('PDF parse error in chat, trying Claude fallback:', e);
+  }
+
+  // Fallback: Claude vision OCR
+  try {
+    const base64 = buffer.toString('base64');
+    const res = await anthropic.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      messages: [{
+        role: 'user',
+        content: [
+          { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: base64 } },
+          { type: 'text', text: 'חלץ את כל הטקסט מהמסמך הזה. עברית ואנגלית. החזר רק את הטקסט.' },
+        ],
+      }],
+      max_tokens: 8000,
+    });
+    const text = res.content[0].type === 'text' ? res.content[0].text : '';
+    if (text.length > 20) return text;
+  } catch (e) {
+    console.error('Claude PDF OCR fallback error:', e);
+  }
+
+  return '';
+}
+
+// Parse DOCX buffer with mammoth
+async function parseDocxBuffer(buffer: Buffer): Promise<string> {
+  try {
+    const mammoth = await import('mammoth');
+    const extract = mammoth.default?.extractRawText || mammoth.extractRawText;
+    const result = await extract({ buffer });
+    return result.value || '';
+  } catch (e) {
+    console.error('DOCX parse error:', e);
+    return '';
+  }
+}
+
+function isLinkedInUrl(url: string): boolean {
+  return /linkedin\.com\/(company|in|posts|pulse|feed)/i.test(url);
+}
+
 async function fetchUrlContent(url: string): Promise<string | null> {
   // Step 1: Always check grants DB first — fastest path
   const grantData = await lookupGrantByUrl(url);
   if (grantData) return grantData;
 
+  // Step 2: LinkedIn — always use Jina Reader
+  if (isLinkedInUrl(url)) {
+    const jinaContent = await fetchWithJinaReader(url);
+    if (jinaContent) return `[תוכן לינקדאין מ-${url}]\n${jinaContent}`;
+    return `[לא הצלחתי לקרוא את דף הלינקדאין. לינקדאין חוסם קריאה ישירה — בקש מהמשתמש להעתיק את הטקסט מהדף.]`;
+  }
+
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 15000);
+    const timeout = setTimeout(() => controller.abort(), 30000);
 
     const res = await fetch(url, {
       signal: controller.signal,
       headers: {
         'User-Agent':
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,application/pdf,*/*;q=0.8',
         'Accept-Language': 'he-IL,he;q=0.9,en-US;q=0.8,en;q=0.7',
       },
     });
@@ -128,7 +187,6 @@ async function fetchUrlContent(url: string): Promise<string | null> {
     clearTimeout(timeout);
 
     if (!res.ok) {
-      // Direct fetch failed — try Jina Reader (renders JavaScript)
       const jinaContent = await fetchWithJinaReader(url);
       if (jinaContent) return jinaContent;
       return `[שגיאה: ${res.status} ${res.statusText}]`;
@@ -136,8 +194,29 @@ async function fetchUrlContent(url: string): Promise<string | null> {
 
     const contentType = res.headers.get('content-type') || '';
 
-    if (contentType.match(/image|video|audio|octet-stream|pdf|zip/)) {
-      return `[קובץ בינארי: ${contentType}. לא ניתן לקרוא PDF מלינק. בקש מהמשתמש להוריד את הקובץ ולהעלות אותו דרך כפתור ההעלאה, או להעתיק את הטקסט ולשלוח בצ'אט.]`;
+    // PDF — download and parse with pdf-parse + Claude OCR
+    if (contentType.includes('pdf') || /\.pdf(\?|$|#)/i.test(url)) {
+      const buffer = Buffer.from(await res.arrayBuffer());
+      const pdfText = await parsePdfBuffer(buffer);
+      if (pdfText.length > 30) {
+        return `[תוכן PDF מ-${url}]\n${pdfText.slice(0, 15000)}`;
+      }
+      return `[PDF שלא הצלחתי לחלץ ממנו טקסט. ייתכן ומדובר ב-PDF סרוק. בקש מהמשתמש להעתיק את הטקסט ידנית.]`;
+    }
+
+    // DOCX — download and parse with mammoth
+    if (contentType.includes('wordprocessingml') || contentType.includes('msword') || /\.docx?(\?|$|#)/i.test(url)) {
+      const buffer = Buffer.from(await res.arrayBuffer());
+      const docxText = await parseDocxBuffer(buffer);
+      if (docxText.length > 30) {
+        return `[תוכן Word מ-${url}]\n${docxText.slice(0, 15000)}`;
+      }
+      return `[לא הצלחתי לחלץ טקסט מקובץ Word.]`;
+    }
+
+    // Other binary — skip
+    if (contentType.match(/image|video|audio|octet-stream|zip/)) {
+      return `[קובץ בינארי: ${contentType}. לא ניתן לקריאה.]`;
     }
 
     const text = await res.text();
@@ -148,8 +227,6 @@ async function fetchUrlContent(url: string): Promise<string | null> {
 
     if (contentType.includes('html')) {
       const cleaned = stripHtml(text);
-      // If HTML content is too short — likely an SPA that renders with JS
-      // Use Jina Reader to get the rendered content
       if (cleaned.length < 500) {
         const jinaContent = await fetchWithJinaReader(url);
         if (jinaContent) return jinaContent;
@@ -162,7 +239,6 @@ async function fetchUrlContent(url: string): Promise<string | null> {
 
     return text.slice(0, 12000);
   } catch (e) {
-    // Network error — try Jina Reader as last resort
     const jinaContent = await fetchWithJinaReader(url);
     if (jinaContent) return jinaContent;
     return `[לא הצלחתי לקרוא את הלינק: ${e instanceof Error ? e.message : 'שגיאה'}]`;
@@ -952,6 +1028,129 @@ async function loadGrantsIndex(): Promise<string> {
   }
 }
 
+// ===== Funders Intelligence (always loaded) =====
+
+async function loadFundersIndex(
+  supabase: ReturnType<typeof createAdminClient>
+): Promise<string> {
+  try {
+    const grantsDb = createGrantsClient();
+
+    // Aggregate funder data from grants
+    const { data: grants } = await grantsDb
+      .from('grants')
+      .select('funder, categories, target_populations, amount, deadline, title, url')
+      .eq('is_database', true)
+      .not('funder', 'is', null);
+
+    if (!grants?.length) return '';
+
+    const today = new Date().toISOString().split('T')[0];
+
+    // Build funder profiles
+    const funderMap = new Map<string, {
+      grantCount: number;
+      categories: Set<string>;
+      populations: Set<string>;
+      minAmount: number | null;
+      maxAmount: number | null;
+      openGrants: number;
+      sampleTitles: string[];
+      urls: Set<string>;
+    }>();
+
+    for (const g of grants) {
+      const name = g.funder?.trim();
+      if (!name || name.length < 2 || name.includes('{')) continue;
+
+      if (!funderMap.has(name)) {
+        funderMap.set(name, {
+          grantCount: 0, categories: new Set(), populations: new Set(),
+          minAmount: null, maxAmount: null, openGrants: 0, sampleTitles: [], urls: new Set(),
+        });
+      }
+      const f = funderMap.get(name)!;
+      f.grantCount++;
+      if (g.categories) for (const c of g.categories) f.categories.add(c);
+      if (g.target_populations) for (const p of g.target_populations) f.populations.add(p);
+      if (g.amount) {
+        if (!f.minAmount || g.amount < f.minAmount) f.minAmount = g.amount;
+        if (!f.maxAmount || g.amount > f.maxAmount) f.maxAmount = g.amount;
+      }
+      if (g.deadline && g.deadline >= today) f.openGrants++;
+      if (f.sampleTitles.length < 3) f.sampleTitles.push(g.title);
+      if (g.url) f.urls.add(g.url);
+    }
+
+    // Also load scan sources for URL directory
+    const { data: sources } = await supabase
+      .from('grant_sources')
+      .select('name, url, layer, fields, populations, notes')
+      .eq('is_active', true);
+
+    // Build the index
+    const funderLines = Array.from(funderMap.entries())
+      .sort((a, b) => b[1].grantCount - a[1].grantCount)
+      .map(([name, f]) => {
+        const parts = [`${name} (${f.grantCount} קולות קוראים`];
+        if (f.openGrants > 0) parts[0] += `, ${f.openGrants} פתוחים`;
+        parts[0] += ')';
+        if (f.categories.size) parts.push(`תחומים: ${Array.from(f.categories).slice(0, 4).join(', ')}`);
+        if (f.populations.size) parts.push(`אוכלוסיות: ${Array.from(f.populations).slice(0, 4).join(', ')}`);
+        if (f.maxAmount) parts.push(`עד ${(f.maxAmount / 1000).toFixed(0)}K₪`);
+        if (f.sampleTitles.length) parts.push(`דוגמאות: ${f.sampleTitles.slice(0, 2).join('; ')}`);
+        return parts.join(' | ');
+      });
+
+    let result = `\n\n===== מודיעין גופים מממנים — ${funderMap.size} גופים =====`;
+    result += `\nאתה מכיר כל גוף מממן. כשמישהו שואל על קרן או גוף — תענה מהידע שלך.`;
+    result += `\n${funderLines.join('\n')}`;
+
+    // Add scan sources directory
+    if (sources?.length) {
+      const byLayer: Record<string, string[]> = {};
+      for (const s of sources) {
+        const layer = s.layer || 'other';
+        if (!byLayer[layer]) byLayer[layer] = [];
+        byLayer[layer].push(s.url);
+      }
+      const layerLabels: Record<string, string> = {
+        government: 'ממשלתי', private_il: 'קרנות ישראליות',
+        international: 'בינלאומי', aggregator: 'אגרגטורים',
+      };
+      result += `\n\n## מקורות סריקה (${sources.length} אתרים)`;
+      for (const [layer, urls] of Object.entries(byLayer)) {
+        result += `\n${layerLabels[layer] || layer}: ${urls.join(' | ')}`;
+      }
+    }
+
+    // Expert knowledge about major funders
+    result += `\n\n## מודיעין עומק — גופים מרכזיים:`;
+    result += `
+משרד החינוך: מדדים כמותיים, שפה פורמלית, יעדים SMART, שיתוף רשויות מקומיות. דדליינים: אוגוסט-ספטמבר.
+ביטוח לאומי: קרנות ייעודיות (מוגבלות, קשישים, ילדים). בירוקרטי, דורשים ניהול תקין + 46א. 50K-500K.
+ג'וינט/JDC: חדשנות, שיתופי פעולה, evidence-based, מדידה + למידה. מעדיפים תוכניות חדשות.
+מפעל הפיס: פריפריה, נגישות, קהילה, תרבות. 20K-300K. תהליך פשוט.
+קרן עזריאלי: חינוך, מדע, מנהיגות, ספורט. 100K-1M. תחרותי, דורשים מצוינות.
+שוסטרמן: חינוך יהודי, מנהיגות צעירה, ישראל-תפוצות. סגנון אמריקאי, ROI ברור.
+קרן ויינברג: רווחה, בריאות, קהילה. דרך שותפים מקומיים. מעדיפים ארגונים מבוססים.
+יד הנדיב (רוטשילד): חינוך, סביבה, אזרחות. סכומים גדולים, תהליך ארוך, מצוינות מחקרית.
+קרן רשי: פריפריה, חינוך, תעסוקה. מועדפים: דרום ונגב. leverage ממשלתי.
+ועדת העיזבונות: 100K-2M, רווחה + חינוך, תהליך ארוך, דורש מסמכים רבים.
+קק"ל: סביבה, פריפריה, חינוך. שותפויות עם רשויות. impact מדיד.
+הסוכנות היהודית: עלייה, קליטה, זהות יהודית. חיבור ישראל-תפוצות.`;
+
+    if (result.length > 15000) {
+      result = result.slice(0, 15000) + '\n[... עוד גופים מממנים]';
+    }
+
+    return result;
+  } catch (e) {
+    console.error('Funders index load error:', e);
+    return '';
+  }
+}
+
 // ===== Sector Intelligence =====
 
 const SECTOR_KEYWORDS = ['מגזר שלישי', 'עמותות', 'מתחרים', 'מגמות', 'טרנדים', 'חדשות', 'סטארטאפ חברתי', 'אימפקט', 'CSR', 'פילנתרופיה', 'תרומות בישראל', 'קרנות בישראל', 'שוק', 'מגזר', 'תחרות', 'benchmarking', 'דוח מגזרי', 'נתוני שוק'];
@@ -1060,8 +1259,8 @@ export async function POST(request: NextRequest) {
     const urlContent = formatUrlsForMessage(fetchedUrls);
     const orgContext = buildOrgContext(profile?.data ?? null, org?.name ?? null);
 
-    // Load matched opportunities, companies, sector intelligence, companies index, and grants index in parallel
-    const [opportunityContext, companyContext, sectorContext, companiesIndex, grantsIndex] = await Promise.all([
+    // Load all knowledge layers in parallel
+    const [opportunityContext, companyContext, sectorContext, companiesIndex, grantsIndex, fundersIndex] = await Promise.all([
       scanOpportunities(
         supabase, org_id, profile?.data as Record<string, unknown> | null, org?.name ?? null, message
       ),
@@ -1071,6 +1270,7 @@ export async function POST(request: NextRequest) {
       loadSectorIntelligence(supabase, message),
       loadCompaniesIndex(supabase),
       loadGrantsIndex(),
+      loadFundersIndex(supabase),
     ]);
 
     // Tab-specific focus instructions
@@ -1101,7 +1301,7 @@ export async function POST(request: NextRequest) {
     };
     const tabFocus = (active_tab && TAB_FOCUS[active_tab]) || '';
 
-    const systemPrompt = FISHGOLD_SYSTEM_PROMPT + FISHGOLD_GRANT_EXPERTISE + FISHGOLD_SECTOR_KNOWLEDGE + tabFocus + orgContext + docSummary + knowledge + rag + opportunityContext + companyContext + companiesIndex + grantsIndex + sectorContext;
+    const systemPrompt = FISHGOLD_SYSTEM_PROMPT + FISHGOLD_GRANT_EXPERTISE + FISHGOLD_SECTOR_KNOWLEDGE + tabFocus + orgContext + docSummary + knowledge + rag + opportunityContext + companyContext + companiesIndex + grantsIndex + fundersIndex + sectorContext;
 
     // Load conversation history
     let chatMessages: { role: 'user' | 'assistant'; content: string }[] = [];
