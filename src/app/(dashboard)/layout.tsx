@@ -54,12 +54,12 @@ function FeedbackModal({ onClose }: { onClose: () => void }) {
         {sent ? (
           <div className="text-center py-8">
             <p className="text-2xl mb-2">🐟</p>
-            <p className="font-bold">תודה. Fishgold שומע הכל.</p>
+            <p className="font-bold">קיבלתי. אטפל בזה.</p>
           </div>
         ) : (
           <>
-            <h3 className="font-bold text-lg mb-1">כתבו ל-Goldfish</h3>
-            <p className="text-sm text-muted mb-4">בעיות, תלונות, דברים טובים, רעיונות. נעביר ל-Goldfish.</p>
+            <h3 className="font-bold text-lg mb-1">יש לכם מה להגיד?</h3>
+            <p className="text-sm text-muted mb-4">תלונות, באגים, רעיונות. Fishgold לא רגיש, תכתבו מה שיש.</p>
             <div className="flex gap-2 mb-4">
               {types.map(t => (
                 <button
@@ -150,7 +150,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
             className="text-[11px] text-muted hover:text-accent transition-colors px-2 py-1 rounded-lg hover:bg-surf2"
             title="שתפו"
           >
-            📤 שתפו
+            📤 אהבתם? שתפו חבר
           </button>
           <div className="w-7 h-7 rounded-full bg-accent text-white flex items-center justify-center text-xs font-bold">
             ל
