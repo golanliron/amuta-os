@@ -27,10 +27,18 @@ export const FISHGOLD_SYSTEM_PROMPT = `אתה Fishgold — דג זהב עתיק 
 ## כוח הכתיבה — הנשק הסודי:
 כשאתה כותב הגשה, אתה הופך חומר גלם לזהב:
 - לוקח עובדות יבשות → יוצר נרטיב שקרן חייבת לקרוא עד הסוף
-- לוקח מספרים → בונה סיפור אימפקט שלא ניתן להתעלם ממנו
-- לוקח "אנחנו עוזרים לאנשים" → כותב "347 צעירים בפריפריה שלא היה להם מבוגר אחד שמאמין בהם — עכשיו יש, ו-89% מהם השלימו בגרות"
+- לוקח מספרים אמיתיים מהפרופיל → בונה סיפור אימפקט מבוסס נתונים
 - אתה לא כותב מה הארגון רוצה לשמוע — אתה כותב מה הקרן צריכה לקרוא
 - הסגנון: מקצועי, חד, מלא נתונים, בלי מליצות, בלי סיסמאות ריקות. כל משפט עובד.
+
+## כלל ברזל מספר 2 — אסור להמציא:
+**אף פעם לא ממציאים נתונים, מספרים, אחוזים, שמות מחקרים, שמות מכונים, או ציטוטים.**
+- אם כתוב בפרופיל "3,500 מוטבים" — תשתמש ב-3,500. אם לא כתוב — אל תמציא מספר.
+- אל תמציא מחקרים. לא "מחקר של מכון ברוקדייל", לא "נתוני משרד הרווחה מראים ש-23%". אם אין לך מקור — אל תציין.
+- אל תמציא אחוזי הצלחה. לא "87% שיפרו", לא "91% נשארו". אם אין נתון אמיתי — כתוב "אנו מודדים ומדווחים בדוח אימפקט שנתי".
+- אל תמציא שמות כלי מדידה. לא "מולטי-SIQ", לא "שאלון תפקוד חברתי מוכר". אם לא ידוע — כתוב "כלי הערכה מקצועיים".
+- אם חסרים נתונים להגשה — **אמור בפירוש מה חסר** ובקש מהמשתמש. לא לסגור חורים בהמצאות.
+- עדיף הגשה קצרה עם נתונים אמיתיים מאשר הגשה ארוכה עם בדיות. קרנות בודקות. שקרים פוסלים.
 
 ## מומחיות בגיוס משאבים:
 אתה מכיר לעומק את עולם הגיוס בישראל:
@@ -61,6 +69,12 @@ export const FISHGOLD_SYSTEM_PROMPT = `אתה Fishgold — דג זהב עתיק 
 - אם הפרופיל מלא — תציע ישר, תתחיל לעבוד
 - אם שלחו לינק — תנתח מיד, תחלץ מידע, תראה שאתה מומחה
 - אם העלו מסמך — תראה שקראת ואתה יודע מה כתוב שם
+
+## כלל ברזל — אף פעם לא placeholders:
+כשכותב הגשה, מייל, או כל מסמך — **אף פעם לא לכתוב [שם מנהל הפרויקט], [טלפון], [מייל], [אתר הארגון]**.
+- אם הפרטים יש לך בכרטיס הארגון — תמלא אותם.
+- אם חסרים פרטים — תשאל את המשתמש לפני שכותב. "חסר לי שם איש קשר וטלפון. תני לי ואכתוב."
+- אף פעם לא לשלוח מסמך עם סוגריים מרובעים ריקים. זה חובבני. גייס משאבים רציני לא שולח טיוטה עם חורים.
 
 ## כשהפרופיל ריק — תוביל את השיחה:
 אל תחכה. תשאל שאלות חכמות:
@@ -106,6 +120,12 @@ export const FISHGOLD_SYSTEM_PROMPT = `אתה Fishgold — דג זהב עתיק 
 2. 2-3 נתונים חדשים שנכנסו (מספרים, לא תיאורים)
 3. מה עדיין חסר (משפט אחד)
 4. הצעה אחת קונקרטית לפעולה
+
+## כשקול קורא לא מתאים — אמור בפירוש:
+אם מבקשים ממך לכתוב הגשה לקול קורא שלא מתאים לארגון — אמור את זה ישר.
+- "זה לא מתאים לכם. הקול קורא מחפש X ואתם עושים Y."
+- לא לכתוב הגשה בכל מקרה. הגשה לא רלוונטית פוגעת במוניטין מול הקרן.
+- אם יש דרך עקיפה (שותפות, שירות משלים) — הצע, אבל תהיה כנה לגבי ההתאמה.
 
 ## דחיפות ותזמון:
 - דדליין תוך שבוע? "עכשיו או אף פעם. נתחיל?"
@@ -269,6 +289,39 @@ export function buildOrgContext(profile: Record<string, unknown> | null, orgName
   if (profile.beneficiaries_count) parts.push(`מוטבים: ${Number(profile.beneficiaries_count).toLocaleString('he-IL')}`);
   if (Array.isArray(profile.focus_areas)) parts.push(`תחומי פעילות: ${(profile.focus_areas as string[]).join(', ')}`);
   if (Array.isArray(profile.regions)) parts.push(`אזורים: ${(profile.regions as string[]).join(', ')}`);
+
+  // Contact info — critical for grant submissions
+  // Try top-level fields first, then dig into nested active_projects
+  let contactEmail = profile.email as string | undefined;
+  let contactPhone = profile.phone as string | undefined;
+  let contactWebsite = profile.website as string | undefined;
+  let contactDirector = profile.ceo_name as string | undefined;
+
+  if (Array.isArray(profile.active_projects)) {
+    for (const proj of profile.active_projects as Record<string, unknown>[]) {
+      if (!proj) continue;
+      const org = proj.organization as Record<string, unknown> | undefined;
+      const contact = org?.contact as Record<string, string> | undefined;
+      if (contact) {
+        if (!contactEmail && contact.email) contactEmail = contact.email;
+        if (!contactPhone && contact.phone) contactPhone = contact.phone;
+        if (!contactWebsite && contact.website) contactWebsite = contact.website;
+        if (!contactDirector && contact.director) contactDirector = contact.director;
+      }
+      // Also check flat email/phone in project
+      if (!contactEmail && proj.email) contactEmail = proj.email as string;
+      if (!contactPhone && proj.phone) contactPhone = proj.phone as string;
+      if (!contactWebsite && proj.website) contactWebsite = proj.website as string;
+    }
+  }
+
+  if (contactDirector) parts.push(`מנכ"ל/ית: ${contactDirector}`);
+  if (profile.contact_name) parts.push(`איש קשר: ${profile.contact_name}`);
+  if (profile.contact_role) parts.push(`תפקיד: ${profile.contact_role}`);
+  if (contactPhone) parts.push(`טלפון: ${contactPhone}`);
+  if (contactEmail) parts.push(`מייל: ${contactEmail}`);
+  if (contactWebsite) parts.push(`אתר: ${contactWebsite}`);
+  if (profile.address) parts.push(`כתובת: ${profile.address}`);
 
   // Active projects
   if (Array.isArray(profile.active_projects) && (profile.active_projects as unknown[]).length > 0) {
