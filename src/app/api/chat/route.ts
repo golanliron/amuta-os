@@ -726,6 +726,79 @@ async function scanCompanies(
   }
 }
 
+// ===== Sector Intelligence =====
+
+const SECTOR_KEYWORDS = ['מגזר שלישי', 'עמותות', 'מתחרים', 'מגמות', 'טרנדים', 'חדשות', 'סטארטאפ חברתי', 'אימפקט', 'CSR', 'פילנתרופיה', 'תרומות בישראל', 'קרנות בישראל', 'שוק', 'מגזר', 'תחרות', 'benchmarking', 'דוח מגזרי', 'נתוני שוק'];
+
+function userAsksAboutSector(message: string): boolean {
+  return SECTOR_KEYWORDS.some((kw) => message.includes(kw));
+}
+
+async function loadSectorIntelligence(
+  supabase: ReturnType<typeof createAdminClient>,
+  userMessage: string
+): Promise<string> {
+  try {
+    // Always load core knowledge topics
+    const { data: knowledge } = await supabase
+      .from('sector_knowledge')
+      .select('topic, content')
+      .not('topic', 'like', 'daily_digest_%')
+      .order('last_updated', { ascending: false })
+      .limit(10);
+
+    let sectorContext = '';
+    if (knowledge?.length) {
+      const topics = knowledge.map(k => `[${k.topic}]\n${k.content}`);
+      sectorContext = `\n\n===== ידע מגזרי — מגזר שלישי ישראלי =====\n${topics.join('\n\n')}`;
+
+      // Truncate if too long
+      if (sectorContext.length > 15000) {
+        sectorContext = sectorContext.slice(0, 15000) + '\n[... עוד ידע מגזרי]';
+      }
+    }
+
+    // Load today's digest if available
+    const today = new Date().toISOString().split('T')[0];
+    const { data: digest } = await supabase
+      .from('sector_knowledge')
+      .select('content')
+      .eq('topic', `daily_digest_${today}`)
+      .single();
+
+    if (digest?.content) {
+      sectorContext += `\n\n===== סיכום יומי — ${today} =====\n${digest.content}`;
+    }
+
+    // If user asks about sector topics, load recent intelligence
+    if (userAsksAboutSector(userMessage)) {
+      const keywords = userMessage.split(/\s+/).filter(w => w.length > 2).slice(0, 5).join(' & ');
+      let intelligenceQuery = supabase
+        .from('sector_intelligence')
+        .select('title, summary, category, source, source_url, relevance_score, scan_date')
+        .gte('relevance_score', 40)
+        .order('relevance_score', { ascending: false })
+        .limit(10);
+
+      if (keywords) {
+        intelligenceQuery = intelligenceQuery.textSearch('fts', keywords, { type: 'plain' });
+      }
+
+      const { data: intel } = await intelligenceQuery;
+      if (intel?.length) {
+        const items = intel.map(i =>
+          `- [${i.category}] ${i.title} (${i.source}, ${i.scan_date})${i.summary ? `: ${i.summary}` : ''}${i.source_url ? ` | ${i.source_url}` : ''}`
+        );
+        sectorContext += `\n\n===== חדשות אחרונות מהמגזר =====\n${items.join('\n')}`;
+      }
+    }
+
+    return sectorContext;
+  } catch {
+    return '';
+  }
+}
+
 // ===== Main Handler =====
 
 export async function POST(request: NextRequest) {
@@ -761,14 +834,15 @@ export async function POST(request: NextRequest) {
     const urlContent = formatUrlsForMessage(fetchedUrls);
     const orgContext = buildOrgContext(profile?.data ?? null, org?.name ?? null);
 
-    // Load matched opportunities and companies if profile exists
-    const [opportunityContext, companyContext] = await Promise.all([
+    // Load matched opportunities, companies, and sector intelligence in parallel
+    const [opportunityContext, companyContext, sectorContext] = await Promise.all([
       scanOpportunities(
         supabase, org_id, profile?.data as Record<string, unknown> | null, org?.name ?? null, message
       ),
       scanCompanies(
         supabase, profile?.data as Record<string, unknown> | null, org?.name ?? null, message
       ),
+      loadSectorIntelligence(supabase, message),
     ]);
 
     // Tab-specific focus instructions
@@ -799,7 +873,7 @@ export async function POST(request: NextRequest) {
     };
     const tabFocus = (active_tab && TAB_FOCUS[active_tab]) || '';
 
-    const systemPrompt = FISHGOLD_SYSTEM_PROMPT + tabFocus + orgContext + docSummary + knowledge + rag + opportunityContext + companyContext;
+    const systemPrompt = FISHGOLD_SYSTEM_PROMPT + tabFocus + orgContext + docSummary + knowledge + rag + opportunityContext + companyContext + sectorContext;
 
     // Load conversation history
     let chatMessages: { role: 'user' | 'assistant'; content: string }[] = [];
