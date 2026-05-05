@@ -38,6 +38,11 @@
 
 * { box-sizing: border-box; }
 
+/* Safe area for mobile bottom bar (iPhone notch/home indicator) */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
 body {
   background: var(--color-bg);
   color: var(--color-text);

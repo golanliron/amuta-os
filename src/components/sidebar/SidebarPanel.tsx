@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { SidebarTab, AppStage } from '@/types';
 import OrgTab from './OrgTab';
 import OpportunitiesTab from './OpportunitiesTab';
@@ -10,6 +10,7 @@ import HistoryTab from './HistoryTab';
 interface SidebarPanelProps {
   stage: AppStage;
   orgId: string | null;
+  initialTab?: SidebarTab;
 }
 
 const tabs: { id: SidebarTab; label: string; icon: string }[] = [
@@ -19,31 +20,41 @@ const tabs: { id: SidebarTab; label: string; icon: string }[] = [
   { id: 'history', label: 'היסטוריה', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
 ];
 
-export default function SidebarPanel({ stage, orgId }: SidebarPanelProps) {
-  const [activeTab, setActiveTab] = useState<SidebarTab>('opportunities');
+export default function SidebarPanel({ stage, orgId, initialTab }: SidebarPanelProps) {
+  const [activeTab, setActiveTab] = useState<SidebarTab>(initialTab || 'opportunities');
+
+  // Sync with parent initialTab changes (mobile tab switching)
+  useEffect(() => {
+    if (initialTab) setActiveTab(initialTab);
+  }, [initialTab]);
+
+  // On mobile, hide the tab bar (bottom nav handles it)
+  const isMobileView = initialTab !== undefined;
 
   return (
     <div className="flex flex-col h-full bg-bg2 border-r border-border">
-      {/* Tab buttons */}
-      <div className="flex border-b border-border">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-xs font-medium transition-colors relative cursor-pointer
-              ${activeTab === tab.id ? 'text-accent' : 'text-muted hover:text-text'}
-            `}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d={tab.icon} />
-            </svg>
-            {tab.label}
-            {activeTab === tab.id && (
-              <span className="absolute bottom-0 inset-x-2 h-0.5 bg-accent rounded-full" />
-            )}
-          </button>
-        ))}
-      </div>
+      {/* Tab buttons - hidden on mobile (bottom nav replaces this) */}
+      {!isMobileView && (
+        <div className="flex border-b border-border">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-xs font-medium transition-colors relative cursor-pointer
+                ${activeTab === tab.id ? 'text-accent' : 'text-muted hover:text-text'}
+              `}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d={tab.icon} />
+              </svg>
+              {tab.label}
+              {activeTab === tab.id && (
+                <span className="absolute bottom-0 inset-x-2 h-0.5 bg-accent rounded-full" />
+              )}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Tab content */}
       <div className="flex-1 overflow-y-auto">
