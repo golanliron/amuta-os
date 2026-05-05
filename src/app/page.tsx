@@ -299,7 +299,7 @@ export default function LandingPage() {
           Fishgold
         </h1>
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight mb-2 shimmer-text fade-up" style={{ animationDelay: '0.3s' }}>
-          דג זהב עתיק שדג מענקים מהמים
+          דג זהב שדג מענקים מהמים
         </h2>
         <p className="text-sm text-muted mb-8 fade-up" style={{ animationDelay: '0.35s' }}>מילה של דג זהב.</p>
 
