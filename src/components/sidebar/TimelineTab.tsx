@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import type { AppStage, Match } from '@/types';
+import { useEffect, useState, useMemo } from 'react';
+import type { AppStage } from '@/types';
 import { createClient } from '@/lib/supabase/client';
 
 interface TimelineTabProps {
@@ -9,82 +9,82 @@ interface TimelineTabProps {
   orgId: string | null;
 }
 
-interface TimelineEvent {
+interface DeadlineItem {
   id: string;
   title: string;
-  source: string;
+  funder: string | null;
   deadline: string;
   daysLeft: number;
-  score: number;
-  status: string;
+  type: string | null;
 }
 
 export default function TimelineTab({ stage, orgId }: TimelineTabProps) {
-  const [events, setEvents] = useState<TimelineEvent[]>([]);
+  const [items, setItems] = useState<DeadlineItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   useEffect(() => {
-    if (!orgId || stage < 2) return;
     const supabase = createClient();
 
     supabase
-      .from('matches')
-      .select('*, opportunity:opportunities(*)')
-      .eq('org_id', orgId)
-      .not('opportunity.deadline', 'is', null)
-      .order('score', { ascending: false })
+      .from('opportunities')
+      .select('id, title, funder, deadline, type')
+      .eq('active', true)
+      .not('deadline', 'is', null)
+      .gte('deadline', new Date().toISOString().split('T')[0])
+      .order('deadline', { ascending: true })
       .then(({ data }) => {
-        if (!data) return;
-        const mapped = (data as unknown as Match[])
-          .filter(m => m.opportunity?.deadline)
-          .map(m => ({
-            id: m.id,
-            title: m.opportunity!.title,
-            source: m.opportunity!.source,
-            deadline: m.opportunity!.deadline!,
-            daysLeft: Math.ceil((new Date(m.opportunity!.deadline!).getTime() - Date.now()) / 86400000),
-            score: m.score,
-            status: m.status,
-          }))
-          .sort((a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime());
-        setEvents(mapped);
+        if (data) {
+          setItems(
+            data.map(d => ({
+              ...d,
+              daysLeft: Math.ceil(
+                (new Date(d.deadline!).getTime() - Date.now()) / 86400000
+              ),
+            })) as DeadlineItem[]
+          );
+        }
+        setLoading(false);
       });
-  }, [orgId, stage]);
+  }, []);
 
-  if (stage < 2) {
-    return (
-      <div className="text-center py-8">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-surf2 flex items-center justify-center">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-            <line x1="16" y1="2" x2="16" y2="6" />
-            <line x1="8" y1="2" x2="8" y2="6" />
-            <line x1="3" y1="10" x2="21" y2="10" />
-          </svg>
-        </div>
-        <p className="text-sm text-muted mb-1">לוח זמנים עדיין נעול</p>
-        <p className="text-xs text-muted2">יפתח אחרי סריקת קולות קוראים</p>
-      </div>
-    );
-  }
-
-  // Generate calendar days
+  // Calendar calculations
   const year = currentMonth.getFullYear();
   const month = currentMonth.getMonth();
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const monthName = currentMonth.toLocaleDateString('he-IL', { month: 'long', year: 'numeric' });
-
-  // Map deadlines to days
-  const deadlineMap = new Map<number, TimelineEvent[]>();
-  events.forEach(ev => {
-    const d = new Date(ev.deadline);
-    if (d.getMonth() === month && d.getFullYear() === year) {
-      const day = d.getDate();
-      if (!deadlineMap.has(day)) deadlineMap.set(day, []);
-      deadlineMap.get(day)!.push(ev);
-    }
+  const monthName = currentMonth.toLocaleDateString('he-IL', {
+    month: 'long',
+    year: 'numeric',
   });
+
+  // Map deadlines to calendar days
+  const deadlineMap = useMemo(() => {
+    const map = new Map<number, DeadlineItem[]>();
+    items.forEach(item => {
+      const d = new Date(item.deadline);
+      if (d.getMonth() === month && d.getFullYear() === year) {
+        const day = d.getDate();
+        if (!map.has(day)) map.set(day, []);
+        map.get(day)!.push(item);
+      }
+    });
+    return map;
+  }, [items, month, year]);
+
+  // Upcoming items (next 30 days)
+  const upcoming = useMemo(
+    () => items.filter(i => i.daysLeft <= 30).slice(0, 10),
+    [items]
+  );
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -115,31 +115,43 @@ export default function TimelineTab({ stage, orgId }: TimelineTabProps) {
           <div key={d} className="text-[10px] text-muted2 py-1">{d}</div>
         ))}
         {Array.from({ length: firstDay }, (_, i) => (
-          <div key={`empty-${i}`} />
+          <div key={`e-${i}`} />
         ))}
         {Array.from({ length: daysInMonth }, (_, i) => {
           const day = i + 1;
-          const dayEvents = deadlineMap.get(day);
-          const isToday = day === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear();
+          const dayItems = deadlineMap.get(day);
+          const today = new Date();
+          const isToday =
+            day === today.getDate() &&
+            month === today.getMonth() &&
+            year === today.getFullYear();
 
           return (
             <div
               key={day}
-              className={`relative py-1.5 text-[10px] rounded ${
+              className={`relative py-1.5 text-[10px] rounded cursor-default ${
                 isToday ? 'bg-accent text-white font-bold' : ''
-              } ${dayEvents ? 'font-semibold' : 'text-muted'}`}
+              } ${dayItems ? 'font-semibold' : 'text-muted'}`}
+              title={dayItems ? `${dayItems.length} דדליינים` : undefined}
             >
               {day}
-              {dayEvents && (
+              {dayItems && (
                 <div className="absolute bottom-0.5 left-1/2 -translate-x-1/2 flex gap-0.5">
-                  {dayEvents.slice(0, 3).map((ev, j) => (
+                  {dayItems.slice(0, 3).map((item, j) => (
                     <span
                       key={j}
                       className={`w-1 h-1 rounded-full ${
-                        ev.daysLeft <= 7 ? 'bg-red' : ev.daysLeft <= 14 ? 'bg-amber' : 'bg-green'
+                        item.daysLeft <= 7
+                          ? 'bg-red-500'
+                          : item.daysLeft <= 14
+                          ? 'bg-amber-500'
+                          : 'bg-green-500'
                       }`}
                     />
                   ))}
+                  {dayItems.length > 3 && (
+                    <span className="w-1 h-1 rounded-full bg-gray-400" />
+                  )}
                 </div>
               )}
             </div>
@@ -147,39 +159,71 @@ export default function TimelineTab({ stage, orgId }: TimelineTabProps) {
         })}
       </div>
 
-      {/* Upcoming deadlines list */}
-      <div>
-        <h4 className="text-xs font-semibold text-muted mb-2">דדליינים קרובים</h4>
-        <div className="space-y-2">
-          {events
-            .filter(ev => ev.daysLeft > 0)
-            .slice(0, 8)
-            .map(ev => (
-              <div key={ev.id} className="flex items-center gap-2 py-1.5 px-2 rounded-lg hover:bg-surf2 transition-colors">
-                <span className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                  ev.daysLeft <= 7 ? 'bg-red' : ev.daysLeft <= 14 ? 'bg-amber' : 'bg-green'
-                }`} />
-                <div className="flex-1 min-w-0">
-                  <p className="text-[11px] font-medium truncate">{ev.title}</p>
-                  <p className="text-[9px] text-muted">{ev.source}</p>
-                </div>
-                <span className={`text-[10px] font-semibold flex-shrink-0 ${
-                  ev.daysLeft <= 7 ? 'text-red' : ev.daysLeft <= 14 ? 'text-amber' : 'text-muted'
-                }`}>
-                  {ev.daysLeft}d
-                </span>
-              </div>
-            ))}
-        </div>
+      {/* Stats bar */}
+      <div className="flex gap-3 text-[10px] text-muted">
+        <span className="flex items-center gap-1">
+          <span className="w-2 h-2 rounded-full bg-red-500" /> 7 ימים
+        </span>
+        <span className="flex items-center gap-1">
+          <span className="w-2 h-2 rounded-full bg-amber-500" /> 14 ימים
+        </span>
+        <span className="flex items-center gap-1">
+          <span className="w-2 h-2 rounded-full bg-green-500" /> מעל 14
+        </span>
+        <span className="mr-auto font-medium">{items.length} דדליינים פתוחים</span>
       </div>
 
-      {/* Google Calendar sync */}
-      <button className="w-full py-2 text-[11px] text-muted border border-dashed border-border rounded-lg hover:bg-surf2 transition-colors flex items-center justify-center gap-1.5">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-        סנכרן ל-Google Calendar
-      </button>
+      {/* Upcoming deadlines */}
+      <div>
+        <h4 className="text-xs font-semibold text-muted mb-2">דדליינים קרובים</h4>
+        <div className="space-y-1.5">
+          {upcoming.length === 0 ? (
+            <p className="text-[11px] text-muted2 text-center py-4">אין דדליינים בחודש הקרוב</p>
+          ) : (
+            upcoming.map(item => (
+              <div
+                key={item.id}
+                className="flex items-center gap-2 py-2 px-2.5 rounded-lg hover:bg-surf2 transition-colors"
+              >
+                <span
+                  className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                    item.daysLeft <= 7
+                      ? 'bg-red-500'
+                      : item.daysLeft <= 14
+                      ? 'bg-amber-500'
+                      : 'bg-green-500'
+                  }`}
+                />
+                <div className="flex-1 min-w-0">
+                  <p className="text-[11px] font-medium truncate">{item.title}</p>
+                  {item.funder && (
+                    <p className="text-[9px] text-muted truncate">{item.funder}</p>
+                  )}
+                </div>
+                <div className="flex-shrink-0 text-left">
+                  <span
+                    className={`text-[10px] font-semibold ${
+                      item.daysLeft <= 7
+                        ? 'text-red-500'
+                        : item.daysLeft <= 14
+                        ? 'text-amber-500'
+                        : 'text-muted'
+                    }`}
+                  >
+                    {item.daysLeft} ימים
+                  </span>
+                  <p className="text-[9px] text-muted2">
+                    {new Date(item.deadline).toLocaleDateString('he-IL', {
+                      day: 'numeric',
+                      month: 'short',
+                    })}
+                  </p>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
     </div>
   );
 }

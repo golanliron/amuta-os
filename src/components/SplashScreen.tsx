@@ -76,7 +76,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
         Fishgold
       </h1>
       <p className="text-sm text-muted mb-10 font-light">
-        Resource Mobilization AI
+        גייס משאבים שמוצא דגים בים
       </p>
 
       {/* Progress bar - thin and elegant */}

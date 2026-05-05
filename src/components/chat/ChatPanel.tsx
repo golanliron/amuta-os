@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import FishLogo from './FishLogo';
 import type { ChatMessage } from '@/types';
+import { FISHGOLD_WELCOME, getRandomLoadingPhrase } from '@/lib/ai/fishgold';
 
 interface ChatPanelProps {
   orgId: string | null;
@@ -11,12 +12,60 @@ interface ChatPanelProps {
 }
 
 export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelProps) {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      id: 'welcome',
+      role: 'assistant',
+      content: FISHGOLD_WELCOME,
+      timestamp: new Date().toISOString(),
+    },
+  ]);
   const [input, setInput] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
+  const [loaded, setLoaded] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  // Load last conversation on mount - Fishgold remembers you
+  useEffect(() => {
+    if (!orgId || !userId || loaded) return;
+
+    async function loadLastConversation() {
+      try {
+        const res = await fetch(`/api/conversations?org_id=${orgId}&user_id=${userId}`);
+        const data = await res.json();
+
+        if (data.conversation?.messages?.length > 0) {
+          const restored: ChatMessage[] = data.conversation.messages.map(
+            (m: { role: string; content: string; timestamp?: string }, i: number) => ({
+              id: `restored-${i}`,
+              role: m.role as 'user' | 'assistant',
+              content: m.content,
+              timestamp: m.timestamp || data.conversation.updated_at,
+            })
+          );
+
+          // Add a "memory" separator so the user knows this is from last time
+          const memoryMsg: ChatMessage = {
+            id: 'memory-separator',
+            role: 'assistant',
+            content: 'אני זוכר אותך. הנה המשך השיחה האחרונה שלנו:',
+            timestamp: new Date().toISOString(),
+          };
+
+          setMessages([memoryMsg, ...restored]);
+          setConversationId(data.conversation.id);
+        }
+      } catch {
+        // First visit or error - keep welcome message
+      } finally {
+        setLoaded(true);
+      }
+    }
+
+    loadLastConversation();
+  }, [orgId, userId, loaded]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -155,23 +204,92 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
 
         const data = await res.json();
 
-        const categoryNames: Record<string, string> = {
-          identity: 'זהות הארגון',
-          budget: 'תקציב ומספרים',
-          project: 'פרויקט',
-          grant: 'מענק קיים',
-          submission: 'הגשה קודמת',
-          other: 'כללי',
-        };
+        if (!res.ok || data.error) {
+          const errorMsg: ChatMessage = {
+            id: crypto.randomUUID(),
+            role: 'assistant',
+            content: data.error || `לא הצלחתי לקרוא את "${file.name}". נסי פורמט אחר.`,
+            timestamp: new Date().toISOString(),
+          };
+          setMessages(prev => [...prev, errorMsg]);
+          continue;
+        }
 
-        const responseMsg: ChatMessage = {
+        onStageChange?.(1);
+
+        // Now ask Fishgold to respond intelligently about what he learned
+        const fishgoldMsg: ChatMessage = {
           id: crypto.randomUUID(),
           role: 'assistant',
-          content: `קראתי את "${file.name}". סיווגתי אותו כ**${categoryNames[data.category] || data.category}**.\n\nהמידע נכנס לזיכרון. תמשיכי להעלות מה שיש.`,
+          content: '',
           timestamp: new Date().toISOString(),
         };
-        setMessages(prev => [...prev, responseMsg]);
-        onStageChange?.(1);
+        setMessages(prev => [...prev, fishgoldMsg]);
+        setIsStreaming(true);
+
+        // Send the upload summary to Fishgold so he can analyze it
+        const fields = data.extracted_fields ? JSON.stringify(data.extracted_fields, null, 2) : '';
+        const chatPrompt = `[המשתמשת העלתה קובץ: "${file.name}"]
+סיכום: ${data.summary || 'לא זמין'}
+קטגוריה: ${data.category || 'לא ידוע'}
+נתונים שחולצו: ${fields || 'אין'}
+
+תגיב בקצרה: מה למדת מהקובץ? מה חדש נכנס לזיכרון? מה עוד חסר?`;
+
+        try {
+          const chatRes = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              message: chatPrompt,
+              conversation_id: conversationId,
+              org_id: orgId,
+              user_id: userId,
+            }),
+          });
+
+          const reader = chatRes.body?.getReader();
+          const decoder = new TextDecoder();
+
+          if (reader) {
+            let buffer = '';
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              buffer += decoder.decode(value, { stream: true });
+              const lines = buffer.split('\n');
+              buffer = lines.pop() || '';
+              for (const line of lines) {
+                if (!line.startsWith('data: ')) continue;
+                try {
+                  const d = JSON.parse(line.slice(6));
+                  if (d.text) {
+                    setMessages(prev => {
+                      const updated = [...prev];
+                      const last = updated[updated.length - 1];
+                      if (last.role === 'assistant') last.content += d.text;
+                      return updated;
+                    });
+                  }
+                  if (d.done && d.conversation_id) {
+                    setConversationId(d.conversation_id);
+                  }
+                } catch { /* skip */ }
+              }
+            }
+          }
+        } catch {
+          setMessages(prev => {
+            const updated = [...prev];
+            const last = updated[updated.length - 1];
+            if (last.role === 'assistant' && !last.content) {
+              last.content = `קראתי את "${file.name}". המידע נכנס לזיכרון.`;
+            }
+            return updated;
+          });
+        } finally {
+          setIsStreaming(false);
+        }
       } catch {
         const errorMsg: ChatMessage = {
           id: crypto.randomUUID(),
@@ -190,13 +308,6 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
     <div className="flex flex-col h-full">
       {/* Messages area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-full text-center">
-            <FishLogo size={80} className="swim mb-4 opacity-20" />
-            <p className="text-muted text-sm">פישגולד מחכה. תתחילי לדבר או תעלי מסמך.</p>
-          </div>
-        )}
-
         {messages.map((msg) => (
           <div
             key={msg.id}
@@ -228,10 +339,13 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
             >
               <div className="whitespace-pre-wrap">{msg.content}</div>
               {msg.role === 'assistant' && isStreaming && msg === messages[messages.length - 1] && !msg.content && (
-                <div className="flex gap-1 py-1">
-                  <span className="w-2 h-2 bg-accent rounded-full animate-pulse" />
-                  <span className="w-2 h-2 bg-accent rounded-full animate-pulse" style={{ animationDelay: '0.15s' }} />
-                  <span className="w-2 h-2 bg-accent rounded-full animate-pulse" style={{ animationDelay: '0.3s' }} />
+                <div className="flex items-center gap-2 py-1">
+                  <span className="text-[11px] text-muted italic">{getRandomLoadingPhrase()}</span>
+                  <div className="flex gap-1">
+                    <span className="w-1.5 h-1.5 bg-accent rounded-full animate-pulse" />
+                    <span className="w-1.5 h-1.5 bg-accent rounded-full animate-pulse" style={{ animationDelay: '0.15s' }} />
+                    <span className="w-1.5 h-1.5 bg-accent rounded-full animate-pulse" style={{ animationDelay: '0.3s' }} />
+                  </div>
                 </div>
               )}
             </div>

@@ -1,139 +1,440 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import type { AppStage, Match } from '@/types';
+import { useEffect, useState, useMemo } from 'react';
+import type { Opportunity, OpportunityType } from '@/types';
 import { createClient } from '@/lib/supabase/client';
 
+interface TaxItem {
+  id: number;
+  type: 'category' | 'population';
+  key: string;
+  label_he: string;
+}
+
 interface OpportunitiesTabProps {
-  stage: AppStage;
+  stage: number;
   orgId: string | null;
 }
 
+const TYPE_LABELS: Record<OpportunityType, string> = {
+  kok: 'קול קורא',
+  fund: 'קרן',
+  business: 'עסקי',
+  endowment: 'הקדש',
+};
+
+const TYPE_COLORS: Record<OpportunityType, string> = {
+  kok: 'bg-blue-100 text-blue-700',
+  fund: 'bg-green-100 text-green-700',
+  business: 'bg-purple-100 text-purple-700',
+  endowment: 'bg-amber-100 text-amber-700',
+};
+
 export default function OpportunitiesTab({ stage, orgId }: OpportunitiesTabProps) {
-  const [matches, setMatches] = useState<Match[]>([]);
+  const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
+  const [taxonomy, setTaxonomy] = useState<TaxItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedPopulation, setSelectedPopulation] = useState('');
+  const [selectedType, setSelectedType] = useState<OpportunityType | ''>('');
+
+  const categories = useMemo(() => taxonomy.filter(t => t.type === 'category'), [taxonomy]);
+  const populations = useMemo(() => taxonomy.filter(t => t.type === 'population'), [taxonomy]);
 
   useEffect(() => {
-    if (!orgId || stage < 2) return;
     const supabase = createClient();
 
+    // Load taxonomy
     supabase
-      .from('matches')
-      .select('*, opportunity:opportunities(*)')
-      .eq('org_id', orgId)
-      .order('score', { ascending: false })
-      .limit(20)
+      .from('grant_taxonomy')
+      .select('*')
+      .order('label_he')
       .then(({ data }) => {
-        if (data) setMatches(data as unknown as Match[]);
+        if (data) setTaxonomy(data as TaxItem[]);
       });
-  }, [orgId, stage]);
 
-  if (stage < 2) {
-    return (
-      <div className="text-center py-8">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-surf2 flex items-center justify-center">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted">
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-        </div>
-        <p className="text-sm text-muted mb-1">קולות קוראים עדיין נעולים</p>
-        <p className="text-xs text-muted2">
-          {stage === 0
-            ? 'העלי מסמכים קודם כדי שאדע מה מתאים לך'
-            : 'סורק קולות קוראים... זה ייקח רגע'}
-        </p>
-      </div>
-    );
-  }
+    // Load active opportunities
+    supabase
+      .from('opportunities')
+      .select('*')
+      .eq('active', true)
+      .order('deadline', { ascending: true, nullsFirst: false })
+      .then(({ data }) => {
+        if (data) setOpportunities(data as unknown as Opportunity[]);
+        setLoading(false);
+      });
+  }, []);
 
-  if (matches.length === 0) {
+  const filtered = useMemo(() => {
+    let result = opportunities;
+
+    if (search) {
+      const q = search.toLowerCase();
+      result = result.filter(o =>
+        o.title.toLowerCase().includes(q) ||
+        (o.description && o.description.toLowerCase().includes(q)) ||
+        (o.funder && o.funder.toLowerCase().includes(q))
+      );
+    }
+
+    if (selectedCategory) {
+      result = result.filter(o => o.categories?.includes(selectedCategory));
+    }
+
+    if (selectedPopulation) {
+      result = result.filter(o => o.target_populations?.includes(selectedPopulation));
+    }
+
+    if (selectedType) {
+      result = result.filter(o => o.type === selectedType);
+    }
+
+    return result;
+  }, [opportunities, search, selectedCategory, selectedPopulation, selectedType]);
+
+  const activeFilters = [selectedCategory, selectedPopulation, selectedType].filter(Boolean).length;
+
+  if (loading) {
     return (
-      <div className="text-center py-8">
-        <p className="text-sm text-muted">לא נמצאו קולות קוראים מתאימים כרגע</p>
-        <p className="text-xs text-muted2 mt-1">נמשיך לסרוק ונעדכן אותך</p>
+      <div className="flex items-center justify-center py-12">
+        <div className="w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
-      {matches.map((match) => {
-        const opp = match.opportunity;
-        if (!opp) return null;
+    <div className="flex flex-col h-full">
+      {/* Header */}
+      <div className="p-3 border-b border-border space-y-2">
+        {/* Search */}
+        <div className="relative">
+          <svg className="absolute right-3 top-1/2 -translate-y-1/2 text-muted" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            type="text"
+            placeholder="חיפוש קול קורא, קרן, מממן..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="w-full pr-9 pl-3 py-2 text-xs bg-surf2 border border-border rounded-lg focus:border-accent focus:outline-none transition-colors"
+          />
+        </div>
 
-        const daysLeft = opp.deadline
-          ? Math.ceil((new Date(opp.deadline).getTime() - Date.now()) / 86400000)
-          : null;
-
-        const urgency = daysLeft !== null && daysLeft <= 7 ? 'urgent' :
-                       daysLeft !== null && daysLeft <= 14 ? 'soon' : 'normal';
-
-        return (
-          <div key={match.id} className="bg-surf rounded-xl border border-border p-3 slide-in-right hover:border-accent/30 transition-colors">
-            {/* Header */}
-            <div className="flex items-start justify-between gap-2 mb-2">
-              <div className="flex-1 min-w-0">
-                <h4 className="text-sm font-semibold truncate">{opp.title}</h4>
-                <p className="text-[10px] text-muted">{opp.source}</p>
-              </div>
-              {/* Match score */}
-              <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold text-white ${
-                match.score >= 80 ? 'bg-green' :
-                match.score >= 60 ? 'bg-accent' : 'bg-muted'
-              }`}>
-                {match.score}%
-              </div>
-            </div>
-
-            {/* Details */}
-            <div className="flex items-center gap-3 text-[10px] text-muted mb-2">
-              {opp.amount_max && (
-                <span className="flex items-center gap-1">
-                  <span className="text-green font-semibold">
-                    {opp.amount_max >= 1000000
-                      ? `${(opp.amount_max / 1000000).toFixed(1)}M`
-                      : `${(opp.amount_max / 1000).toFixed(0)}K`}
-                  </span>
-                  ש&quot;ח
-                </span>
-              )}
-              {daysLeft !== null && (
-                <span className={`flex items-center gap-1 ${
-                  urgency === 'urgent' ? 'text-red font-semibold' :
-                  urgency === 'soon' ? 'text-amber font-semibold' : ''
-                }`}>
-                  {daysLeft <= 0 ? 'פג תוקף' : `${daysLeft} ימים`}
-                </span>
-              )}
-            </div>
-
-            {/* Reasoning */}
-            {match.reasoning && (
-              <p className="text-[10px] text-text2 leading-relaxed mb-2 line-clamp-2">
-                {match.reasoning}
-              </p>
+        {/* Filter toggle */}
+        <div className="flex items-center justify-between">
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className={`flex items-center gap-1 text-[11px] px-2 py-1 rounded-md transition-colors ${
+              showFilters || activeFilters > 0
+                ? 'bg-accent/10 text-accent font-medium'
+                : 'text-muted hover:text-text'
+            }`}
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="4" y1="6" x2="20" y2="6" />
+              <line x1="8" y1="12" x2="16" y2="12" />
+              <line x1="11" y1="18" x2="13" y2="18" />
+            </svg>
+            סינון
+            {activeFilters > 0 && (
+              <span className="bg-accent text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center">
+                {activeFilters}
+              </span>
             )}
+          </button>
+          <span className="text-[10px] text-muted">
+            {filtered.length} מתוך {opportunities.length}
+          </span>
+        </div>
 
-            {/* Actions */}
-            <div className="flex gap-1.5">
-              <button className="flex-1 py-1.5 text-[10px] font-medium bg-accent text-white rounded-lg hover:bg-accent-hover transition-colors">
-                כתוב הגשה
+        {/* Filter dropdowns */}
+        {showFilters && (
+          <div className="space-y-1.5 pt-1">
+            <select
+              value={selectedCategory}
+              onChange={e => setSelectedCategory(e.target.value)}
+              className="w-full text-[11px] px-2 py-1.5 bg-surf2 border border-border rounded-md focus:border-accent focus:outline-none"
+            >
+              <option value="">כל הקטגוריות</option>
+              {categories.map(c => (
+                <option key={c.key} value={c.key}>{c.label_he}</option>
+              ))}
+            </select>
+
+            <select
+              value={selectedPopulation}
+              onChange={e => setSelectedPopulation(e.target.value)}
+              className="w-full text-[11px] px-2 py-1.5 bg-surf2 border border-border rounded-md focus:border-accent focus:outline-none"
+            >
+              <option value="">כל אוכלוסיות היעד</option>
+              {populations.map(p => (
+                <option key={p.key} value={p.key}>{p.label_he}</option>
+              ))}
+            </select>
+
+            <select
+              value={selectedType}
+              onChange={e => setSelectedType(e.target.value as OpportunityType | '')}
+              className="w-full text-[11px] px-2 py-1.5 bg-surf2 border border-border rounded-md focus:border-accent focus:outline-none"
+            >
+              <option value="">כל הסוגים</option>
+              {(Object.keys(TYPE_LABELS) as OpportunityType[]).map(t => (
+                <option key={t} value={t}>{TYPE_LABELS[t]}</option>
+              ))}
+            </select>
+
+            {activeFilters > 0 && (
+              <button
+                onClick={() => {
+                  setSelectedCategory('');
+                  setSelectedPopulation('');
+                  setSelectedType('');
+                }}
+                className="text-[10px] text-accent hover:underline"
+              >
+                נקה סינון
               </button>
-              <button className="px-2 py-1.5 text-[10px] text-muted border border-border rounded-lg hover:bg-surf2 transition-colors" title="שלח למייל">
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Opportunities list */}
+      <div className="flex-1 overflow-y-auto p-3 space-y-2.5">
+        {filtered.length === 0 ? (
+          <div className="text-center py-8">
+            <p className="text-sm text-muted">לא נמצאו תוצאות</p>
+            <p className="text-xs text-muted2 mt-1">נסי לשנות את החיפוש או הסינון</p>
+          </div>
+        ) : (
+          filtered.map(opp => <OpportunityCard key={opp.id} opp={opp} />)
+        )}
+      </div>
+    </div>
+  );
+}
+
+function buildShareText(opp: Opportunity): string {
+  const parts = [`*${opp.title}*`];
+  if (opp.funder) parts.push(`מממן: ${opp.funder}`);
+  if (opp.amount_max) parts.push(`סכום: עד ${formatAmount(opp.amount_max)} ש"ח`);
+  if (opp.deadline) {
+    const d = new Date(opp.deadline);
+    parts.push(`דדליין: ${d.toLocaleDateString('he-IL')}`);
+  }
+  if (opp.description) parts.push(`\n${opp.description.slice(0, 200)}${opp.description.length > 200 ? '...' : ''}`);
+  if (opp.url) parts.push(`\nקישור: ${opp.url}`);
+  parts.push('\n-- נשלח מ-Fishgold');
+  return parts.join('\n');
+}
+
+function OpportunityCard({ opp }: { opp: Opportunity }) {
+  const [expanded, setExpanded] = useState(false);
+  const [showShare, setShowShare] = useState(false);
+
+  const daysLeft = opp.deadline
+    ? Math.ceil((new Date(opp.deadline).getTime() - Date.now()) / 86400000)
+    : null;
+
+  const deadlineColor =
+    daysLeft !== null && daysLeft <= 0 ? 'text-red-500' :
+    daysLeft !== null && daysLeft <= 7 ? 'text-red-500 font-semibold' :
+    daysLeft !== null && daysLeft <= 14 ? 'text-amber-500 font-semibold' :
+    'text-muted';
+
+  const deadlineText =
+    daysLeft !== null
+      ? daysLeft <= 0
+        ? 'פג תוקף'
+        : `${daysLeft} ימים`
+      : null;
+
+  return (
+    <div
+      className="bg-surf rounded-xl border border-border p-3 hover:border-accent/30 transition-colors cursor-pointer"
+      onClick={() => setExpanded(!expanded)}
+    >
+      {/* Top row: title + type badge */}
+      <div className="flex items-start justify-between gap-2 mb-1.5">
+        <h4 className="text-[13px] font-semibold leading-snug flex-1 min-w-0 line-clamp-2">
+          {opp.title}
+        </h4>
+        {opp.type && (
+          <span className={`flex-shrink-0 text-[9px] px-1.5 py-0.5 rounded-full font-medium ${TYPE_COLORS[opp.type]}`}>
+            {TYPE_LABELS[opp.type]}
+          </span>
+        )}
+      </div>
+
+      {/* Funder */}
+      {opp.funder && (
+        <p className="text-[11px] text-muted mb-1.5">{opp.funder}</p>
+      )}
+
+      {/* Meta row: amount + deadline */}
+      <div className="flex items-center gap-3 text-[10px] mb-2">
+        {(opp.amount_min || opp.amount_max) && (
+          <span className="text-green-600 font-medium">
+            {opp.amount_min && opp.amount_max
+              ? `${formatAmount(opp.amount_min)} - ${formatAmount(opp.amount_max)}`
+              : opp.amount_max
+                ? `עד ${formatAmount(opp.amount_max)}`
+                : `מ-${formatAmount(opp.amount_min!)}`
+            }
+          </span>
+        )}
+        {deadlineText && (
+          <span className={deadlineColor}>{deadlineText}</span>
+        )}
+        {opp.deadline && (
+          <span className="text-muted">
+            {new Date(opp.deadline).toLocaleDateString('he-IL', { day: 'numeric', month: 'short' })}
+          </span>
+        )}
+      </div>
+
+      {/* Category tags */}
+      {opp.categories && opp.categories.length > 0 && (
+        <div className="flex flex-wrap gap-1 mb-2">
+          {opp.categories.slice(0, 3).map(cat => (
+            <span key={cat} className="text-[9px] px-1.5 py-0.5 bg-surf2 text-muted rounded-md">
+              {cat}
+            </span>
+          ))}
+          {opp.categories.length > 3 && (
+            <span className="text-[9px] text-muted">+{opp.categories.length - 3}</span>
+          )}
+        </div>
+      )}
+
+      {/* Expanded details */}
+      {expanded && (
+        <div className="mt-2 pt-2 border-t border-border space-y-2 text-[11px]">
+          {opp.description && (
+            <p className="text-text2 leading-relaxed">{opp.description}</p>
+          )}
+          {opp.eligibility && (
+            <div>
+              <span className="font-medium text-text">תנאי סף: </span>
+              <span className="text-text2">{opp.eligibility}</span>
+            </div>
+          )}
+          {opp.how_to_apply && (
+            <div>
+              <span className="font-medium text-text">אופן הגשה: </span>
+              <span className="text-text2">{opp.how_to_apply}</span>
+            </div>
+          )}
+          {opp.contact_info && (
+            <div>
+              <span className="font-medium text-text">איש קשר: </span>
+              <span className="text-text2">{opp.contact_info}</span>
+            </div>
+          )}
+          {opp.target_populations && opp.target_populations.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              <span className="font-medium text-text ml-1">אוכלוסיות:</span>
+              {opp.target_populations.map(pop => (
+                <span key={pop} className="text-[9px] px-1.5 py-0.5 bg-accent/10 text-accent rounded-md">
+                  {pop}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Action buttons */}
+          <div className="flex gap-1.5 pt-1">
+            {opp.url && (
+              <a
+                href={opp.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={e => e.stopPropagation()}
+                className="flex-1 py-1.5 text-[10px] font-medium text-center border border-border rounded-lg hover:bg-surf2 transition-colors"
+              >
+                פתח קול קורא
+              </a>
+            )}
+            <button
+              onClick={e => {
+                e.stopPropagation();
+                // TODO: trigger submission writing flow
+              }}
+              className="flex-1 py-1.5 text-[10px] font-medium bg-accent text-white rounded-lg hover:opacity-90 transition-opacity"
+            >
+              כתוב הגשה
+            </button>
+            <button
+              onClick={e => {
+                e.stopPropagation();
+                setShowShare(!showShare);
+              }}
+              className="px-2.5 py-1.5 text-[10px] border border-border rounded-lg hover:bg-surf2 transition-colors"
+              title="שתף"
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="18" cy="5" r="3" />
+                <circle cx="6" cy="12" r="3" />
+                <circle cx="18" cy="19" r="3" />
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Share options */}
+          {showShare && (
+            <div className="flex gap-1.5 pt-1.5">
+              <a
+                href={`mailto:?subject=${encodeURIComponent(opp.title)}&body=${encodeURIComponent(buildShareText(opp))}`}
+                onClick={e => e.stopPropagation()}
+                className="flex-1 py-1.5 text-[10px] font-medium text-center border border-border rounded-lg hover:bg-surf2 transition-colors flex items-center justify-center gap-1"
+              >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                   <polyline points="22,6 12,13 2,6" />
                 </svg>
-              </button>
-              <button className="px-2 py-1.5 text-[10px] text-muted border border-border rounded-lg hover:bg-surf2 transition-colors" title="שלח לוואטסאפ">
+                מייל
+              </a>
+              <a
+                href={`https://wa.me/?text=${encodeURIComponent(buildShareText(opp))}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={e => e.stopPropagation()}
+                className="flex-1 py-1.5 text-[10px] font-medium text-center border border-green-300 text-green-700 rounded-lg hover:bg-green-50 transition-colors flex items-center justify-center gap-1"
+              >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
                 </svg>
+                וואטסאפ
+              </a>
+              <button
+                onClick={e => {
+                  e.stopPropagation();
+                  navigator.clipboard.writeText(buildShareText(opp));
+                  setShowShare(false);
+                }}
+                className="px-2.5 py-1.5 text-[10px] border border-border rounded-lg hover:bg-surf2 transition-colors"
+                title="העתק"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                  <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                </svg>
               </button>
             </div>
-          </div>
-        );
-      })}
+          )}
+        </div>
+      )}
     </div>
   );
+}
+
+function formatAmount(amount: number): string {
+  if (amount >= 1_000_000) return `${(amount / 1_000_000).toFixed(1)}M`;
+  if (amount >= 1_000) return `${(amount / 1_000).toFixed(0)}K`;
+  return amount.toLocaleString('he-IL');
 }

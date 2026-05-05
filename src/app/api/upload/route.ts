@@ -1,23 +1,111 @@
 import { NextRequest } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { createAdminClient } from '@/lib/supabase/admin';
+// PDF: use pdfjs-dist directly (pdf-parse has ESM issues with Turbopack)
+async function parsePDF(buffer: Buffer): Promise<string> {
+  try {
+    const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
+    const doc = await pdfjs.getDocument({ data: new Uint8Array(buffer) }).promise;
+    const pages: string[] = [];
+    for (let i = 1; i <= doc.numPages; i++) {
+      const page = await doc.getPage(i);
+      const content = await page.getTextContent();
+      const text = (content.items as { str?: string }[])
+        .filter((item) => item && typeof item.str === 'string')
+        .map((item) => item.str!)
+        .join(' ');
+      pages.push(text);
+    }
+    return pages.join('\n\n');
+  } catch (e) {
+    console.error('PDF parse error:', e);
+    return '';
+  }
+}
+
+// DOCX: mammoth works fine with dynamic import
+async function parseDocx(buffer: Buffer): Promise<string> {
+  const mammoth = await import('mammoth');
+  const extract = mammoth.default?.extractRawText || mammoth.extractRawText;
+  const result = await extract({ buffer });
+  return result.value || '';
+}
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-// Classify document category using Claude
+// ===== Text Extraction =====
+
+async function extractTextFromFile(file: File): Promise<{ text: string; fileType: string }> {
+  const ext = file.name.split('.').pop()?.toLowerCase() || 'txt';
+  const buffer = Buffer.from(await file.arrayBuffer());
+
+  switch (ext) {
+    case 'pdf': {
+      const text = await parsePDF(buffer);
+      return { text, fileType: 'pdf' };
+    }
+    case 'docx':
+    case 'doc': {
+      const text = await parseDocx(buffer);
+      return { text, fileType: 'docx' };
+    }
+    case 'xlsx':
+    case 'xls': {
+      // Basic: read as text, won't work well but better than nothing
+      return { text: `[קובץ אקסל: ${file.name}]`, fileType: 'xlsx' };
+    }
+    case 'html':
+    case 'htm': {
+      const html = buffer.toString('utf-8');
+      const cleaned = stripHtml(html);
+      return { text: cleaned, fileType: 'html' };
+    }
+    case 'txt':
+    case 'md':
+    case 'csv': {
+      return { text: buffer.toString('utf-8'), fileType: ext };
+    }
+    default: {
+      const text = buffer.toString('utf-8');
+      if (text.length > 100 && !text.includes('\u0000')) {
+        return { text, fileType: ext };
+      }
+      return { text: `[קובץ ${ext}: ${file.name}]`, fileType: ext };
+    }
+  }
+}
+
+function stripHtml(html: string): string {
+  return html
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/<nav[\s\S]*?<\/nav>/gi, '')
+    .replace(/<footer[\s\S]*?<\/footer>/gi, '')
+    .replace(/<header[\s\S]*?<\/header>/gi, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// ===== AI Classification & Extraction =====
+
 async function classifyDocument(text: string): Promise<string> {
   const res = await anthropic.messages.create({
-    model: 'claude-haiku-3-5-20241022',
-    system: `Classify this document into exactly ONE category:
-- identity: charter, registration, organizational description
-- budget: financial reports, balance sheets, budget plans
-- project: project descriptions, work plans, activity reports
-- grant: existing grant agreements, funding letters
-- submission: past grant submissions/proposals
-- other: anything else
+    model: 'claude-haiku-4-5-20251001',
+    system: `סווג את המסמך הזה לקטגוריה אחת בלבד:
+- identity: תקנון, תיאור ארגוני, דף אודות, חזון ומטרות
+- budget: דוחות כספיים, מאזנים, תקציבים
+- project: תיאורי פרויקטים, תוכניות עבודה, דוחות פעילות
+- grant: הסכמי מענק, מכתבי מימון
+- submission: הגשות קודמות לקרנות
+- other: כל דבר אחר
 
-Reply with ONLY the category name, nothing else.`,
-    messages: [{ role: 'user', content: text.slice(0, 3000) }],
+ענה רק עם שם הקטגוריה באנגלית, בלי שום דבר אחר.`,
+    messages: [{ role: 'user', content: text.slice(0, 4000) }],
     max_tokens: 20,
   });
 
@@ -27,30 +115,43 @@ Reply with ONLY the category name, nothing else.`,
   return valid.includes(category) ? category : 'other';
 }
 
-// Extract structured data from document using Claude
 async function extractStructuredData(text: string, category: string): Promise<Record<string, unknown>> {
   const res = await anthropic.messages.create({
-    model: 'claude-haiku-3-5-20241022',
-    system: `Extract structured data from this ${category} document. Return valid JSON with relevant fields.
-For identity: name, registration_number, founded_year, mission, focus_areas
-For budget: annual_budget, revenue_sources, expenses_breakdown
-For project: project_name, description, budget, beneficiaries, region
-For grant: source, amount, period, conditions
-For submission: target_fund, amount_requested, project_name, status
-Extract what's available. Hebrew text is fine. Return ONLY valid JSON.`,
-    messages: [{ role: 'user', content: text.slice(0, 4000) }],
+    model: 'claude-haiku-4-5-20251001',
+    system: `חלץ נתונים מובנים מהמסמך. החזר JSON תקין בלבד.
+לפי הקטגוריה ${category}:
+- identity: name, registration_number, founded_year, mission, focus_areas (מערך), regions (מערך), beneficiaries_count, employees_count
+- budget: annual_budget (מספר), revenue_sources, expenses_breakdown
+- project: project_name, description, budget, beneficiaries, region
+- grant: source, amount, period, conditions
+- submission: target_fund, amount_requested, project_name
+
+חלץ מה שזמין. עברית מותרת בערכים. החזר רק JSON תקין.`,
+    messages: [{ role: 'user', content: text.slice(0, 5000) }],
     max_tokens: 1000,
   });
 
   try {
-    const content = res.content[0].type === 'text' ? res.content[0].text : '{}';
-    return JSON.parse(content);
+    const raw = res.content[0].type === 'text' ? res.content[0].text : '{}';
+    const jsonMatch = raw.match(/```(?:json)?\s*([\s\S]*?)```/) || [null, raw];
+    return JSON.parse(jsonMatch[1]!.trim());
   } catch {
     return {};
   }
 }
 
-// Chunk text into ~500 token segments
+async function summarizeDocument(text: string): Promise<string> {
+  const res = await anthropic.messages.create({
+    model: 'claude-haiku-4-5-20251001',
+    system: `סכם את המסמך ב-2-3 משפטים בעברית. ציין: שם הארגון, תחום פעילות, נקודות מפתח.`,
+    messages: [{ role: 'user', content: text.slice(0, 5000) }],
+    max_tokens: 200,
+  });
+  return res.content[0].type === 'text' ? res.content[0].text : '';
+}
+
+// ===== Chunking =====
+
 function chunkText(text: string, maxChars: number = 2000): string[] {
   const paragraphs = text.split(/\n\n+/);
   const chunks: string[] = [];
@@ -64,13 +165,11 @@ function chunkText(text: string, maxChars: number = 2000): string[] {
       current += (current ? '\n\n' : '') + para;
     }
   }
-
-  if (current.trim()) {
-    chunks.push(current.trim());
-  }
-
+  if (current.trim()) chunks.push(current.trim());
   return chunks.length > 0 ? chunks : [text.slice(0, maxChars)];
 }
+
+// ===== Main Handler =====
 
 export async function POST(request: NextRequest) {
   try {
@@ -78,49 +177,44 @@ export async function POST(request: NextRequest) {
     const file = formData.get('file') as File | null;
     const orgId = formData.get('org_id') as string;
 
-    if (!file || !orgId) {
+    if (!orgId || !file) {
       return Response.json({ error: 'Missing file or org_id' }, { status: 400 });
     }
 
     const supabase = createAdminClient();
 
-    // Upload file to storage
-    const storagePath = `${orgId}/${Date.now()}_${file.name}`;
-    const { error: uploadError } = await supabase.storage
-      .from('documents')
-      .upload(storagePath, file);
+    // 1. Extract text from file
+    const { text: parsedText, fileType } = await extractTextFromFile(file);
 
-    if (uploadError) {
-      return Response.json({ error: 'Upload failed' }, { status: 500 });
+    if (parsedText.length < 20) {
+      return Response.json({
+        error: 'לא הצלחתי לחלץ טקסט מהקובץ. נסי פורמט אחר (PDF, DOCX, TXT).',
+      }, { status: 400 });
     }
 
-    // Determine file type
-    const ext = file.name.split('.').pop()?.toLowerCase() || 'txt';
-    const fileTypeMap: Record<string, string> = {
-      pdf: 'pdf', docx: 'docx', doc: 'docx',
-      xlsx: 'xlsx', xls: 'xlsx', txt: 'txt',
-    };
-    const fileType = fileTypeMap[ext] || 'txt';
+    // 2. Classify + Extract + Summarize in parallel
+    const [category, metadata, summary] = await Promise.all([
+      classifyDocument(parsedText),
+      extractStructuredData(parsedText, 'identity'),
+      summarizeDocument(parsedText),
+    ]);
 
-    // Parse text from file
-    let parsedText = '';
-    if (fileType === 'txt' || ext === 'md') {
-      parsedText = await file.text();
-    } else {
-      parsedText = `[${fileType} file: ${file.name}]`;
+    // Re-extract with correct category if not identity
+    let finalMetadata = metadata;
+    if (category !== 'identity') {
+      finalMetadata = await extractStructuredData(parsedText, category);
     }
 
-    // Classify document
-    const category = parsedText.length > 50
-      ? await classifyDocument(parsedText)
-      : 'other';
+    // 3. Upload to storage (non-blocking)
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+    let storagePath = `${orgId}/${Date.now()}_${safeName}`;
+    try {
+      await supabase.storage.from('documents').upload(storagePath, file);
+    } catch {
+      storagePath = `local/${safeName}`;
+    }
 
-    // Extract structured data
-    const metadata = parsedText.length > 50
-      ? await extractStructuredData(parsedText, category)
-      : {};
-
-    // Save document record
+    // 4. Save document record
     const { data: doc, error: docError } = await supabase
       .from('documents')
       .insert({
@@ -129,44 +223,45 @@ export async function POST(request: NextRequest) {
         file_type: fileType,
         storage_path: storagePath,
         category,
-        parsed_text: parsedText,
-        metadata,
+        parsed_text: parsedText.slice(0, 50000),
+        metadata: { ...finalMetadata, summary },
         status: 'ready',
       })
       .select('id')
       .single();
 
     if (docError || !doc) {
+      console.error('Doc insert error:', docError);
       return Response.json({ error: 'Failed to save document' }, { status: 500 });
     }
 
-    // Store chunks for text-based RAG (no embeddings needed with Claude)
-    if (parsedText.length > 50) {
-      const chunks = chunkText(parsedText);
-
-      for (const chunkContent of chunks) {
-        await supabase.from('document_chunks').insert({
-          document_id: doc.id,
-          org_id: orgId,
-          content: chunkContent,
-          metadata: { category, filename: file.name },
-        });
-      }
-
-      // Update org profile with extracted data
-      await updateOrgProfile(supabase, orgId, category, metadata);
+    // 5. Store chunks for RAG
+    const chunks = chunkText(parsedText);
+    for (const chunkContent of chunks) {
+      await supabase.from('document_chunks').insert({
+        document_id: doc.id,
+        org_id: orgId,
+        content: chunkContent,
+        metadata: { category, filename: file.name },
+      });
     }
+
+    // 6. Update org profile
+    await updateOrgProfile(supabase, orgId, category, finalMetadata);
 
     return Response.json({
       document_id: doc.id,
       category,
-      extracted_fields: metadata,
+      summary,
+      extracted_fields: finalMetadata,
     });
   } catch (error) {
     console.error('Upload error:', error);
     return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
+// ===== Org Profile Update =====
 
 async function updateOrgProfile(
   supabase: ReturnType<typeof createAdminClient>,
@@ -180,34 +275,28 @@ async function updateOrgProfile(
     .eq('org_id', orgId)
     .single();
 
-  const currentData = (existing?.data as Record<string, unknown>) || {};
-  const mergedData = { ...currentData };
+  const current = (existing?.data as Record<string, unknown>) || {};
+  const merged = { ...current };
 
   if (category === 'identity') {
-    Object.assign(mergedData, {
-      name: newData.name || mergedData.name,
-      registration_number: newData.registration_number || mergedData.registration_number,
-      founded_year: newData.founded_year || mergedData.founded_year,
-      mission: newData.mission || mergedData.mission,
-      focus_areas: newData.focus_areas || mergedData.focus_areas,
-    });
+    for (const key of ['name', 'registration_number', 'founded_year', 'mission', 'focus_areas', 'regions', 'beneficiaries_count', 'employees_count']) {
+      if (newData[key]) merged[key] = newData[key];
+    }
   } else if (category === 'budget') {
-    Object.assign(mergedData, {
-      annual_budget: newData.annual_budget || mergedData.annual_budget,
-    });
+    if (newData.annual_budget) merged.annual_budget = newData.annual_budget;
   } else if (category === 'project') {
-    const projects = (mergedData.active_projects as unknown[]) || [];
+    const projects = (merged.active_projects as unknown[]) || [];
     projects.push(newData);
-    mergedData.active_projects = projects;
+    merged.active_projects = projects;
   } else if (category === 'grant') {
-    const grants = (mergedData.existing_grants as unknown[]) || [];
+    const grants = (merged.existing_grants as unknown[]) || [];
     grants.push(newData);
-    mergedData.existing_grants = grants;
+    merged.existing_grants = grants;
   }
 
   await supabase.from('org_profiles').upsert({
     org_id: orgId,
-    data: mergedData,
+    data: merged,
     last_updated: new Date().toISOString(),
   }, { onConflict: 'org_id' });
 }

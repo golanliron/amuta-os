@@ -18,47 +18,44 @@ const tabs: { id: SidebarTab; label: string; icon: string }[] = [
 ];
 
 export default function SidebarPanel({ stage, orgId }: SidebarPanelProps) {
-  const [activeTab, setActiveTab] = useState<SidebarTab>('org');
+  const [activeTab, setActiveTab] = useState<SidebarTab>('opportunities');
 
   return (
     <div className="flex flex-col h-full bg-bg2 border-r border-border">
       {/* Tab buttons */}
       <div className="flex border-b border-border">
-        {tabs.map((tab) => {
-          const isLocked = tab.id === 'opportunities' && stage < 2 ||
-                          tab.id === 'timeline' && stage < 2;
-
-          return (
-            <button
-              key={tab.id}
-              onClick={() => !isLocked && setActiveTab(tab.id)}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-xs font-medium transition-colors relative
-                ${activeTab === tab.id ? 'text-accent' : 'text-muted hover:text-text'}
-                ${isLocked ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}
-              `}
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d={tab.icon} />
-              </svg>
-              {tab.label}
-              {isLocked && (
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className="absolute top-1 left-1">
-                  <path d="M12 17a2 2 0 002-2v-2a2 2 0 00-4 0v2a2 2 0 002 2zm6-6V9A6 6 0 006 9v2a2 2 0 00-2 2v6a2 2 0 002 2h12a2 2 0 002-2v-6a2 2 0 00-2-2zM8 9a4 4 0 018 0v2H8V9z" />
-                </svg>
-              )}
-              {activeTab === tab.id && (
-                <span className="absolute bottom-0 inset-x-2 h-0.5 bg-accent rounded-full" />
-              )}
-            </button>
-          );
-        })}
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-xs font-medium transition-colors relative cursor-pointer
+              ${activeTab === tab.id ? 'text-accent' : 'text-muted hover:text-text'}
+            `}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d={tab.icon} />
+            </svg>
+            {tab.label}
+            {activeTab === tab.id && (
+              <span className="absolute bottom-0 inset-x-2 h-0.5 bg-accent rounded-full" />
+            )}
+          </button>
+        ))}
       </div>
 
       {/* Tab content */}
-      <div className="flex-1 overflow-y-auto p-4">
-        {activeTab === 'org' && <OrgTab stage={stage} orgId={orgId} />}
+      <div className="flex-1 overflow-y-auto">
+        {activeTab === 'org' && (
+          <div className="p-4">
+            <OrgTab stage={stage} orgId={orgId} />
+          </div>
+        )}
         {activeTab === 'opportunities' && <OpportunitiesTab stage={stage} orgId={orgId} />}
-        {activeTab === 'timeline' && <TimelineTab stage={stage} orgId={orgId} />}
+        {activeTab === 'timeline' && (
+          <div className="p-4">
+            <TimelineTab stage={stage} orgId={orgId} />
+          </div>
+        )}
       </div>
     </div>
   );

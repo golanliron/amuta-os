@@ -90,22 +90,64 @@ export interface GrantSummary {
   status: string;
 }
 
-// ===== Opportunities =====
+// ===== Opportunities (matches real DB schema) =====
+
+export type OpportunityType = 'kok' | 'fund' | 'business' | 'endowment';
 
 export interface Opportunity {
   id: string;
   source: string;
   title: string;
-  description: string;
+  description: string | null;
   amount_min: number | null;
   amount_max: number | null;
   deadline: string | null;
+  open_date: string | null;
   requirements: Record<string, unknown>;
   categories: string[];
   regions: string[];
+  target_populations: string[] | null;
+  tags: string[] | null;
+  type: OpportunityType | null;
+  funder: string | null;
   url: string | null;
+  eligibility: string | null;
+  how_to_apply: string | null;
+  contact_info: string | null;
   active: boolean;
   scraped_at: string;
+}
+
+// ===== Taxonomy =====
+
+export interface TaxonomyItem {
+  id: number;
+  type: 'category' | 'population';
+  key: string;
+  label_he: string;
+  label_en: string;
+}
+
+// ===== Grant Sources =====
+
+export interface GrantSource {
+  id: number;
+  name: string;
+  url: string;
+  layer: 'government' | 'private' | 'international' | 'business' | 'community';
+  scan_frequency: string;
+  is_active: boolean;
+}
+
+// ===== Filters =====
+
+export interface OpportunityFilters {
+  categories: string[];
+  target_populations: string[];
+  type: OpportunityType | null;
+  funder: string | null;
+  deadlineBefore: string | null;
+  search: string;
 }
 
 export interface Match {
