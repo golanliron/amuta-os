@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useRef } from 'react';
 import type { AppStage, OrgProfileData, Document as FgDoc } from '@/types';
-import { createClient } from '@/lib/supabase/client';
 
 interface OrgTabProps {
   stage: AppStage;
@@ -114,25 +113,13 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
 
   const loadData = () => {
     if (!orgId) return;
-    const supabase = createClient();
-
-    supabase
-      .from('org_profiles')
-      .select('data')
-      .eq('org_id', orgId)
-      .single()
-      .then(({ data }) => {
-        if (data?.data) setProfile(data.data as OrgProfileData);
-      });
-
-    supabase
-      .from('documents')
-      .select('*')
-      .eq('org_id', orgId)
-      .order('uploaded_at', { ascending: false })
-      .then(({ data }) => {
-        if (data) setDocuments(data as FgDoc[]);
-      });
+    fetch(`/api/org?org_id=${orgId}`)
+      .then(r => r.json())
+      .then(({ profile: p, documents: d }) => {
+        if (p) setProfile(p as OrgProfileData);
+        if (d) setDocuments(d as FgDoc[]);
+      })
+      .catch(() => {});
   };
 
   useEffect(() => {
