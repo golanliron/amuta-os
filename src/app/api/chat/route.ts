@@ -730,7 +730,7 @@ async function scanCompanies(
 
 export async function POST(request: NextRequest) {
   try {
-    const { message, conversation_id, org_id, user_id } = await request.json();
+    const { message, conversation_id, org_id, user_id, active_tab } = await request.json();
 
     if (!message || !org_id || !user_id) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
@@ -771,7 +771,35 @@ export async function POST(request: NextRequest) {
       ),
     ]);
 
-    const systemPrompt = FISHGOLD_SYSTEM_PROMPT + orgContext + docSummary + knowledge + rag + opportunityContext + companyContext;
+    // Tab-specific focus instructions
+    const TAB_FOCUS: Record<string, string> = {
+      opportunities: `\n\n===== הקשר נוכחי: קולות קוראים =====
+המשתמש נמצא בלשונית "קולות קוראים". התמקד בנושאים הבאים:
+- ניתוח והתאמת קולות קוראים לארגון
+- כתיבת טיוטות הגשה
+- דדליינים ולוחות זמנים
+- ניתוח דרישות של קול קורא ספציפי
+- טיפים לשיפור סיכויי קבלה
+אם המשתמש שואל שאלה כללית, ענה רגיל. אבל אם ההודעה לא ברורה, הנח שהיא קשורה לקולות קוראים.`,
+      business: `\n\n===== הקשר נוכחי: חברות וקרנות =====
+המשתמש נמצא בלשונית "חברות וקרנות". התמקד בנושאים הבאים:
+- ניתוח חברות וקרנות מתאימות
+- ניסוח מיילים ופניות לתורמים פוטנציאליים
+- מידע על CSR ותרומות של חברות
+- אסטרטגיות פנייה ושותפויות
+- חיבור בין תחומי הארגון לתחומי העניין של החברה
+אם המשתמש שואל שאלה כללית, ענה רגיל. אבל אם ההודעה לא ברורה, הנח שהיא קשורה לחברות וגיוס מעסקים.`,
+      org: `\n\n===== הקשר נוכחי: העמותה =====
+המשתמש נמצא בלשונית "העמותה" — פרופיל הארגון. התמקד בנושאים הבאים:
+- שיפור ועדכון פרופיל הארגון
+- ניתוח חוזקות וחולשות של המצגת הארגונית
+- המלצות לשדרוג התיאור, החזון והמשימה
+- זיהוי מידע חסר שישפר את ההתאמה למענקים ולתורמים
+אם המשתמש שואל שאלה כללית, ענה רגיל. אבל אם ההודעה לא ברורה, הנח שהיא קשורה לפרופיל הארגון.`,
+    };
+    const tabFocus = (active_tab && TAB_FOCUS[active_tab]) || '';
+
+    const systemPrompt = FISHGOLD_SYSTEM_PROMPT + tabFocus + orgContext + docSummary + knowledge + rag + opportunityContext + companyContext;
 
     // Load conversation history
     let chatMessages: { role: 'user' | 'assistant'; content: string }[] = [];

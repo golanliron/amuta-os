@@ -5,6 +5,24 @@ import FishLogo from './FishLogo';
 import type { ChatMessage } from '@/types';
 import { FISHGOLD_WELCOME, getRandomLoadingPhrase } from '@/lib/ai/fishgold';
 
+const TAB_QUICK_ACTIONS: Record<string, { label: string; prompt: string }[]> = {
+  opportunities: [
+    { label: '🔍 סרוק קולות קוראים', prompt: 'סרוק בשבילי קולות קוראים פתוחים שמתאימים לארגון' },
+    { label: '📝 כתוב טיוטת הגשה', prompt: 'כתוב לי טיוטת הגשה לקול הקורא הכי מתאים' },
+    { label: '📋 סכם דדליינים', prompt: 'תסכם לי את כל הדדליינים הקרובים של קולות קוראים רלוונטיים' },
+  ],
+  business: [
+    { label: '🏢 חברות מתאימות', prompt: 'מצא לי חברות וקרנות שמתאימות לארגון שלנו' },
+    { label: '✉️ נסח מייל פנייה', prompt: 'כתוב מייל פנייה מקצועי לחברה הכי מתאימה לנו' },
+    { label: '📊 ניתוח תורמים', prompt: 'תנתח את התורמים הפוטנציאליים הכי גדולים שמתאימים לנו' },
+  ],
+  org: [
+    { label: '📄 מה חסר בפרופיל?', prompt: 'מה חסר בפרופיל הארגון שלנו כדי לשפר התאמות?' },
+    { label: '✨ שפר תיאור', prompt: 'שפר את תיאור הארגון שלנו לצורך הגשות' },
+    { label: '🎯 נקודות חוזק', prompt: 'מה נקודות החוזק של הארגון שכדאי להדגיש בהגשות?' },
+  ],
+};
+
 interface ChatPanelProps {
   orgId: string | null;
   userId: string | null;
@@ -115,6 +133,7 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
           conversation_id: conversationId,
           org_id: orgId,
           user_id: userId,
+          active_tab: activeTab,
         }),
       });
 
@@ -178,14 +197,6 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
   sendMessageRef.current = sendMessage;
 
   const [activeTab, setActiveTab] = useState<string>('chat');
-  const [tabCta, setTabCta] = useState<string | null>(null);
-
-  const TAB_CTAS: Record<string, string> = {
-    business: 'לחצי על חברה או קרן מהרשימה ואנתח אותה. או בקשי ממני לנסח מייל פנייה.',
-    opportunities: 'בחרי קול קורא מהרשימה ואכתוב לך טיוטת הגשה. או הדביקי לינק לקול קורא חדש.',
-    org: 'שלחי חומרים, לינק לאתר, או כתבי על הארגון. ככל שאדע יותר, ההגשות יהיו חדות יותר.',
-    history: 'אפשר לחזור לכל שיחה קודמת ולהמשיך מאיפה שעצרנו.',
-  };
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -195,21 +206,45 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
     const tabHandler = (e: Event) => {
       const tab = (e as CustomEvent).detail || 'chat';
       setActiveTab(tab);
-      // Show contextual CTA for 8 seconds
-      if (TAB_CTAS[tab]) {
-        setTabCta(TAB_CTAS[tab]);
-        setTimeout(() => setTabCta(null), 8000);
-      } else {
-        setTabCta(null);
-      }
     };
+    const loadConvHandler = async (e: Event) => {
+      const { conversationId: convId } = (e as CustomEvent).detail || {};
+      if (!convId || !orgId) return;
+      try {
+        const res = await fetch(`/api/conversations/${convId}?org_id=${orgId}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.conversation?.messages?.length > 0) {
+          const restored: ChatMessage[] = data.conversation.messages.map(
+            (m: { role: string; content: string; timestamp?: string }, i: number) => ({
+              id: `restored-${convId}-${i}`,
+              role: m.role as 'user' | 'assistant',
+              content: m.content,
+              timestamp: m.timestamp || data.conversation.updated_at,
+            })
+          );
+          const separator: ChatMessage = {
+            id: `sep-${convId}`,
+            role: 'assistant',
+            content: `שיחה קודמת — ${data.conversation.title || 'שיחה'}\n\nאפשר להמשיך מכאן.`,
+            timestamp: new Date().toISOString(),
+          };
+          setMessages([separator, ...restored]);
+          setConversationId(convId);
+          window.dispatchEvent(new CustomEvent('fishgold:closeSidebar'));
+        }
+      } catch { /* ignore */ }
+    };
+
     window.addEventListener('fishgold:send', handler);
     window.addEventListener('fishgold:activeTab', tabHandler);
+    window.addEventListener('fishgold:loadConversation', loadConvHandler);
     return () => {
       window.removeEventListener('fishgold:send', handler);
       window.removeEventListener('fishgold:activeTab', tabHandler);
+      window.removeEventListener('fishgold:loadConversation', loadConvHandler);
     };
-  }, []);
+  }, [orgId]);
 
   const placeholderByTab: Record<string, string> = {
     chat: 'כתבי ל-Fishgold...',
@@ -292,6 +327,7 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
               conversation_id: conversationId,
               org_id: orgId,
               user_id: userId,
+              active_tab: activeTab,
             }),
           });
 
@@ -405,14 +441,19 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Tab context CTA */}
-      {tabCta && (
-        <div className="mx-4 mb-0 px-3 py-2 bg-accent/5 border border-accent/15 rounded-lg text-[11px] text-text2 leading-relaxed flex items-start gap-2 fade-up">
-          <FishLogo size={16} />
-          <span>{tabCta}</span>
-          <button onClick={() => setTabCta(null)} className="flex-shrink-0 text-muted hover:text-text ml-auto">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-          </button>
+      {/* Tab-specific quick actions */}
+      {activeTab !== 'chat' && activeTab !== 'history' && (
+        <div className="mx-4 mb-1 flex flex-wrap gap-1.5">
+          {(TAB_QUICK_ACTIONS[activeTab] || []).map((action, i) => (
+            <button
+              key={i}
+              onClick={() => sendMessage(action.prompt)}
+              disabled={isStreaming}
+              className="px-3 py-1.5 text-[11px] bg-accent/8 hover:bg-accent/15 border border-accent/20 rounded-full text-text2 transition-colors disabled:opacity-40"
+            >
+              {action.label}
+            </button>
+          ))}
         </div>
       )}
 
