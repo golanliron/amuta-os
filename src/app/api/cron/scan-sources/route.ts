@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
-import { createAdminClient } from '@/lib/supabase/admin';
+import { createGrantsClient } from '@/lib/supabase/grants-db';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -67,7 +67,7 @@ interface ScannedItem {
 }
 
 async function scanAllSources() {
-  const supabase = createAdminClient();
+  const supabase = createGrantsClient();
   let totalNew = 0;
   let totalSkipped = 0;
   const errors: string[] = [];
@@ -98,7 +98,7 @@ async function scanAllSources() {
 
         // Check if already exists (by title similarity)
         const { data: existing } = await supabase
-          .from('opportunities')
+          .from('grants')
           .select('id')
           .ilike('title', `%${item.title.slice(0, 40)}%`)
           .limit(1);
@@ -109,7 +109,7 @@ async function scanAllSources() {
         }
 
         // Insert new opportunity
-        await supabase.from('opportunities').insert({
+        await supabase.from('grants').insert({
           title: item.title,
           description: item.description || null,
           funder: item.funder || source.name,

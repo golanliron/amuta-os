@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { createGrantsClient } from '@/lib/supabase/grants-db';
 import { FISHGOLD_SYSTEM_PROMPT, buildContext, buildOrgContext } from '@/lib/ai/fishgold';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -178,8 +179,9 @@ export async function POST(request: NextRequest) {
 
       if (matches && matches.length > 0) {
         const oppIds = matches.map(m => m.opportunity_id);
-        const { data: opps } = await supabase
-          .from('opportunities')
+        const grantsDb = createGrantsClient();
+        const { data: opps } = await grantsDb
+          .from('grants')
           .select('id, title, funder, deadline, amount_max')
           .in('id', oppIds)
           .eq('active', true);
@@ -352,8 +354,9 @@ async function handleCommand(
       }
 
       const oppIds = matches.map(m => m.opportunity_id);
-      const { data: opps } = await supabase
-        .from('opportunities')
+      const grantsDb = createGrantsClient();
+      const { data: opps } = await grantsDb
+        .from('grants')
         .select('id, title, funder, deadline, url')
         .in('id', oppIds);
 
