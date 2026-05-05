@@ -125,6 +125,7 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
 
       if (reader) {
         let buffer = '';
+        let accumulated = '';
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
@@ -138,14 +139,15 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
             try {
               const data = JSON.parse(line.slice(6));
               if (data.text) {
-                setMessages(prev => {
-                  const updated = [...prev];
-                  const last = updated[updated.length - 1];
-                  if (last.role === 'assistant') {
-                    last.content += data.text;
-                  }
-                  return updated;
-                });
+                accumulated += data.text;
+                const snapshot = accumulated;
+                setMessages(prev =>
+                  prev.map((msg, i) =>
+                    i === prev.length - 1 && msg.role === 'assistant'
+                      ? { ...msg, content: snapshot }
+                      : msg
+                  )
+                );
               }
               if (data.done && data.conversation_id) {
                 setConversationId(data.conversation_id);
@@ -252,6 +254,7 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
 
           if (reader) {
             let buffer = '';
+            let accumulated = '';
             while (true) {
               const { done, value } = await reader.read();
               if (done) break;
@@ -263,12 +266,15 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
                 try {
                   const d = JSON.parse(line.slice(6));
                   if (d.text) {
-                    setMessages(prev => {
-                      const updated = [...prev];
-                      const last = updated[updated.length - 1];
-                      if (last.role === 'assistant') last.content += d.text;
-                      return updated;
-                    });
+                    accumulated += d.text;
+                    const snapshot = accumulated;
+                    setMessages(prev =>
+                      prev.map((msg, i) =>
+                        i === prev.length - 1 && msg.role === 'assistant'
+                          ? { ...msg, content: snapshot }
+                          : msg
+                      )
+                    );
                   }
                   if (d.done && d.conversation_id) {
                     setConversationId(d.conversation_id);
