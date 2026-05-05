@@ -96,8 +96,22 @@ export default function BusinessTab({ orgId }: BusinessTabProps) {
   }, [companies, search]);
 
   const handleAskFishgold = (company: Company) => {
-    const prompt = `ספר לי על ${company.name}. למי הם תרמו? למה שווה לפנות אליהם? מה תחומי העניין שלהם?`;
-    window.dispatchEvent(new CustomEvent('fishgold:send', { detail: prompt }));
+    const typeLabel = TYPE_LABELS[company.company_type] || company.company_type;
+    const parts = [
+      `[חברה מהמאגר שלך — השתמש במידע הזה!]`,
+      `שם: ${company.name}`,
+      `סוג: ${typeLabel}`,
+    ];
+    if (company.description) parts.push(`תיאור: ${company.description}`);
+    if (company.interests?.length) parts.push(`תחומי עניין: ${company.interests.join(', ')}`);
+    if (company.contact_name) parts.push(`איש קשר: ${company.contact_name}${company.contact_role ? ` (${company.contact_role})` : ''}`);
+    if (company.contact_email) parts.push(`מייל: ${company.contact_email}`);
+    if (company.contact_phone) parts.push(`טלפון: ${company.contact_phone}`);
+    if (company.website) parts.push(`אתר: ${company.website}`);
+    if (company.donation_amount) parts.push(`סכום תרומות: ${formatAmount(company.donation_amount)} ש"ח`);
+    if (company.csr_rank) parts.push(`דירוג CSR: #${company.csr_rank}`);
+    parts.push(`\nנתח את החברה הזאת. למי הם תורמים? למה שווה לפנות אליהם? מה החיבור לארגון שלנו? תציע דרך פנייה.`);
+    window.dispatchEvent(new CustomEvent('fishgold:send', { detail: parts.join('\n') }));
     window.dispatchEvent(new CustomEvent('fishgold:closeSidebar'));
   };
 

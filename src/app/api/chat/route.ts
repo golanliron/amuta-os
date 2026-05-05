@@ -319,8 +319,30 @@ async function loadAllChunks(
   supabase: ReturnType<typeof createAdminClient>,
   orgId: string,
   message: string
-): Promise<{ knowledge: string; rag: string }> {
+): Promise<{ knowledge: string; rag: string; docSummary: string }> {
   try {
+    // Load ALL documents list (for completeness awareness)
+    const { data: allDocs } = await supabase
+      .from('documents')
+      .select('id, filename, category, file_type, parsed_text, created_at')
+      .eq('org_id', orgId)
+      .order('created_at', { ascending: false });
+
+    let docSummary = '';
+    if (allDocs?.length) {
+      // Build a rich summary of ALL documents Fishgold has access to
+      const docLines = allDocs.map(d => {
+        const preview = d.parsed_text ? d.parsed_text.slice(0, 500) : '';
+        return `[${d.category || 'other'}] ${d.filename}${preview ? `:\n${preview}` : ''}`;
+      });
+      docSummary = `\n\n===== כל המסמכים שקראת (${allDocs.length} מסמכים) =====\n${docLines.join('\n\n')}`;
+
+      // Truncate if too long, but keep as much as possible
+      if (docSummary.length > 20000) {
+        docSummary = docSummary.slice(0, 20000) + '\n[... עוד מסמכים]';
+      }
+    }
+
     // Load knowledge base chunks (always)
     const { data: kbChunks } = await supabase
       .from('document_chunks')
@@ -352,14 +374,14 @@ async function loadAllChunks(
         .eq('org_id', orgId)
         .neq('metadata->>source', 'knowledge_base')
         .textSearch('content', keywords, { type: 'plain' })
-        .limit(6);
+        .limit(8);
 
       if (chunks?.length) {
         rag = buildContext(chunks);
       }
     }
 
-    // Fallback: recent document chunks
+    // Fallback: recent document chunks (load more)
     if (!rag) {
       const { data: recent } = await supabase
         .from('document_chunks')
@@ -367,16 +389,16 @@ async function loadAllChunks(
         .eq('org_id', orgId)
         .neq('metadata->>source', 'knowledge_base')
         .order('created_at', { ascending: false })
-        .limit(4);
+        .limit(8);
 
       if (recent?.length) {
         rag = buildContext(recent);
       }
     }
 
-    return { knowledge, rag };
+    return { knowledge, rag, docSummary };
   } catch {
-    return { knowledge: '', rag: '' };
+    return { knowledge: '', rag: '', docSummary: '' };
   }
 }
 
@@ -682,7 +704,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Step 3: Re-fetch profile (may have been updated by learnFromUrls) + load knowledge in parallel
-    const [{ data: profile }, { knowledge, rag }] = await Promise.all([
+    const [{ data: profile }, { knowledge, rag, docSummary }] = await Promise.all([
       fetchedUrls.length > 0
         ? supabase.from('org_profiles').select('data').eq('org_id', org_id).single()
         : Promise.resolve({ data: profileBefore }),
@@ -702,7 +724,7 @@ export async function POST(request: NextRequest) {
       ),
     ]);
 
-    const systemPrompt = FISHGOLD_SYSTEM_PROMPT + orgContext + knowledge + rag + opportunityContext + companyContext;
+    const systemPrompt = FISHGOLD_SYSTEM_PROMPT + orgContext + docSummary + knowledge + rag + opportunityContext + companyContext;
 
     // Load conversation history
     let chatMessages: { role: 'user' | 'assistant'; content: string }[] = [];

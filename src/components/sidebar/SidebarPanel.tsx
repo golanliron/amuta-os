@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import type { SidebarTab, AppStage } from '@/types';
 import OrgTab from './OrgTab';
 import OpportunitiesTab from './OpportunitiesTab';
-import TimelineTab from './TimelineTab';
 import HistoryTab from './HistoryTab';
 import BusinessTab from './BusinessTab';
 
@@ -17,7 +16,6 @@ interface SidebarPanelProps {
 const tabs: { id: SidebarTab; label: string; icon: string }[] = [
   { id: 'org', label: 'העמותה', icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' },
   { id: 'opportunities', label: 'קולות קוראים', icon: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z' },
-  { id: 'timeline', label: 'לוח זמנים', icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' },
   { id: 'history', label: 'היסטוריה', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
   { id: 'business', label: 'חברות', icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4' },
 ];
@@ -66,11 +64,6 @@ export default function SidebarPanel({ stage, orgId, initialTab }: SidebarPanelP
           </div>
         )}
         {activeTab === 'opportunities' && <OpportunitiesTab stage={stage} orgId={orgId} />}
-        {activeTab === 'timeline' && (
-          <div className="p-4">
-            <TimelineTab stage={stage} orgId={orgId} />
-          </div>
-        )}
         {activeTab === 'history' && (
           <div className="p-4">
             <HistoryTab stage={stage} orgId={orgId} />
