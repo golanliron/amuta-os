@@ -764,6 +764,80 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Marketplace Overview */}
+      <section className="relative z-10 max-w-5xl mx-auto px-6 pb-24">
+        <RevealSection>
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-3">הכל במקום אחד</h2>
+          <p className="text-center text-muted mb-12 max-w-lg mx-auto">
+            428 קולות קוראים וקרנות. מאות חברות ועסקים. Fishgold מחבר ביניהם.
+          </p>
+        </RevealSection>
+
+        <div className="grid sm:grid-cols-2 gap-6">
+          {/* Grants & Foundations card */}
+          <RevealSection type="reveal-right">
+            <div className="bg-surf border border-border rounded-2xl p-6 hover:border-accent/30 transition-all hover:shadow-md h-full relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-l from-accent to-accent/40" />
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
+                style={{ background: 'rgba(238,122,48,0.08)', color: '#EE7A30' }}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <h3 className="font-bold text-lg mb-2">קרנות וקולות קוראים</h3>
+              <p className="text-[13px] text-muted leading-relaxed mb-4">
+                מאגר שנסרק כל יום. משרד החינוך, ג׳וינט, קק״ל, קרנות פרטיות ועוד. כל קול קורא מקבל ציון התאמה אישי לארגון שלך.
+              </p>
+              <div className="flex items-center gap-4 text-xs text-muted">
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-green-500" />
+                  428 קולות קוראים
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-accent" />
+                  סריקה יומית
+                </span>
+              </div>
+            </div>
+          </RevealSection>
+
+          {/* Companies & Businesses card */}
+          <RevealSection type="reveal-left">
+            <div className="bg-surf border border-dashed border-accent/30 rounded-2xl p-6 hover:border-accent/50 transition-all hover:shadow-md h-full relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-l from-blue-500 to-blue-300" />
+              <div className="inline-flex items-center gap-1.5 bg-blue-500/10 text-blue-600 text-[10px] font-bold px-2 py-0.5 rounded-full mb-3">
+                <span className="w-1 h-1 rounded-full bg-blue-500 animate-pulse" />
+                בקרוב
+              </div>
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
+                style={{ background: 'rgba(59,130,246,0.08)', color: '#3B82F6' }}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+              </div>
+              <h3 className="font-bold text-lg mb-2">חברות ועסקים</h3>
+              <p className="text-[13px] text-muted leading-relaxed mb-4">
+                חברות שרוצות לעשות אימפקט חברתי ימצאו כאן עמותות שמתאימות לחזון שלהן. דוחות אימפקט, שקיפות מלאה, שותפות אמיתית.
+              </p>
+              <div className="flex items-center gap-4 text-xs text-muted">
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-blue-500" />
+                  CSR חכם
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-blue-400" />
+                  התאמה לפי חזון
+                </span>
+              </div>
+            </div>
+          </RevealSection>
+        </div>
+      </section>
+
       {/* For Businesses */}
       <section id="business" className="relative z-10 max-w-5xl mx-auto px-6 pb-24">
         <RevealSection>
