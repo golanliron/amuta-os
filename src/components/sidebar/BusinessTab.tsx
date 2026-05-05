@@ -116,8 +116,18 @@ export default function BusinessTab({ orgId }: BusinessTabProps) {
   };
 
   const handleDraftEmail = (company: Company) => {
-    const prompt = `תנסח מייל פנייה מקצועי ומשכנע ל${company.name}${company.contact_name ? ` (${company.contact_name}${company.contact_role ? `, ${company.contact_role}` : ''})` : ''}. המייל צריך להיות בסגנון Fishgold — חד, מקצועי, עם נתונים. תציע שותפות/תרומה על בסיס תחומי העניין שלהם${company.interests?.length ? `: ${company.interests.join(', ')}` : ''}.`;
-    window.dispatchEvent(new CustomEvent('fishgold:send', { detail: prompt }));
+    const typeLabel = TYPE_LABELS[company.company_type] || company.company_type;
+    const parts = [
+      `[חברה מהמאגר שלך — נסח מייל פנייה!]`,
+      `שם: ${company.name} (${typeLabel})`,
+    ];
+    if (company.description) parts.push(`תיאור החברה: ${company.description}`);
+    if (company.interests?.length) parts.push(`תחומי עניין: ${company.interests.join(', ')}`);
+    if (company.contact_name) parts.push(`נמען: ${company.contact_name}${company.contact_role ? ` (${company.contact_role})` : ''}`);
+    if (company.contact_email) parts.push(`מייל: ${company.contact_email}`);
+    if (company.website) parts.push(`אתר: ${company.website}`);
+    parts.push(`\nתנסח מייל פנייה חכם ל${company.name}. קח מילים מתוך מה שהם עושים וחבר לארגון שלנו. אל תבקש כסף. תציע חיבור, שותפות, או שיחה. המייל חייב להרגיש כתוב אישית, לא template.`);
+    window.dispatchEvent(new CustomEvent('fishgold:send', { detail: parts.join('\n') }));
     window.dispatchEvent(new CustomEvent('fishgold:closeSidebar'));
   };
 
