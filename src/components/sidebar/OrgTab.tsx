@@ -56,7 +56,7 @@ const DOC_CATEGORIES: DocCategory[] = [
       </svg>
     ),
     examples: 'דוח כספי שנתי, מאזן, תקציב מאושר',
-    whyNeeded: 'קרנות דורשות נתונים כספיים — בלי זה אין הגשה',
+    whyNeeded: 'קרנות דורשות נתונים כספיים. בלי זה אין הגשה',
   },
   {
     key: 'project_budget',
@@ -80,7 +80,7 @@ const DOC_CATEGORIES: DocCategory[] = [
       </svg>
     ),
     examples: 'דוח אימפקט, סקרים, מדדי הצלחה, עדויות',
-    whyNeeded: 'הנתונים שמראים שמה שאתם עושים — עובד',
+    whyNeeded: 'הנתונים שמראים שמה שאתם עושים עובד',
   },
   {
     key: 'submission',
@@ -346,7 +346,7 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
           {completeness >= 80
             ? 'מצוין! Fishgold מכיר את הארגון לעומק ויכתוב הגשות מדויקות.'
             : completeness >= 40
-            ? 'טוב. ככל שתעלו יותר מסמכים — ההגשות יהיו מדויקות יותר.'
+            ? 'טוב. ככל שתעלו יותר מסמכים, ההגשות יהיו מדויקות יותר.'
             : 'העלו מסמכים כדי שFishgold יכיר את הארגון ויוכל לכתוב הגשות.'}
         </p>
       </div>
@@ -361,7 +361,7 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
           <h4 className="text-xs font-semibold">ספרו על הארגון בטקסט חופשי</h4>
         </div>
         <p className="text-[10px] text-muted2 mb-2">
-          הדביקו תיאור, העתיקו מהאתר, או פשוט כתבו — Fishgold ילמד מזה.
+          הדביקו תיאור, העתיקו מהאתר, או פשוט כתבו. Fishgold ילמד מזה.
         </p>
         <textarea
           value={freeText}
@@ -395,7 +395,7 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
             disabled={savingText}
             className="mt-2 w-full py-1.5 text-[11px] font-medium bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors disabled:opacity-50"
           >
-            {savingText ? 'שומר...' : 'שמור — Fishgold ילמד את זה'}
+            {savingText ? 'שומר...' : 'שמור. Fishgold ילמד את זה'}
           </button>
         )}
       </div>
@@ -411,7 +411,7 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
           <h4 className="text-xs font-semibold">חיבור Google Drive</h4>
         </div>
         <p className="text-[10px] text-muted2 mb-2">
-          הדביקו קישור לתיקיית Drive משותפת — Fishgold יקרא את המסמכים משם.
+          הדביקו קישור לתיקיית Drive משותפת. Fishgold יקרא את המסמכים משם.
         </p>
         <div className="flex gap-1.5">
           <input
