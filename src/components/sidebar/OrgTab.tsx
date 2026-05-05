@@ -109,6 +109,9 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
   const [driveUrl, setDriveUrl] = useState('');
   const [connectingDrive, setConnectingDrive] = useState(false);
   const [driveStatus, setDriveStatus] = useState<string | null>(null);
+  const [linkUrl, setLinkUrl] = useState('');
+  const [loadingLink, setLoadingLink] = useState(false);
+  const [linkStatus, setLinkStatus] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const loadData = () => {
@@ -222,9 +225,25 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
     return acc;
   }, {});
 
-  // Calculate completeness
+  // Calculate completeness — honest assessment of what Fishgold actually knows
   const filledCategories = DOC_CATEGORIES.filter(c => (docsByCategory[c.key]?.length || 0) > 0);
-  const completeness = Math.round((filledCategories.length / DOC_CATEGORIES.length) * 100);
+
+  // 12 checkpoints: 6 doc categories + 6 profile fields
+  let knowledgePoints = 0;
+  const totalPoints = 12;
+
+  // Doc categories (1 point each)
+  knowledgePoints += filledCategories.length;
+
+  // Profile fields (1 point each, only if meaningful data)
+  if (profile?.mission && profile.mission.length > 10) knowledgePoints += 1;
+  if (profile?.annual_budget && profile.annual_budget > 0) knowledgePoints += 1;
+  if (profile?.beneficiaries_count && profile.beneficiaries_count > 0) knowledgePoints += 1;
+  if (profile?.focus_areas && profile.focus_areas.length > 0) knowledgePoints += 1;
+  if (profile?.registration_number) knowledgePoints += 1;
+  if (profile?.regions && profile.regions.length > 0) knowledgePoints += 1;
+
+  const completeness = Math.round((knowledgePoints / totalPoints) * 100);
 
   return (
     <div className="space-y-4">
@@ -372,9 +391,11 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
         <p className="text-[10px] text-muted2">
           {completeness >= 80
             ? 'מצוין! Fishgold מכיר את הארגון לעומק ויכתוב הגשות מדויקות.'
-            : completeness >= 40
-            ? 'טוב. ככל שתעלו יותר מסמכים, ההגשות יהיו מדויקות יותר.'
-            : 'העלו מסמכים כדי שFishgold יכיר את הארגון ויוכל לכתוב הגשות.'}
+            : completeness >= 60
+            ? 'טוב. עוד כמה מסמכים ונתוני פרופיל וההגשות יהיו מדויקות יותר.'
+            : completeness >= 30
+            ? 'Fishgold מכיר אתכם חלקית. השלימו פרטי פרופיל והעלו מסמכים נוספים.'
+            : 'העלו מסמכים ומלאו פרטי פרופיל כדי ש-Fishgold יכיר את הארגון.'}
         </p>
       </div>
 
@@ -424,6 +445,64 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
           >
             {savingText ? 'שומר...' : 'שמור. Fishgold ילמד את זה'}
           </button>
+        )}
+      </div>
+
+      {/* Add link to learn from */}
+      <div className="rounded-xl border border-border bg-surf p-3">
+        <div className="flex items-center gap-2 mb-2">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-accent flex-shrink-0">
+            <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" />
+            <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" />
+          </svg>
+          <h4 className="text-xs font-semibold">הוסיפו קישור לאתר הארגון</h4>
+        </div>
+        <p className="text-[10px] text-muted2 mb-2">
+          הדביקו קישור לאתר העמותה, דף אודות, או כל דף רלוונטי. Fishgold יקרא וישמור.
+        </p>
+        <div className="flex gap-1.5">
+          <input
+            type="url"
+            value={linkUrl}
+            onChange={e => { setLinkUrl(e.target.value); setLinkStatus(null); }}
+            placeholder="https://www.example.org.il/about"
+            className="flex-1 px-2.5 py-1.5 text-[11px] border border-border rounded-lg bg-bg focus:border-accent focus:outline-none"
+            dir="ltr"
+          />
+          <button
+            onClick={async () => {
+              if (!orgId || !linkUrl.trim()) return;
+              setLoadingLink(true);
+              setLinkStatus(null);
+              try {
+                const res = await fetch('/api/learn-url', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ org_id: orgId, url: linkUrl.trim() }),
+                });
+                const data = await res.json();
+                if (res.ok) {
+                  setLinkStatus(`Fishgold למד מ-"${data.title || linkUrl}"`);
+                  setLinkUrl('');
+                  loadData();
+                } else {
+                  setLinkStatus(data.error || 'שגיאה בקריאת הקישור');
+                }
+              } catch {
+                setLinkStatus('שגיאה בקריאת הקישור');
+              }
+              setLoadingLink(false);
+            }}
+            disabled={loadingLink || !linkUrl.trim()}
+            className="px-3 py-1.5 text-[11px] font-medium bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors disabled:opacity-50 flex-shrink-0"
+          >
+            {loadingLink ? (
+              <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            ) : 'קרא'}
+          </button>
+        </div>
+        {linkStatus && (
+          <p className={`text-[10px] mt-1.5 ${linkStatus.startsWith('שגיאה') ? 'text-red-500' : 'text-accent'}`}>{linkStatus}</p>
         )}
       </div>
 
