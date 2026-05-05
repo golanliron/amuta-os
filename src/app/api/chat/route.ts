@@ -848,6 +848,92 @@ async function loadCompaniesIndex(
   }
 }
 
+// ===== Grants Index (always loaded) =====
+
+async function loadGrantsIndex(): Promise<string> {
+  try {
+    const grantsDb = createGrantsClient();
+    const today = new Date().toISOString().split('T')[0];
+
+    const { data: grants } = await grantsDb
+      .from('grants')
+      .select('id, title, funder, deadline, description, categories, target_populations, url, amount, type, eligibility, how_to_apply, contact_info, tags')
+      .eq('is_database', true)
+      .order('deadline', { ascending: true, nullsFirst: false });
+
+    if (!grants?.length) return '';
+
+    // Split into open/closed/no-deadline
+    const open: typeof grants = [];
+    const noDeadline: typeof grants = [];
+    const closed: typeof grants = [];
+
+    for (const g of grants) {
+      if (!g.deadline) {
+        noDeadline.push(g);
+      } else if (g.deadline >= today) {
+        open.push(g);
+      } else {
+        closed.push(g);
+      }
+    }
+
+    // Build compact but rich index per grant
+    const formatGrant = (g: typeof grants[0]) => {
+      const parts = [`"${g.title}"`];
+      if (g.funder) parts.push(`גוף: ${g.funder}`);
+      if (g.deadline) parts.push(`דדליין: ${g.deadline}`);
+      if (g.amount) parts.push(`עד ${(g.amount / 1000).toFixed(0)}K₪`);
+      if (g.categories?.length) parts.push(`תחומים: ${g.categories.slice(0, 3).join(', ')}`);
+      if (g.target_populations?.length) parts.push(`אוכלוסיות: ${g.target_populations.slice(0, 3).join(', ')}`);
+      if (g.type) parts.push(`סוג: ${g.type}`);
+      if (g.url) parts.push(`לינק: ${g.url}`);
+      if (g.description) parts.push(`תיאור: ${g.description.slice(0, 200)}`);
+      if (g.eligibility) parts.push(`תנאי סף: ${g.eligibility.slice(0, 150)}`);
+      if (g.how_to_apply) parts.push(`הגשה: ${g.how_to_apply.slice(0, 100)}`);
+      if (g.contact_info) parts.push(`קשר: ${g.contact_info.slice(0, 80)}`);
+      return parts.join(' | ');
+    };
+
+    let result = `\n\n===== מאגר קולות קוראים — ${grants.length} במאגר =====`;
+    result += `\nאתה מכיר את כל הקולות הקוראים האלה על בוריהם. כשמשתמש שואל על קול קורא — חפש במאגר הזה קודם!`;
+    result += `\nסה"כ: ${open.length} פתוחים, ${noDeadline.length} ללא דדליין, ${closed.length} סגורים.`;
+
+    if (open.length > 0) {
+      result += `\n\n## פתוחים עכשיו (${open.length})`;
+      result += `\n${open.map(formatGrant).join('\n')}`;
+    }
+
+    if (noDeadline.length > 0) {
+      result += `\n\n## ללא דדליין — תמיד פתוחים (${noDeadline.length})`;
+      result += `\n${noDeadline.map(formatGrant).join('\n')}`;
+    }
+
+    if (closed.length > 0) {
+      result += `\n\n## סגורים (${closed.length}) — לדעת שקיימים, לעקוב אחרי סבבים עתידיים`;
+      // For closed, shorter format to save tokens
+      result += `\n${closed.map(g => {
+        const parts = [`"${g.title}"`];
+        if (g.funder) parts.push(g.funder);
+        if (g.deadline) parts.push(`סגור ${g.deadline}`);
+        if (g.categories?.length) parts.push(g.categories.slice(0, 2).join(', '));
+        if (g.url) parts.push(g.url);
+        return parts.join(' | ');
+      }).join('\n')}`;
+    }
+
+    // Truncate if too long (grants can be verbose)
+    if (result.length > 40000) {
+      result = result.slice(0, 40000) + '\n[... עוד קולות קוראים]';
+    }
+
+    return result;
+  } catch (e) {
+    console.error('Grants index load error:', e);
+    return '';
+  }
+}
+
 // ===== Sector Intelligence =====
 
 const SECTOR_KEYWORDS = ['מגזר שלישי', 'עמותות', 'מתחרים', 'מגמות', 'טרנדים', 'חדשות', 'סטארטאפ חברתי', 'אימפקט', 'CSR', 'פילנתרופיה', 'תרומות בישראל', 'קרנות בישראל', 'שוק', 'מגזר', 'תחרות', 'benchmarking', 'דוח מגזרי', 'נתוני שוק'];
@@ -956,8 +1042,8 @@ export async function POST(request: NextRequest) {
     const urlContent = formatUrlsForMessage(fetchedUrls);
     const orgContext = buildOrgContext(profile?.data ?? null, org?.name ?? null);
 
-    // Load matched opportunities, companies, sector intelligence, and companies index in parallel
-    const [opportunityContext, companyContext, sectorContext, companiesIndex] = await Promise.all([
+    // Load matched opportunities, companies, sector intelligence, companies index, and grants index in parallel
+    const [opportunityContext, companyContext, sectorContext, companiesIndex, grantsIndex] = await Promise.all([
       scanOpportunities(
         supabase, org_id, profile?.data as Record<string, unknown> | null, org?.name ?? null, message
       ),
@@ -966,6 +1052,7 @@ export async function POST(request: NextRequest) {
       ),
       loadSectorIntelligence(supabase, message),
       loadCompaniesIndex(supabase),
+      loadGrantsIndex(),
     ]);
 
     // Tab-specific focus instructions
@@ -996,7 +1083,7 @@ export async function POST(request: NextRequest) {
     };
     const tabFocus = (active_tab && TAB_FOCUS[active_tab]) || '';
 
-    const systemPrompt = FISHGOLD_SYSTEM_PROMPT + tabFocus + orgContext + docSummary + knowledge + rag + opportunityContext + companyContext + companiesIndex + sectorContext;
+    const systemPrompt = FISHGOLD_SYSTEM_PROMPT + tabFocus + orgContext + docSummary + knowledge + rag + opportunityContext + companyContext + companiesIndex + grantsIndex + sectorContext;
 
     // Load conversation history
     let chatMessages: { role: 'user' | 'assistant'; content: string }[] = [];
