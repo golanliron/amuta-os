@@ -240,6 +240,7 @@ export default function LandingPage() {
             <a href="#why" className="text-sm text-text2 hover:text-accent transition-colors">למה Fishgold</a>
             <a href="#how" className="text-sm text-text2 hover:text-accent transition-colors">איך זה עובד</a>
             <a href="#whatsapp" className="text-sm text-text2 hover:text-accent transition-colors">גם בוואטסאפ שלך</a>
+            <a href="#business" className="text-sm text-text2 hover:text-accent transition-colors">לעסקים</a>
             <a href="#pricing" className="text-sm text-text2 hover:text-accent transition-colors">מחירים</a>
             <button
               onClick={() => router.push('/dashboard')}
@@ -271,6 +272,7 @@ export default function LandingPage() {
             <a href="#why" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">למה Fishgold</a>
             <a href="#how" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">איך זה עובד</a>
             <a href="#whatsapp" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">גם בוואטסאפ שלך</a>
+            <a href="#business" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">לעסקים</a>
             <a href="#pricing" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">מחירים</a>
             <button
               onClick={() => { setMobileMenu(false); router.push('/dashboard'); }}
@@ -759,19 +761,78 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Coming soon - Organizations */}
-      <RevealSection className="relative z-10 max-w-3xl mx-auto px-6 pb-16" type="reveal-scale">
-        <div className="bg-surf border border-dashed border-accent/40 rounded-2xl p-6 text-center">
-          <div className="inline-flex items-center gap-2 bg-accent/10 text-accent text-xs font-bold px-3 py-1 rounded-full mb-3">
+      {/* For Businesses */}
+      <section id="business" className="relative z-10 max-w-5xl mx-auto px-6 pb-24">
+        <RevealSection>
+          <div className="inline-flex items-center gap-2 bg-accent/10 text-accent text-xs font-bold px-3 py-1 rounded-full mb-4 mx-auto block w-fit">
             <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
             בקרוב
           </div>
-          <h3 className="font-bold text-lg mb-1">ארגונים וחברות מוצאים אותך</h3>
-          <p className="text-sm text-muted max-w-md mx-auto">
-            קרנות, חברות עסקיות ותורמים יוכלו לחפש עמותות שמתאימות להם. לא רק אתם מחפשים מימון. גם המימון מחפש אתכם.
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-3">לחברות ועסקים</h2>
+          <p className="text-center text-muted mb-12 max-w-lg mx-auto">
+            לא רק עמותות מחפשות מימון. גם מימון מחפש עמותות.
           </p>
+        </RevealSection>
+
+        <div className="grid sm:grid-cols-3 gap-5">
+          {[
+            {
+              icon: (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+              ),
+              title: 'מצאו את העמותה שלכם',
+              desc: 'חפשו לפי תחום, אזור, אוכלוסייה או גודל. Fishgold מתאים בין חברות לעמותות שעושות אימפקט אמיתי.',
+            },
+            {
+              icon: (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M12 2L2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" /><path d="M2 12l10 5 10-5" />
+                </svg>
+              ),
+              title: 'CSR חכם',
+              desc: 'דוחות אימפקט, נתוני תוצאות, שקיפות מלאה. תדעו בדיוק לאן הכסף הולך ומה הוא עושה.',
+            },
+            {
+              icon: (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" />
+                  <path d="M23 21v-2a4 4 0 00-3-3.87" /><path d="M16 3.13a4 4 0 010 7.75" />
+                </svg>
+              ),
+              title: 'שותפות, לא תרומה',
+              desc: 'בנו קשר ישיר עם עמותות. ליווי לאורך זמן, לא צ׳ק חד פעמי. ככה נבנה אימפקט אמיתי.',
+            },
+          ].map((item, i) => (
+            <RevealSection key={i} type="reveal-scale" delay={`stagger-${i + 1}`}>
+              <div className="bg-surf border border-dashed border-accent/30 rounded-2xl p-6 hover:border-accent/50 transition-all hover:shadow-md h-full text-center">
+                <div
+                  className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4"
+                  style={{ background: 'rgba(238,122,48,0.08)', color: '#EE7A30' }}
+                >
+                  {item.icon}
+                </div>
+                <h3 className="font-bold text-sm mb-2">{item.title}</h3>
+                <p className="text-[13px] text-muted leading-relaxed">{item.desc}</p>
+              </div>
+            </RevealSection>
+          ))}
         </div>
-      </RevealSection>
+
+        <RevealSection className="mt-8 text-center">
+          <p className="text-sm text-muted mb-3">רוצים להיות מהראשונים?</p>
+          <a
+            href="mailto:info@fishgold.co.il?subject=עניין בפלטפורמה לעסקים"
+            className="inline-flex items-center gap-2 px-6 py-3 border-2 border-accent text-accent font-semibold rounded-xl hover:bg-accent hover:text-white transition-all"
+          >
+            השאירו פרטים
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
+            </svg>
+          </a>
+        </RevealSection>
+      </section>
 
       {/* Pricing */}
       <section id="pricing" className="relative z-10 max-w-5xl mx-auto px-6 pb-24">
