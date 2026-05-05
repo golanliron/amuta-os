@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
       .select('*')
       .eq('active', true)
       .order('deadline', { ascending: true, nullsFirst: false })
-      .limit(200),
+      .limit(500),
     orgId
       ? supabase.from('matches').select('opportunity_id, score, reasoning').eq('org_id', orgId).gte('score', 50)
       : Promise.resolve({ data: [] }),
