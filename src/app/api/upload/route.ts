@@ -1,8 +1,21 @@
 import { NextRequest } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { createAdminClient } from '@/lib/supabase/admin';
-// PDF: use pdfjs-dist directly (pdf-parse has ESM issues with Turbopack)
+// PDF: try pdf-parse first (robust), fallback to pdfjs-dist
 async function parsePDF(buffer: Buffer): Promise<string> {
+  // Method 1: pdf-parse (simpler, more reliable)
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const pdfParse = require('pdf-parse') as (buf: Buffer) => Promise<{ text: string }>;
+    const result = await pdfParse(buffer);
+    if (result.text && result.text.trim().length > 10) {
+      return result.text;
+    }
+  } catch (e) {
+    console.error('pdf-parse failed, trying pdfjs:', e);
+  }
+
+  // Method 2: pdfjs-dist fallback
   try {
     const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
     const doc = await pdfjs.getDocument({ data: new Uint8Array(buffer) }).promise;
@@ -18,7 +31,7 @@ async function parsePDF(buffer: Buffer): Promise<string> {
     }
     return pages.join('\n\n');
   } catch (e) {
-    console.error('PDF parse error:', e);
+    console.error('pdfjs-dist also failed:', e);
     return '';
   }
 }
