@@ -578,12 +578,59 @@ function userAsksAboutCompanies(message: string): boolean {
   return COMPANY_KEYWORDS.some((kw) => message.includes(kw));
 }
 
+async function findSpecificCompany(
+  supabase: ReturnType<typeof createAdminClient>,
+  userMessage: string
+): Promise<string | null> {
+  // Extract potential company/fund names from message (3+ word segments or known patterns)
+  const msg = userMessage.toLowerCase();
+  // Skip if message is too short or is a generic question
+  if (msg.length < 5) return null;
+
+  // Search companies whose name appears in the message
+  const { data: allCompanies } = await supabase
+    .from('companies')
+    .select('name, company_type, description, interests, donation_amount, contact_name, contact_email, contact_phone, contact_role, website')
+    .eq('active', true);
+
+  if (!allCompanies) return null;
+
+  // Find companies whose name appears in the user message (case insensitive)
+  const matches = allCompanies.filter(c => {
+    const name = c.name.toLowerCase();
+    // Skip very short names that might cause false positives
+    if (name.length < 3) return false;
+    return msg.includes(name);
+  });
+
+  if (matches.length === 0) return null;
+
+  // Build context for the matched companies
+  const lines = matches.slice(0, 5).map(c => {
+    const parts = [`[חברה מהמאגר שלך] "${c.name}" | סוג: ${c.company_type}`];
+    if (c.description) parts.push(`תיאור: ${c.description.slice(0, 300)}`);
+    if (c.interests?.length) parts.push(`תחומי עניין: ${c.interests.join(', ')}`);
+    if (c.donation_amount) parts.push(`תרומות: ${(c.donation_amount / 1000).toFixed(0)}K ש"ח`);
+    if (c.contact_name) parts.push(`איש קשר: ${c.contact_name}${c.contact_role ? ` (${c.contact_role})` : ''}`);
+    if (c.contact_email) parts.push(`מייל: ${c.contact_email}`);
+    if (c.contact_phone) parts.push(`טלפון: ${c.contact_phone}`);
+    if (c.website) parts.push(`אתר: ${c.website}`);
+    return parts.join(' | ');
+  });
+
+  return `\n\n===== חברות שנמצאו בהודעה =====\n${lines.join('\n')}`;
+}
+
 async function scanCompanies(
   supabase: ReturnType<typeof createAdminClient>,
   profileData: Record<string, unknown> | null,
   orgName: string | null,
   userMessage: string
 ): Promise<string> {
+  // Check if user mentions a specific company name (even without generic keywords)
+  const specificCompanyMatch = await findSpecificCompany(supabase, userMessage);
+  if (specificCompanyMatch) return specificCompanyMatch;
+
   if (!userAsksAboutCompanies(userMessage)) return '';
 
   try {

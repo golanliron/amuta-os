@@ -465,9 +465,11 @@ function CompanyCard({
           {(company.contact_email || company.contact_phone) && (
             <div className="flex gap-1.5">
               {company.contact_email && (
-                <a
-                  href={`mailto:${company.contact_email}`}
-                  onClick={(e) => e.stopPropagation()}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDraftEmail(company);
+                  }}
                   className="flex-1 py-1.5 text-[10px] font-medium text-center border border-border rounded-lg hover:bg-surf2 transition-colors flex items-center justify-center gap-1"
                 >
                   <svg
@@ -482,9 +484,9 @@ function CompanyCard({
                     <polyline points="22,6 12,13 2,6" />
                   </svg>
                   שלח מייל
-                </a>
+                </button>
               )}
-              {company.contact_phone && (
+              {company.contact_phone && /^0?5\d/.test(company.contact_phone.replace(/[^0-9]/g, '')) && (
                 <a
                   href={`https://wa.me/${company.contact_phone.replace(/[^0-9+]/g, '').replace(/^0/, '972')}`}
                   target="_blank"
