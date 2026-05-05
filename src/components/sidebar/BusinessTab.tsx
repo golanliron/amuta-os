@@ -356,12 +356,12 @@ function CompanyCard({
 
       {/* Meta row */}
       <div className="flex items-center gap-3 text-[10px] mb-1.5">
-        {company.donation_amount && company.donation_amount > 0 && (
+        {!!company.donation_amount && company.donation_amount > 0 && (
           <span className="text-green-600 font-medium">
             {formatAmount(company.donation_amount)} ש&quot;ח תרומות
           </span>
         )}
-        {company.csr_rank && company.csr_rank > 0 && (
+        {!!company.csr_rank && company.csr_rank > 0 && (
           <span className="text-accent font-medium">CSR #{company.csr_rank}</span>
         )}
       </div>
