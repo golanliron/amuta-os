@@ -80,7 +80,37 @@ async function lookupGrantByUrl(url: string): Promise<string | null> {
   }
 }
 
+async function fetchWithJinaReader(url: string): Promise<string | null> {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 20000);
+
+    const res = await fetch(`https://r.jina.ai/${url}`, {
+      signal: controller.signal,
+      headers: {
+        Accept: 'text/plain',
+        'Accept-Language': 'he-IL,he;q=0.9,en-US;q=0.8,en;q=0.7',
+      },
+    });
+
+    clearTimeout(timeout);
+
+    if (!res.ok) return null;
+
+    const text = await res.text();
+    // Jina returns markdown-like text; if it's substantial, use it
+    if (text.length > 200) return text.slice(0, 15000);
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 async function fetchUrlContent(url: string): Promise<string | null> {
+  // Step 1: Always check grants DB first — fastest path
+  const grantData = await lookupGrantByUrl(url);
+  if (grantData) return grantData;
+
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 15000);
@@ -98,18 +128,15 @@ async function fetchUrlContent(url: string): Promise<string | null> {
     clearTimeout(timeout);
 
     if (!res.ok) {
-      // Try grants DB fallback
-      const grantData = await lookupGrantByUrl(url);
-      if (grantData) return grantData;
+      // Direct fetch failed — try Jina Reader (renders JavaScript)
+      const jinaContent = await fetchWithJinaReader(url);
+      if (jinaContent) return jinaContent;
       return `[שגיאה: ${res.status} ${res.statusText}]`;
     }
 
     const contentType = res.headers.get('content-type') || '';
 
     if (contentType.match(/image|video|audio|octet-stream|pdf|zip/)) {
-      // PDF/binary — try grants DB for the full description
-      const grantData = await lookupGrantByUrl(url);
-      if (grantData) return grantData;
       return `[קובץ בינארי: ${contentType}. לא ניתן לקרוא PDF מלינק. בקש מהמשתמש להוריד את הקובץ ולהעלות אותו דרך כפתור ההעלאה, או להעתיק את הטקסט ולשלוח בצ'אט.]`;
     }
 
@@ -121,19 +148,23 @@ async function fetchUrlContent(url: string): Promise<string | null> {
 
     if (contentType.includes('html')) {
       const cleaned = stripHtml(text);
-      // If HTML is too short (SPA/empty), try grants DB
-      if (cleaned.length < 200) {
-        const grantData = await lookupGrantByUrl(url);
-        if (grantData) return grantData;
+      // If HTML content is too short — likely an SPA that renders with JS
+      // Use Jina Reader to get the rendered content
+      if (cleaned.length < 500) {
+        const jinaContent = await fetchWithJinaReader(url);
+        if (jinaContent) return jinaContent;
+      }
+      if (cleaned.length < 100) {
+        return `[הלינק ${url} הוא אתר דינמי (SPA) שלא ניתן לקריאה ישירה. בקש מהמשתמש להעתיק את הטקסט המלא מהדף ולשלוח בצ'אט, או להוריד כ-PDF ולהעלות.]`;
       }
       return cleaned.slice(0, 12000);
     }
 
     return text.slice(0, 12000);
   } catch (e) {
-    // Network error — try grants DB fallback
-    const grantData = await lookupGrantByUrl(url);
-    if (grantData) return grantData;
+    // Network error — try Jina Reader as last resort
+    const jinaContent = await fetchWithJinaReader(url);
+    if (jinaContent) return jinaContent;
     return `[לא הצלחתי לקרוא את הלינק: ${e instanceof Error ? e.message : 'שגיאה'}]`;
   }
 }
