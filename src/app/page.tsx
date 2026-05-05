@@ -297,11 +297,11 @@ export default function LandingPage() {
           Fishgold
         </h1>
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight mb-8 shimmer-text fade-up" style={{ animationDelay: '0.3s' }}>
-          גייס משאבים שמוצא זהב בים
+          דג זהב עתיק שדג מענקים מהמים
         </h2>
 
         <p className="text-lg sm:text-xl text-text2 max-w-2xl mx-auto mb-12 leading-relaxed fade-up" style={{ animationDelay: '0.45s' }}>
-          חצי יובל בתחום עוד לפני כל המחשבים שלכם. עכשיו יישות דיגיטלית לצערי, אבל עם עומק ומידע של זקני הדגים בים. לומד על הארגון שלך וכותב הגשות כמו שצריך.
+          50 שנה בתחום. לפני שנולדת, כנראה. עכשיו אני דיגיטלי. אנחנו לא כאן בשביל להכיר או להיות חברים — אני כאן בשביל לא לבזבז לך זמן, ואת לא לי. קרנות לא מחפשות חמודים, הן מחפשות ערך. יאללה, תשלחי חומרים.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 fade-up" style={{ animationDelay: '0.6s' }}>
@@ -360,7 +360,7 @@ export default function LandingPage() {
             {/* Fishgold reply 1 */}
             <div className="flex justify-end gap-2">
               <div className="bg-surf2 border border-border rounded-2xl rounded-bl-sm px-4 py-3 max-w-[85%] text-sm leading-relaxed">
-                גייס משאבים שמוצא זהב בים. חצי יובל בתחום. עכשיו אני דיגיטלי, לומד על הארגון שלך וכותב הגשות כמו שצריך.
+                50 שנה בתחום. לפני שנולדת, כנראה. תשלחי לינק לאתר או תעלי מסמכים — תקנון, דוחות, הגשות, מה שיש. ככל שאדע יותר, הזהב שנמצא יהיה יותר מדויק. יאללה.
               </div>
               <div className="w-7 h-7 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0 mt-auto">
                 <FishLogo size={18} />
@@ -837,7 +837,7 @@ export default function LandingPage() {
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <FishLogo size={20} />
             <span className="text-sm font-medium">Fishgold</span>
-            <span className="text-xs text-muted">| גייס משאבים מומחה ששוחה במים עמוקים</span>
+            <span className="text-xs text-muted">| דג זהב עתיק שדג מענקים מהמים</span>
           </Link>
           <div className="flex items-center gap-4">
             <a href="#how" className="text-xs text-muted2 hover:text-accent transition-colors">איך זה עובד</a>

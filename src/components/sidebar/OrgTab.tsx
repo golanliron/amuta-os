@@ -94,7 +94,7 @@ const DOC_CATEGORIES: DocCategory[] = [
       </svg>
     ),
     examples: 'בקשות מענק שהגשתם, מכתבי בקשה, דוחות לקרנות',
-    whyNeeded: 'Fishgold לומד מהסגנון שלכם וכותב בהתאם',
+    whyNeeded: 'Fishgold לומד מההגשות שלכם ומהטעויות שלכם. לא בטוח שכתבתם טוב עד עכשיו?',
   },
 ];
 
