@@ -135,7 +135,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
             className="text-[11px] text-muted hover:text-accent transition-colors px-2 py-1 rounded-lg hover:bg-surf2"
             title="כתבו לנו"
           >
-            💬 כתבו לנו
+            🐟 כתבו לנו
           </button>
           {/* Share */}
           <button
