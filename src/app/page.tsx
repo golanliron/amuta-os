@@ -217,7 +217,6 @@ export default function LandingPage() {
         <div className="absolute top-[10%] right-[15%] w-64 h-64 rounded-full bg-accent float-bubble-1" />
         <div className="absolute top-[40%] left-[10%] w-48 h-48 rounded-full bg-accent float-bubble-2" />
         <div className="absolute bottom-[20%] right-[60%] w-36 h-36 rounded-full bg-accent float-bubble-3" />
-        <div className="absolute top-[70%] right-[80%] w-24 h-24 rounded-full bg-accent float-bubble-1" style={{ animationDelay: '3s' }} />
         <div className="absolute top-[20%] left-[70%] w-20 h-20 rounded-full bg-accent float-bubble-2" style={{ animationDelay: '5s' }} />
       </div>
 
