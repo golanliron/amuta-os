@@ -812,7 +812,8 @@ export default function LandingPage() {
         <div className="bg-surf border border-border rounded-3xl p-10 sm:p-14 border-glow relative overflow-hidden">
           <div className="absolute inset-0 opacity-[0.03]" style={{ background: 'radial-gradient(circle at center, #EE7A30, transparent 70%)' }} />
           <FishLogo size={56} className="swim mx-auto mb-6 relative" />
-          <h2 className="text-2xl sm:text-3xl font-bold mb-3 relative">750₪ בחודש. גיוס משאבים אוטומטי.</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold mb-3 relative">750₪ בחודש. גיוס משאבים עם חוכמה של שנים בתחום.</h2>
+          <p className="text-sm text-muted2 mb-1 relative">דג עתיק שמוצא זהב בים.</p>
           <p className="text-muted mb-8 max-w-md mx-auto relative">
             בלי התחייבות. אפשר לבטל בכל רגע.
           </p>
