@@ -156,6 +156,47 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
     fileInputRef.current?.click();
   };
 
+  // Download document
+  const handleDownload = (doc: FgDoc) => {
+    // If it's a URL type, open the URL
+    if (doc.file_type === 'url' && doc.storage_path?.startsWith('http')) {
+      window.open(doc.storage_path, '_blank');
+      return;
+    }
+    // If it's a text file (free text input), download parsed text
+    if (doc.parsed_text) {
+      const blob = new Blob([doc.parsed_text], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = doc.filename || 'document.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+      return;
+    }
+    // Otherwise try storage download
+    if (doc.storage_path) {
+      window.open(`/api/documents/${doc.id}/download`, '_blank');
+    }
+  };
+
+  // Delete document
+  const handleDelete = async (docId: string) => {
+    if (!orgId) return;
+    if (!confirm('למחוק את המסמך? Fishgold ישכח את מה שלמד ממנו.')) return;
+
+    try {
+      await fetch(`/api/documents/${docId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ org_id: orgId }),
+      });
+      loadData();
+    } catch {
+      // ignore
+    }
+  };
+
   // Save profile edits
   const saveProfile = async () => {
     if (!orgId) return;
@@ -493,12 +534,37 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
               /* Document list */
               <div className="mr-6 space-y-0.5">
                 {docs.map(doc => (
-                  <div key={doc.id} className="flex items-center gap-2 py-1 px-2 rounded-lg hover:bg-surf2 transition-colors text-xs">
+                  <div key={doc.id} className="flex items-center gap-2 py-1 px-2 rounded-lg hover:bg-surf2 transition-colors text-xs group">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted2 flex-shrink-0">
                       <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
                       <polyline points="14 2 14 8 20 8" />
                     </svg>
-                    <span className="truncate text-[11px]">{doc.filename}</span>
+                    <span className="truncate text-[11px] flex-1">{doc.filename}</span>
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+                      {/* Download */}
+                      <button
+                        onClick={() => handleDownload(doc)}
+                        title="הורדה"
+                        className="p-0.5 text-muted2 hover:text-accent transition-colors"
+                      >
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                          <polyline points="7 10 12 15 17 10" />
+                          <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                      </button>
+                      {/* Delete */}
+                      <button
+                        onClick={() => handleDelete(doc.id)}
+                        title="מחיקה"
+                        className="p-0.5 text-muted2 hover:text-red-500 transition-colors"
+                      >
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <polyline points="3 6 5 6 21 6" />
+                          <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                        </svg>
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -521,12 +587,27 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
           </h4>
           <div className="mr-6 space-y-0.5">
             {docsByCategory['other'].map(doc => (
-              <div key={doc.id} className="flex items-center gap-2 py-1 px-2 rounded-lg hover:bg-surf2 transition-colors text-xs">
+              <div key={doc.id} className="flex items-center gap-2 py-1 px-2 rounded-lg hover:bg-surf2 transition-colors text-xs group">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted2 flex-shrink-0">
                   <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
                   <polyline points="14 2 14 8 20 8" />
                 </svg>
-                <span className="truncate text-[11px]">{doc.filename}</span>
+                <span className="truncate text-[11px] flex-1">{doc.filename}</span>
+                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+                  <button onClick={() => handleDownload(doc)} title="הורדה" className="p-0.5 text-muted2 hover:text-accent transition-colors">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                      <polyline points="7 10 12 15 17 10" />
+                      <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                  </button>
+                  <button onClick={() => handleDelete(doc.id)} title="מחיקה" className="p-0.5 text-muted2 hover:text-red-500 transition-colors">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                    </svg>
+                  </button>
+                </div>
               </div>
             ))}
           </div>

@@ -118,7 +118,7 @@ export default function OpportunitiesTab({ stage, orgId }: OpportunitiesTabProps
     return result;
   }, [opportunities, search, selectedCategory, selectedPopulation, selectedType, showOnlyMatched, minMatchScore, matchScores]);
 
-  const activeFilters = [selectedCategory, selectedPopulation, selectedType, minMatchScore].filter(Boolean).length + (showOnlyMatched ? 1 : 0);
+  const activeFilters = [selectedCategory, selectedPopulation, minMatchScore].filter(Boolean).length + (showOnlyMatched ? 1 : 0);
 
   if (loading) {
     return (
@@ -219,6 +219,7 @@ export default function OpportunitiesTab({ stage, orgId }: OpportunitiesTabProps
           </button>
           <span className="text-[10px] text-muted">
             {filtered.length} מתוך {opportunities.length}
+            {matchedCount > 0 && !showOnlyMatched && ` (${matchedCount} מתאימים)`}
           </span>
         </div>
 
@@ -247,17 +248,6 @@ export default function OpportunitiesTab({ stage, orgId }: OpportunitiesTabProps
               ))}
             </select>
 
-            <select
-              value={selectedType}
-              onChange={e => setSelectedType(e.target.value as OpportunityType | '')}
-              className="w-full text-[11px] px-2 py-1.5 bg-surf2 border border-border rounded-md focus:border-accent focus:outline-none"
-            >
-              <option value="">כל הסוגים</option>
-              {(Object.keys(TYPE_LABELS) as OpportunityType[]).map(t => (
-                <option key={t} value={t}>{TYPE_LABELS[t]}</option>
-              ))}
-            </select>
-
             {matchScores.size > 0 && (
               <select
                 value={minMatchScore}
@@ -276,7 +266,6 @@ export default function OpportunitiesTab({ stage, orgId }: OpportunitiesTabProps
                 onClick={() => {
                   setSelectedCategory('');
                   setSelectedPopulation('');
-                  setSelectedType('');
                   setMinMatchScore('');
                 }}
                 className="text-[10px] text-accent hover:underline"

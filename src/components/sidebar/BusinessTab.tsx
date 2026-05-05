@@ -42,7 +42,7 @@ const TYPE_ICONS: Record<string, string> = {
 };
 
 interface BusinessTabProps {
-  stage?: string;
+  stage?: number;
   orgId?: string | null;
 }
 
