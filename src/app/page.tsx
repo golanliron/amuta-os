@@ -91,6 +91,7 @@ function AnimatedCounter({ target, suffix = '' }: { target: string; suffix?: str
 const STATS = [
   { number: '428', suffix: '+', label: 'קולות קוראים במאגר' },
   { number: '75', suffix: '', label: 'מקורות מימון' },
+  { number: '120', suffix: '+', label: 'חברות ועסקים' },
   { number: '3', suffix: ' דק׳', label: 'לטיוטת הגשה ראשונה', prefix: '< ' },
 ];
 
@@ -550,7 +551,7 @@ export default function LandingPage() {
               <FishLogo size={32} />
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {STATS.map((s, i) => (
               <div key={i} className={`text-center py-6 px-2 rounded-2xl bg-surf border border-border hover:border-accent/30 transition-all hover:shadow-md stagger-${i + 1}`}>
                 <div className="text-2xl sm:text-3xl font-extrabold" style={{ color: '#EE7A30' }}>
