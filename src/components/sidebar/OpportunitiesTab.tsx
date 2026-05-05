@@ -46,9 +46,12 @@ export default function OpportunitiesTab({ stage, orgId }: OpportunitiesTabProps
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedPopulation, setSelectedPopulation] = useState('');
   const [selectedType, setSelectedType] = useState<OpportunityType | ''>('');
+  const [showOnlyMatched, setShowOnlyMatched] = useState(true);
+  const [minMatchScore, setMinMatchScore] = useState<'' | '60' | '70' | '80'>('');
 
   const categories = useMemo(() => taxonomy.filter(t => t.type === 'category'), [taxonomy]);
   const populations = useMemo(() => taxonomy.filter(t => t.type === 'population'), [taxonomy]);
+  const matchedCount = useMemo(() => matchScores.size, [matchScores]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -95,6 +98,20 @@ export default function OpportunitiesTab({ stage, orgId }: OpportunitiesTabProps
   const filtered = useMemo(() => {
     let result = opportunities;
 
+    // Filter by match to org
+    if (showOnlyMatched && matchScores.size > 0) {
+      result = result.filter(o => matchScores.has(o.id));
+    }
+
+    // Filter by minimum match score
+    if (minMatchScore) {
+      const min = parseInt(minMatchScore);
+      result = result.filter(o => {
+        const score = matchScores.get(o.id)?.score || 0;
+        return score >= min;
+      });
+    }
+
     if (search) {
       const q = search.toLowerCase();
       result = result.filter(o =>
@@ -116,10 +133,19 @@ export default function OpportunitiesTab({ stage, orgId }: OpportunitiesTabProps
       result = result.filter(o => o.type === selectedType);
     }
 
-    return result;
-  }, [opportunities, search, selectedCategory, selectedPopulation, selectedType]);
+    // Sort by match score (highest first) when we have matches
+    if (matchScores.size > 0) {
+      result = [...result].sort((a, b) => {
+        const scoreA = matchScores.get(a.id)?.score || 0;
+        const scoreB = matchScores.get(b.id)?.score || 0;
+        return scoreB - scoreA;
+      });
+    }
 
-  const activeFilters = [selectedCategory, selectedPopulation, selectedType].filter(Boolean).length;
+    return result;
+  }, [opportunities, search, selectedCategory, selectedPopulation, selectedType, showOnlyMatched, minMatchScore, matchScores]);
+
+  const activeFilters = [selectedCategory, selectedPopulation, selectedType, minMatchScore].filter(Boolean).length + (showOnlyMatched ? 1 : 0);
 
   if (loading) {
     return (
@@ -133,6 +159,47 @@ export default function OpportunitiesTab({ stage, orgId }: OpportunitiesTabProps
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className="p-3 border-b border-border space-y-2">
+        {/* Stats banner */}
+        <div className="bg-accent/5 border border-accent/15 rounded-xl px-3 py-2.5">
+          <div className="flex items-center justify-between mb-1.5">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-green animate-pulse" />
+              <span className="text-[12px] font-bold text-text">
+                {opportunities.length} קולות קוראים פתוחים
+              </span>
+            </div>
+            {matchedCount > 0 && (
+              <span className="text-[11px] font-bold text-accent">
+                {matchedCount} מתאימים לכם
+              </span>
+            )}
+          </div>
+          {matchedCount > 0 && (
+            <div className="flex gap-1.5">
+              <button
+                onClick={() => setShowOnlyMatched(true)}
+                className={`flex-1 text-[10px] py-1 rounded-md font-medium transition-colors ${
+                  showOnlyMatched
+                    ? 'bg-accent text-white'
+                    : 'bg-surf2 text-muted hover:text-text'
+                }`}
+              >
+                מותאמים לארגון ({matchedCount})
+              </button>
+              <button
+                onClick={() => setShowOnlyMatched(false)}
+                className={`flex-1 text-[10px] py-1 rounded-md font-medium transition-colors ${
+                  !showOnlyMatched
+                    ? 'bg-accent text-white'
+                    : 'bg-surf2 text-muted hover:text-text'
+                }`}
+              >
+                כל הקולות ({opportunities.length})
+              </button>
+            </div>
+          )}
+        </div>
+
         {/* Search */}
         <div className="relative">
           <svg className="absolute right-3 top-1/2 -translate-y-1/2 text-muted" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -211,12 +278,26 @@ export default function OpportunitiesTab({ stage, orgId }: OpportunitiesTabProps
               ))}
             </select>
 
+            {matchScores.size > 0 && (
+              <select
+                value={minMatchScore}
+                onChange={e => setMinMatchScore(e.target.value as '' | '60' | '70' | '80')}
+                className="w-full text-[11px] px-2 py-1.5 bg-surf2 border border-accent/20 rounded-md focus:border-accent focus:outline-none"
+              >
+                <option value="">כל רמות ההתאמה</option>
+                <option value="60">60%+ התאמה לארגון</option>
+                <option value="70">70%+ התאמה גבוהה</option>
+                <option value="80">80%+ התאמה מעולה</option>
+              </select>
+            )}
+
             {activeFilters > 0 && (
               <button
                 onClick={() => {
                   setSelectedCategory('');
                   setSelectedPopulation('');
                   setSelectedType('');
+                  setMinMatchScore('');
                 }}
                 className="text-[10px] text-accent hover:underline"
               >
@@ -305,9 +386,11 @@ function OpportunityCard({ opp, match }: { opp: Opportunity; match?: MatchScore 
     >
       {/* Match score badge */}
       {match && (
-        <div className={`flex items-center gap-1.5 mb-2 px-2 py-1 rounded-lg border text-[10px] font-medium ${matchColor}`}>
-          <span>התאמה: {match.score}%</span>
-          <span className="font-normal opacity-75">— {match.reasoning}</span>
+        <div className={`flex items-center gap-1.5 mb-2 px-2.5 py-1.5 rounded-lg border text-[10px] ${matchColor}`}>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="flex-shrink-0">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+          </svg>
+          <span className="font-bold">{match.score}% התאמה לארגון שלכם</span>
         </div>
       )}
 

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import SplashScreen from '@/components/SplashScreen';
 import FishLogo from '@/components/chat/FishLogo';
+import Link from 'next/link';
 import SidebarPanel from '@/components/sidebar/SidebarPanel';
 import type { AppStage } from '@/types';
 
@@ -33,7 +34,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
     <div className="h-screen flex flex-col fade-in">
       {/* Top bar */}
       <header className="flex items-center justify-between px-4 py-2 border-b border-border bg-bg2">
-        <div className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
           <FishLogo size={28} />
           <span className="font-semibold text-sm">Fishgold</span>
           <span className="text-xs text-muted hidden sm:inline">| גייס משאבים עתיק</span>

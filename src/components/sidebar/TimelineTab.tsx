@@ -19,6 +19,25 @@ interface DeadlineItem {
   url: string | null;
 }
 
+function buildGoogleCalendarUrl(item: DeadlineItem): string {
+  const d = new Date(item.deadline);
+  const dateStr = d.toISOString().replace(/[-:]/g, '').split('T')[0];
+  // All-day event: next day as end
+  const nextDay = new Date(d);
+  nextDay.setDate(nextDay.getDate() + 1);
+  const endStr = nextDay.toISOString().replace(/[-:]/g, '').split('T')[0];
+
+  const title = encodeURIComponent(`דדליין: ${item.title}`);
+  const details = encodeURIComponent(
+    `קול קורא: ${item.title}\n` +
+    (item.funder ? `מממן: ${item.funder}\n` : '') +
+    (item.url ? `קישור: ${item.url}\n` : '') +
+    '\n— Fishgold'
+  );
+
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dateStr}/${endStr}&details=${details}`;
+}
+
 export default function TimelineTab({ stage, orgId }: TimelineTabProps) {
   const [items, setItems] = useState<DeadlineItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -174,6 +193,30 @@ export default function TimelineTab({ stage, orgId }: TimelineTabProps) {
         <span className="mr-auto font-medium">{items.length} דדליינים פתוחים</span>
       </div>
 
+      {/* Google Calendar sync */}
+      {upcoming.length > 0 && (
+        <button
+          onClick={() => {
+            // Open all upcoming deadlines in Google Calendar (first 5)
+            upcoming.slice(0, 5).forEach((item, i) => {
+              setTimeout(() => {
+                window.open(buildGoogleCalendarUrl(item), '_blank');
+              }, i * 500);
+            });
+          }}
+          className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl border border-border hover:border-accent/30 hover:bg-surf2 transition-all text-[11px] font-medium text-text2"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" strokeWidth="1.5">
+            <rect x="3" y="4" width="18" height="18" rx="2" stroke="#4285F4" />
+            <line x1="3" y1="10" x2="21" y2="10" stroke="#4285F4" />
+            <line x1="8" y1="2" x2="8" y2="6" stroke="#4285F4" />
+            <line x1="16" y1="2" x2="16" y2="6" stroke="#4285F4" />
+            <path d="M9.5 14l2 2 3.5-3.5" stroke="#34A853" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          סנכרון ליומן גוגל ({Math.min(upcoming.length, 5)} דדליינים)
+        </button>
+      )}
+
       {/* Upcoming deadlines */}
       <div>
         <h4 className="text-xs font-semibold text-muted mb-2">דדליינים קרובים</h4>
@@ -221,27 +264,44 @@ export default function TimelineTab({ stage, orgId }: TimelineTabProps) {
                 </>
               );
 
-              return item.url ? (
-                <a
-                  key={item.id}
-                  href={item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 py-2 px-2.5 rounded-lg hover:bg-surf2 transition-colors cursor-pointer"
-                >
-                  {inner}
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted flex-shrink-0">
-                    <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
-                    <polyline points="15 3 21 3 21 9" />
-                    <line x1="10" y1="14" x2="21" y2="3" />
-                  </svg>
-                </a>
-              ) : (
+              return (
                 <div
                   key={item.id}
                   className="flex items-center gap-2 py-2 px-2.5 rounded-lg hover:bg-surf2 transition-colors"
                 >
                   {inner}
+                  {/* Add to Google Calendar */}
+                  <a
+                    href={buildGoogleCalendarUrl(item)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-shrink-0 p-1 rounded hover:bg-accent/10 transition-colors"
+                    title="הוסף ליומן גוגל"
+                    onClick={e => e.stopPropagation()}
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" strokeWidth="1.5">
+                      <rect x="3" y="4" width="18" height="18" rx="2" stroke="#4285F4" />
+                      <line x1="3" y1="10" x2="21" y2="10" stroke="#4285F4" />
+                      <line x1="12" y1="14" x2="12" y2="18" stroke="#34A853" strokeWidth="2" strokeLinecap="round" />
+                      <line x1="10" y1="16" x2="14" y2="16" stroke="#34A853" strokeWidth="2" strokeLinecap="round" />
+                    </svg>
+                  </a>
+                  {item.url && (
+                    <a
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-shrink-0 p-1 rounded hover:bg-accent/10 transition-colors"
+                      title="פתח קול קורא"
+                      onClick={e => e.stopPropagation()}
+                    >
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted">
+                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
+                        <polyline points="15 3 21 3 21 9" />
+                        <line x1="10" y1="14" x2="21" y2="3" />
+                      </svg>
+                    </a>
+                  )}
                 </div>
               );
             })
