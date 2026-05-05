@@ -91,7 +91,7 @@ function AnimatedCounter({ target, suffix = '' }: { target: string; suffix?: str
 const STATS = [
   { number: '428', suffix: '+', label: 'קולות קוראים במאגר' },
   { number: '75', suffix: '', label: 'מקורות מימון' },
-  { number: '120', suffix: '+', label: 'חברות ועסקים' },
+  { number: '75', suffix: '+', label: 'מקורות מידע' },
   { number: '3', suffix: ' דק׳', label: 'לטיוטת הגשה ראשונה', prefix: '< ' },
 ];
 
@@ -241,7 +241,6 @@ export default function LandingPage() {
             <a href="#why" className="text-sm text-text2 hover:text-accent transition-colors">למה Fishgold</a>
             <a href="#how" className="text-sm text-text2 hover:text-accent transition-colors">איך זה עובד</a>
             <a href="#whatsapp" className="text-sm text-text2 hover:text-accent transition-colors">גם בוואטסאפ שלך</a>
-            <a href="#business" className="text-sm text-text2 hover:text-accent transition-colors">לעסקים</a>
             <a href="#pricing" className="text-sm text-text2 hover:text-accent transition-colors">מחירים</a>
             <button
               onClick={() => router.push('/dashboard')}
@@ -273,7 +272,6 @@ export default function LandingPage() {
             <a href="#why" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">למה Fishgold</a>
             <a href="#how" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">איך זה עובד</a>
             <a href="#whatsapp" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">גם בוואטסאפ שלך</a>
-            <a href="#business" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">לעסקים</a>
             <a href="#pricing" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">מחירים</a>
             <button
               onClick={() => { setMobileMenu(false); router.push('/dashboard'); }}
@@ -770,14 +768,13 @@ export default function LandingPage() {
         <RevealSection>
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-3">הכל במקום אחד</h2>
           <p className="text-center text-muted mb-12 max-w-lg mx-auto">
-            428 קולות קוראים וקרנות. מאות חברות ועסקים. Fishgold מחבר ביניהם.
+            428 קולות קוראים וקרנות. 75 מקורות מידע. Fishgold סורק ומתאים עבורך.
           </p>
         </RevealSection>
 
-        <div className="grid sm:grid-cols-2 gap-6">
-          {/* Grants & Foundations card */}
-          <RevealSection type="reveal-right">
-            <div className="bg-surf border border-border rounded-2xl p-6 hover:border-accent/30 transition-all hover:shadow-md h-full relative overflow-hidden">
+        <div className="max-w-lg mx-auto">
+          <RevealSection type="reveal-scale">
+            <div className="bg-surf border border-border rounded-2xl p-6 hover:border-accent/30 transition-all hover:shadow-md relative overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-l from-accent to-accent/40" />
               <div
                 className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
@@ -799,39 +796,6 @@ export default function LandingPage() {
                 <span className="flex items-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-accent" />
                   סריקה יומית
-                </span>
-              </div>
-            </div>
-          </RevealSection>
-
-          {/* Companies & Businesses card */}
-          <RevealSection type="reveal-left">
-            <div className="bg-surf border border-dashed border-accent/30 rounded-2xl p-6 hover:border-accent/50 transition-all hover:shadow-md h-full relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-l from-blue-500 to-blue-300" />
-              <div className="inline-flex items-center gap-1.5 bg-blue-500/10 text-blue-600 text-[10px] font-bold px-2 py-0.5 rounded-full mb-3">
-                <span className="w-1 h-1 rounded-full bg-blue-500 animate-pulse" />
-                בקרוב
-              </div>
-              <div
-                className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
-                style={{ background: 'rgba(59,130,246,0.08)', color: '#3B82F6' }}
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                </svg>
-              </div>
-              <h3 className="font-bold text-lg mb-2">חברות ועסקים</h3>
-              <p className="text-[13px] text-muted leading-relaxed mb-4">
-                חברות שרוצות לעשות אימפקט חברתי ימצאו כאן עמותות שמתאימות לחזון שלהן. דוחות אימפקט, שקיפות מלאה, שותפות אמיתית.
-              </p>
-              <div className="flex items-center gap-4 text-xs text-muted">
-                <span className="flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-blue-500" />
-                  CSR חכם
-                </span>
-                <span className="flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-blue-400" />
-                  התאמה לפי חזון
                 </span>
               </div>
             </div>
