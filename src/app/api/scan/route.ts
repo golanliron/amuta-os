@@ -53,13 +53,14 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // 2. Load active grants from the shared grants database
+    // 2. Load active grants from the shared grants database (updated daily by scanner)
     const grantsDb = createGrantsClient();
+    const today = new Date().toISOString().split('T')[0];
     const { data: opportunities } = await grantsDb
       .from('grants')
       .select('id, title, description, deadline, categories, target_populations, funder, url, type')
-      .eq('active', true)
-      .or('deadline.is.null,deadline.gte.' + new Date().toISOString().split('T')[0])
+      .eq('is_database', true)
+      .or(`deadline.is.null,deadline.gte.${today}`)
       .order('deadline', { ascending: true, nullsFirst: false })
       .limit(60);
 

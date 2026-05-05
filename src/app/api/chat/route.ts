@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { createGrantsClient } from '@/lib/supabase/grants-db';
 import { FISHGOLD_SYSTEM_PROMPT, buildContext, buildOrgContext } from '@/lib/ai/fishgold';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -340,36 +341,51 @@ async function scanOpportunities(
       .limit(1);
 
     if (recentMatches && recentMatches.length > 0) {
-      // Load existing matches
+      // Load existing matches and enrich from grants DB
       const { data: matches } = await supabase
         .from('matches')
-        .select('score, reasoning, opportunity_id, opportunities(title, deadline, funder, url, description, amount_max)')
+        .select('score, reasoning, opportunity_id')
         .eq('org_id', orgId)
         .gte('score', 50)
         .order('score', { ascending: false })
         .limit(5);
 
       if (matches && matches.length > 0) {
+        // Fetch grant details from the shared grants DB
+        const grantsDb = createGrantsClient();
+        const oppIds = matches.map(m => m.opportunity_id);
+        const { data: grants } = await grantsDb
+          .from('grants')
+          .select('id, title, deadline, funder, url, description, amount')
+          .in('id', oppIds);
+
+        const grantsMap = new Map((grants || []).map(g => [g.id, g]));
+
         const lines = matches.map((m) => {
-          const opp = m.opportunities as unknown as { title: string; deadline: string | null; funder: string | null; url: string | null; description: string | null; amount_max: number | null };
-          return `- **${opp?.title}** (ציון: ${m.score}/100)${opp?.deadline ? ` | דדליין: ${opp.deadline}` : ''}${opp?.funder ? ` | ${opp.funder}` : ''}${opp?.amount_max ? ` | עד ${(opp.amount_max / 1000).toFixed(0)}K ש"ח` : ''}${opp?.url ? ` | לינק: ${opp.url}` : ''}\n  ${m.reasoning}${opp?.description ? `\n  תיאור: ${opp.description.slice(0, 200)}` : ''}`;
-        });
-        return `\n\n===== הזדמנויות מתאימות =====\nמצאתי ${matches.length} קולות קוראים שמתאימים:\n${lines.join('\n')}`;
+          const opp = grantsMap.get(m.opportunity_id);
+          if (!opp) return null;
+          return `- **${opp.title}** (ציון: ${m.score}/100)${opp.deadline ? ` | דדליין: ${opp.deadline}` : ''}${opp.funder ? ` | ${opp.funder}` : ''}${opp.amount ? ` | עד ${(opp.amount / 1000).toFixed(0)}K ש"ח` : ''}${opp.url ? ` | לינק: ${opp.url}` : ''}\n  ${m.reasoning}${opp.description ? `\n  תיאור: ${opp.description.slice(0, 200)}` : ''}`;
+        }).filter(Boolean);
+
+        if (lines.length > 0) {
+          return `\n\n===== הזדמנויות מתאימות =====\nמצאתי ${lines.length} קולות קוראים שמתאימים:\n${lines.join('\n')}`;
+        }
       }
       return '';
     }
   }
 
-  // Run a fresh scan — trigger the /api/scan logic inline
+  // Run a fresh scan — query the shared grants database (updated daily by scanner)
   try {
     const today = new Date().toISOString().split('T')[0];
-    const { data: opportunities, error: oppError } = await supabase
-      .from('opportunities')
+    const grantsDb = createGrantsClient();
+    const { data: opportunities, error: oppError } = await grantsDb
+      .from('grants')
       .select('id, title, description, deadline, categories, target_populations, funder, url')
-      .eq('active', true)
+      .eq('is_database', true)
       .or(`deadline.is.null,deadline.gte.${today}`)
       .order('deadline', { ascending: true, nullsFirst: false })
-      .limit(40);
+      .limit(60);
 
     if (oppError) {
       console.error('Opportunities query error:', oppError);
