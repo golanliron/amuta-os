@@ -304,7 +304,7 @@ export default function LandingPage() {
         <p className="text-sm text-muted mb-8 fade-up" style={{ animationDelay: '0.35s' }}>מילה של דג זהב.</p>
 
         <p className="text-lg sm:text-xl text-text2 max-w-2xl mx-auto mb-12 leading-relaxed fade-up" style={{ animationDelay: '0.45s' }}>
-          נשמה עתיקה. חשיבה חדה. סורק 428 מקורות מימון כל יום, מוצא מה מתאים לך, וכותב הגשות שקרנות אוהבות.
+          מענקים, קרנות, חברות ועסקים. הכל במקום אחד. סורק מאות מקורות מימון כל יום, מוצא מה מתאים לך, וכותב הגשות שקרנות אוהבות.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 fade-up" style={{ animationDelay: '0.6s' }}>
