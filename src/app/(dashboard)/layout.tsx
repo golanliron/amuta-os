@@ -50,7 +50,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
         <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
           <FishLogo size={28} />
           <span className="font-semibold text-sm">Fishgold</span>
-          <span className="text-xs text-muted hidden sm:inline">| דג זהב עתיק שדג מענקים מהמים</span>
+          <span className="text-xs text-muted hidden sm:inline">| מילה של דג זהב</span>
         </Link>
         <div className="flex items-center gap-3">
           <div className="w-7 h-7 rounded-full bg-accent text-white flex items-center justify-center text-xs font-bold">

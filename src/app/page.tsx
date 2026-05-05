@@ -296,9 +296,10 @@ export default function LandingPage() {
         <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold leading-tight mb-3 tracking-tight fade-up" style={{ animationDelay: '0.15s' }}>
           Fishgold
         </h1>
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight mb-8 shimmer-text fade-up" style={{ animationDelay: '0.3s' }}>
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight mb-2 shimmer-text fade-up" style={{ animationDelay: '0.3s' }}>
           דג זהב עתיק שדג מענקים מהמים
         </h2>
+        <p className="text-sm text-muted mb-8 fade-up" style={{ animationDelay: '0.35s' }}>מילה של דג זהב.</p>
 
         <p className="text-lg sm:text-xl text-text2 max-w-2xl mx-auto mb-12 leading-relaxed fade-up" style={{ animationDelay: '0.45s' }}>
           מערכת גיוס משאבים חכמה לעמותות. מאתרת קולות קוראים, מתאימה לארגון שלך, וכותבת הגשות מלאות. 428 מקורות מימון, 75 קרנות, הכל במקום אחד.
@@ -772,7 +773,7 @@ export default function LandingPage() {
             <div className="bg-surf border-2 border-accent rounded-2xl p-8 hover:shadow-lg transition-all relative flex flex-col">
               <div className="mb-5 text-center">
                 <h3 className="font-bold text-xl mb-1">Goldfish</h3>
-                <p className="text-sm text-muted">חבילה אחת. הכל כלול. בלי הפתעות.</p>
+                <p className="text-sm text-muted">מילה של דג זהב.</p>
               </div>
               <div className="text-center mb-6">
                 <span className="text-4xl font-extrabold" style={{ color: '#EE7A30' }}>750</span>
@@ -851,7 +852,7 @@ export default function LandingPage() {
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <FishLogo size={20} />
             <span className="text-sm font-medium">Fishgold</span>
-            <span className="text-xs text-muted">| דג זהב עתיק שדג מענקים מהמים</span>
+            <span className="text-xs text-muted">| מילה של דג זהב</span>
           </Link>
           <div className="flex items-center gap-4">
             <a href="#how" className="text-xs text-muted2 hover:text-accent transition-colors">איך זה עובד</a>
