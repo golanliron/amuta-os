@@ -91,7 +91,7 @@ function AnimatedCounter({ target, suffix = '' }: { target: string; suffix?: str
 const STATS = [
   { number: '428', suffix: '+', label: 'קולות קוראים במאגר' },
   { number: '75', suffix: '', label: 'מקורות מימון' },
-  { number: '75', suffix: '+', label: 'מקורות מידע' },
+  { number: '954', suffix: '', label: 'חברות וארגונים במאגר' },
   { number: '3', suffix: ' דק׳', label: 'לטיוטת הגשה ראשונה', prefix: '< ' },
 ];
 
@@ -768,13 +768,14 @@ export default function LandingPage() {
         <RevealSection>
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-3">הכל במקום אחד</h2>
           <p className="text-center text-muted mb-12 max-w-lg mx-auto">
-            428 קולות קוראים וקרנות. 75 מקורות מידע. Fishgold סורק ומתאים עבורך.
+            428 קולות קוראים. 954 חברות וקרנות. Fishgold מחבר ביניהם.
           </p>
         </RevealSection>
 
-        <div className="max-w-lg mx-auto">
+        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          {/* Grants card */}
           <RevealSection type="reveal-scale">
-            <div className="bg-surf border border-border rounded-2xl p-6 hover:border-accent/30 transition-all hover:shadow-md relative overflow-hidden">
+            <div className="bg-surf border border-border rounded-2xl p-6 hover:border-accent/30 transition-all hover:shadow-md relative overflow-hidden h-full">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-l from-accent to-accent/40" />
               <div
                 className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
@@ -796,6 +797,45 @@ export default function LandingPage() {
                 <span className="flex items-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-accent" />
                   סריקה יומית
+                </span>
+              </div>
+            </div>
+          </RevealSection>
+
+          {/* Companies card */}
+          <RevealSection type="reveal-scale" delay="stagger-1">
+            <div className="bg-surf border border-border rounded-2xl p-6 hover:border-blue-400/30 transition-all hover:shadow-md relative overflow-hidden h-full">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-l from-blue-500 to-blue-300" />
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
+                style={{ background: 'rgba(59,130,246,0.08)', color: '#3B82F6' }}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+              </div>
+              <h3 className="font-bold text-lg mb-2">חברות וארגונים</h3>
+              <p className="text-[13px] text-muted leading-relaxed mb-3">
+                954 חברות, קרנות וארגונים פילנתרופיים. Fishgold מתאים לפי פרופיל הארגון ומנסח מיילי פנייה.
+              </p>
+              <div className="flex flex-wrap gap-1.5 mb-3">
+                {['טבע', 'אזריאלי', 'הפועלים', 'מזרחי טפחות', 'UJA', 'קרן באר שבע', 'מגדל', 'ICL'].map(name => (
+                  <span key={name} className="text-[10px] px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full font-medium">{name}</span>
+                ))}
+                <span className="text-[10px] px-2 py-0.5 bg-surf2 text-muted rounded-full">+946</span>
+              </div>
+              <div className="flex items-center gap-3 text-xs text-muted">
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-green-500" />
+                  954 במאגר
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-blue-500" />
+                  92 קרנות
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-blue-400" />
+                  התאמה חכמה
                 </span>
               </div>
             </div>
