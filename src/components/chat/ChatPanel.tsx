@@ -177,14 +177,31 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
   const sendMessageRef = useRef(sendMessage);
   sendMessageRef.current = sendMessage;
 
+  const [activeTab, setActiveTab] = useState<string>('chat');
+
   useEffect(() => {
     const handler = (e: Event) => {
       const text = (e as CustomEvent).detail;
       if (text) sendMessageRef.current(text);
     };
+    const tabHandler = (e: Event) => {
+      setActiveTab((e as CustomEvent).detail || 'chat');
+    };
     window.addEventListener('fishgold:send', handler);
-    return () => window.removeEventListener('fishgold:send', handler);
+    window.addEventListener('fishgold:activeTab', tabHandler);
+    return () => {
+      window.removeEventListener('fishgold:send', handler);
+      window.removeEventListener('fishgold:activeTab', tabHandler);
+    };
   }, []);
+
+  const placeholderByTab: Record<string, string> = {
+    chat: 'כתבי ל-Fishgold...',
+    org: 'קדימה, מחכה ממך לחומרים על העמותה',
+    opportunities: 'תכתבי לי על איזה קול קורא לעבוד',
+    timeline: 'כתבי ל-Fishgold...',
+    history: 'כתבי ל-Fishgold...',
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -396,7 +413,7 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
               value={input}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
-              placeholder="כתבי ל-Fishgold..."
+              placeholder={placeholderByTab[activeTab] || 'כתבי ל-Fishgold...'}
               rows={1}
               className="w-full resize-none rounded-xl border border-border bg-surf px-4 py-3 pr-12 text-sm focus:outline-none focus:border-accent transition-colors"
             />

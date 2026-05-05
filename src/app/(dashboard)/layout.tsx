@@ -24,11 +24,17 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
   const [stage, setStage] = useState<AppStage>(0);
   const [mobileTab, setMobileTab] = useState<'chat' | SidebarTab>('chat');
 
+  // Broadcast active tab so ChatPanel can update placeholder
+  const switchTab = (tab: 'chat' | SidebarTab) => {
+    setMobileTab(tab);
+    window.dispatchEvent(new CustomEvent('fishgold:activeTab', { detail: tab }));
+  };
+
   useEffect(() => {
     const saved = localStorage.getItem('fishgold_stage');
     if (saved) setStage(Number(saved) as AppStage);
 
-    const closeSidebar = () => setMobileTab('chat');
+    const closeSidebar = () => switchTab('chat');
     window.addEventListener('fishgold:closeSidebar', closeSidebar);
     return () => window.removeEventListener('fishgold:closeSidebar', closeSidebar);
   }, []);
@@ -86,7 +92,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
             {MOBILE_TABS.map(tab => (
               <button
                 key={tab.id}
-                onClick={() => setMobileTab(tab.id)}
+                onClick={() => switchTab(tab.id)}
                 className={`flex-1 flex flex-col items-center gap-0.5 py-2.5 transition-colors relative
                   ${mobileTab === tab.id ? 'text-accent' : 'text-muted'}
                 `}

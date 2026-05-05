@@ -214,9 +214,8 @@ export default function LandingPage() {
     <div className="min-h-screen bg-bg overflow-hidden" dir="rtl">
       {/* Floating bubbles background - subtle */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[10%] right-[15%] w-48 h-48 rounded-full bg-accent float-bubble-1" />
-        <div className="absolute top-[40%] left-[10%] w-32 h-32 rounded-full bg-accent float-bubble-2" />
-        <div className="absolute bottom-[20%] right-[60%] w-24 h-24 rounded-full bg-accent float-bubble-3" />
+        <div className="absolute top-[40%] left-[10%] w-24 h-24 rounded-full bg-accent float-bubble-2" />
+        <div className="absolute bottom-[20%] right-[60%] w-20 h-20 rounded-full bg-accent float-bubble-3" />
       </div>
 
       {/* Subtle dot pattern */}
