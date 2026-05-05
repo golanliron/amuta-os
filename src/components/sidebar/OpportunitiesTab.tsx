@@ -48,7 +48,7 @@ export default function OpportunitiesTab({ stage, orgId }: OpportunitiesTabProps
   const [selectedPopulation, setSelectedPopulation] = useState('');
   const [selectedType, setSelectedType] = useState<OpportunityType | ''>('');
   const [showOnlyMatched, setShowOnlyMatched] = useState(false);
-  const [minMatchScore, setMinMatchScore] = useState<'' | '60' | '70' | '80'>('');
+  const [minMatchScore, setMinMatchScore] = useState<'' | '60' | '70' | '80' | '90'>('');
   const [showTimeline, setShowTimeline] = useState(false);
 
   const categories = useMemo(() => taxonomy.filter(t => t.type === 'category'), [taxonomy]);
@@ -151,28 +151,58 @@ export default function OpportunitiesTab({ stage, orgId }: OpportunitiesTabProps
             )}
           </div>
           {matchedCount > 0 && (
-            <div className="flex gap-1.5">
-              <button
-                onClick={() => setShowOnlyMatched(true)}
-                className={`flex-1 text-[10px] py-1 rounded-md font-medium transition-colors ${
-                  showOnlyMatched
-                    ? 'bg-accent text-white'
-                    : 'bg-surf2 text-muted hover:text-text'
-                }`}
-              >
-                מותאמים לארגון ({matchedCount})
-              </button>
-              <button
-                onClick={() => setShowOnlyMatched(false)}
-                className={`flex-1 text-[10px] py-1 rounded-md font-medium transition-colors ${
-                  !showOnlyMatched
-                    ? 'bg-accent text-white'
-                    : 'bg-surf2 text-muted hover:text-text'
-                }`}
-              >
-                כל הקולות ({opportunities.length})
-              </button>
-            </div>
+            <>
+              <div className="flex gap-1.5 mb-1.5">
+                <button
+                  onClick={() => { setShowOnlyMatched(true); setMinMatchScore(''); }}
+                  className={`flex-1 text-[10px] py-1 rounded-md font-medium transition-colors ${
+                    showOnlyMatched && !minMatchScore
+                      ? 'bg-accent text-white'
+                      : 'bg-surf2 text-muted hover:text-text'
+                  }`}
+                >
+                  מותאמים ({matchedCount})
+                </button>
+                <button
+                  onClick={() => { setShowOnlyMatched(false); setMinMatchScore(''); }}
+                  className={`flex-1 text-[10px] py-1 rounded-md font-medium transition-colors ${
+                    !showOnlyMatched && !minMatchScore
+                      ? 'bg-accent text-white'
+                      : 'bg-surf2 text-muted hover:text-text'
+                  }`}
+                >
+                  כל הקולות ({opportunities.length})
+                </button>
+              </div>
+              {/* Quick match % filter */}
+              <div className="flex gap-1">
+                {(['60', '70', '80', '90'] as const).map(pct => {
+                  const count = opportunities.filter(o => (matchScores.get(o.id)?.score || 0) >= parseInt(pct)).length;
+                  if (count === 0) return null;
+                  return (
+                    <button
+                      key={pct}
+                      onClick={() => {
+                        if (minMatchScore === pct) {
+                          setMinMatchScore('');
+                          setShowOnlyMatched(false);
+                        } else {
+                          setMinMatchScore(pct as typeof minMatchScore);
+                          setShowOnlyMatched(false);
+                        }
+                      }}
+                      className={`flex-1 text-[9px] py-1 rounded-md font-medium transition-colors ${
+                        minMatchScore === pct
+                          ? 'bg-green-600 text-white'
+                          : 'bg-surf2 text-muted hover:text-text border border-border/50'
+                      }`}
+                    >
+                      {pct}%+ ({count})
+                    </button>
+                  );
+                })}
+              </div>
+            </>
           )}
         </div>
 
@@ -263,13 +293,14 @@ export default function OpportunitiesTab({ stage, orgId }: OpportunitiesTabProps
             {matchScores.size > 0 && (
               <select
                 value={minMatchScore}
-                onChange={e => setMinMatchScore(e.target.value as '' | '60' | '70' | '80')}
+                onChange={e => setMinMatchScore(e.target.value as '' | '60' | '70' | '80' | '90')}
                 className="w-full text-[11px] px-2 py-1.5 bg-surf2 border border-accent/20 rounded-md focus:border-accent focus:outline-none"
               >
                 <option value="">כל רמות ההתאמה</option>
                 <option value="60">60%+ התאמה לארגון</option>
                 <option value="70">70%+ התאמה גבוהה</option>
                 <option value="80">80%+ התאמה מעולה</option>
+                <option value="90">90%+ התאמה מושלמת</option>
               </select>
             )}
 

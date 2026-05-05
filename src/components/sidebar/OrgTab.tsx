@@ -228,22 +228,47 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
   // Calculate completeness — honest assessment of what Fishgold actually knows
   const filledCategories = DOC_CATEGORIES.filter(c => (docsByCategory[c.key]?.length || 0) > 0);
 
-  // 12 checkpoints: 6 doc categories + 6 profile fields
-  let knowledgePoints = 0;
-  const totalPoints = 12;
+  // 18-point knowledge assessment — each checkpoint is something Fishgold needs to write quality submissions
+  interface KnowledgeCheck {
+    id: string;
+    label: string;
+    met: boolean;
+    weight: number; // 1 = nice to have, 2 = important, 3 = critical
+  }
 
-  // Doc categories (1 point each)
-  knowledgePoints += filledCategories.length;
+  const checks: KnowledgeCheck[] = [
+    // Document categories (6 checks, weight 2 each = 12 pts)
+    { id: 'doc_identity', label: 'מסמכי היכרות (תקנון, מצגת, חזון)', met: !!(docsByCategory['identity']?.length), weight: 2 },
+    { id: 'doc_programs', label: 'תיאורי תוכניות ומודל הפעלה', met: !!(docsByCategory['programs']?.length), weight: 2 },
+    { id: 'doc_budget', label: 'דוח כספי שנתי / מאזן', met: !!(docsByCategory['budget']?.length), weight: 2 },
+    { id: 'doc_project_budget', label: 'תקציב פרויקט מפורט', met: !!(docsByCategory['project_budget']?.length), weight: 2 },
+    { id: 'doc_impact', label: 'דוח אימפקט / מדדי הצלחה', met: !!(docsByCategory['impact']?.length), weight: 2 },
+    { id: 'doc_submission', label: 'הגשות קודמות לקרנות', met: !!(docsByCategory['submission']?.length), weight: 2 },
+    // Profile fields (8 checks, mixed weights = 14 pts)
+    { id: 'prof_mission', label: 'מטרת הארגון (משפט ברור)', met: !!(profile?.mission && profile.mission.length > 20), weight: 2 },
+    { id: 'prof_budget', label: 'מחזור שנתי', met: !!(profile?.annual_budget && profile.annual_budget > 0), weight: 2 },
+    { id: 'prof_beneficiaries', label: 'מספר מוטבים', met: !!(profile?.beneficiaries_count && profile.beneficiaries_count > 0), weight: 2 },
+    { id: 'prof_focus', label: 'תחומי פעילות', met: !!(profile?.focus_areas && profile.focus_areas.length > 0), weight: 1 },
+    { id: 'prof_reg', label: 'מספר עמותה (ע.ר.)', met: !!profile?.registration_number, weight: 1 },
+    { id: 'prof_regions', label: 'אזורי פעילות', met: !!(profile?.regions && profile.regions.length > 0), weight: 1 },
+    { id: 'prof_employees', label: 'מספר עובדים', met: !!(profile?.employees_count && profile.employees_count > 0), weight: 1 },
+    { id: 'prof_website', label: 'אתר הארגון', met: !!(profile && (profile as Record<string, unknown>).website), weight: 2 },
+    // Depth checks — quality, not just presence (4 checks = 8 pts)
+    { id: 'depth_docs_3plus', label: 'לפחות 3 מסמכים שונים', met: documents.length >= 3, weight: 2 },
+    { id: 'depth_docs_5plus', label: 'לפחות 5 מסמכים (כיסוי רחב)', met: documents.length >= 5, weight: 2 },
+    { id: 'depth_categories_3', label: 'מסמכים מ-3 קטגוריות לפחות', met: filledCategories.length >= 3, weight: 2 },
+    { id: 'depth_mission_rich', label: 'תיאור מטרה מעמיק (50+ תווים)', met: !!(profile?.mission && profile.mission.length > 50), weight: 2 },
+  ];
 
-  // Profile fields (1 point each, only if meaningful data)
-  if (profile?.mission && profile.mission.length > 10) knowledgePoints += 1;
-  if (profile?.annual_budget && profile.annual_budget > 0) knowledgePoints += 1;
-  if (profile?.beneficiaries_count && profile.beneficiaries_count > 0) knowledgePoints += 1;
-  if (profile?.focus_areas && profile.focus_areas.length > 0) knowledgePoints += 1;
-  if (profile?.registration_number) knowledgePoints += 1;
-  if (profile?.regions && profile.regions.length > 0) knowledgePoints += 1;
+  const totalWeight = checks.reduce((sum, c) => sum + c.weight, 0); // 30
+  const earnedWeight = checks.filter(c => c.met).reduce((sum, c) => sum + c.weight, 0);
+  const completeness = Math.round((earnedWeight / totalWeight) * 100);
 
-  const completeness = Math.round((knowledgePoints / totalPoints) * 100);
+  // Build missing items list (sorted by weight desc)
+  const missingChecks = checks
+    .filter(c => !c.met)
+    .sort((a, b) => b.weight - a.weight)
+    .slice(0, 4); // Show top 4 missing items
 
   return (
     <div className="space-y-4">
@@ -374,7 +399,7 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
         <div className="flex items-center justify-between mb-2">
           <h4 className="text-xs font-semibold">מה Fishgold יודע עליכם</h4>
           <span className={`text-[11px] font-bold ${
-            completeness >= 80 ? 'text-green-600' : completeness >= 40 ? 'text-amber-600' : 'text-red-500'
+            completeness >= 90 ? 'text-green-600' : completeness >= 60 ? 'text-amber-600' : 'text-red-500'
           }`}>
             {completeness}%
           </span>
@@ -384,19 +409,33 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
             className="h-full rounded-full transition-all duration-500"
             style={{
               width: `${completeness}%`,
-              background: completeness >= 80 ? '#22C55E' : completeness >= 40 ? '#F59E0B' : '#EF4444',
+              background: completeness >= 90 ? '#22C55E' : completeness >= 60 ? '#F59E0B' : '#EF4444',
             }}
           />
         </div>
         <p className="text-[10px] text-muted2">
-          {completeness >= 80
+          {completeness >= 90
             ? 'מצוין! Fishgold מכיר את הארגון לעומק ויכתוב הגשות מדויקות.'
             : completeness >= 60
-            ? 'טוב. עוד כמה מסמכים ונתוני פרופיל וההגשות יהיו מדויקות יותר.'
+            ? 'Fishgold מכיר אתכם חלקית. עוד חומרים וההגשות יהיו מדויקות יותר.'
             : completeness >= 30
-            ? 'Fishgold מכיר אתכם חלקית. השלימו פרטי פרופיל והעלו מסמכים נוספים.'
+            ? 'Fishgold צריך עוד חומר. בלי מסמכים מספיקים ההגשות לא יהיו טובות.'
             : 'העלו מסמכים ומלאו פרטי פרופיל כדי ש-Fishgold יכיר את הארגון.'}
         </p>
+        {/* Show what's missing — always, unless 90%+ */}
+        {missingChecks.length > 0 && completeness < 90 && (
+          <div className="mt-2 pt-2 border-t border-border/50">
+            <p className="text-[10px] font-semibold text-red-500 mb-1">חסר לי:</p>
+            <ul className="space-y-0.5">
+              {missingChecks.map(check => (
+                <li key={check.id} className="text-[10px] text-muted flex items-center gap-1.5">
+                  <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${check.weight >= 2 ? 'bg-red-400' : 'bg-amber-400'}`} />
+                  {check.label}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
 
       {/* Quick text description */}
