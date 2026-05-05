@@ -17,3 +17,17 @@ export async function GET(req: NextRequest) {
     documents: docsRes.data || [],
   });
 }
+
+export async function POST(req: NextRequest) {
+  const { org_id, data } = await req.json();
+  if (!org_id) return NextResponse.json({ error: 'missing org_id' }, { status: 400 });
+
+  const supabase = createAdminClient();
+  await supabase.from('org_profiles').upsert({
+    org_id,
+    data,
+    last_updated: new Date().toISOString(),
+  }, { onConflict: 'org_id' });
+
+  return NextResponse.json({ ok: true });
+}

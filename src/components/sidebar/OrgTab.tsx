@@ -159,14 +159,13 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
   // Save profile edits
   const saveProfile = async () => {
     if (!orgId) return;
-    const supabase = createClient();
     const merged = { ...profile, ...editData };
 
-    await supabase.from('org_profiles').upsert({
-      org_id: orgId,
-      data: merged,
-      last_updated: new Date().toISOString(),
-    }, { onConflict: 'org_id' });
+    await fetch('/api/org', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ org_id: orgId, data: merged }),
+    });
 
     setProfile(merged as OrgProfileData);
     setEditing(false);
