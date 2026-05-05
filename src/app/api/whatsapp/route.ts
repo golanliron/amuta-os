@@ -131,37 +131,39 @@ export async function POST(request: NextRequest) {
         .single();
 
       // Send onboarding message
-      await sendWhatsApp(phone,
+      const onboardMsg =
         `שלום ${senderName || ''}! אני *פישגולד* — מומחה גיוס משאבים דיגיטלי.\n\n` +
         `אני יודע למצוא קולות קוראים, לנתח התאמה, ולכתוב הגשות.\n\n` +
         `כדי להתחיל, שלחו לי:\n` +
         `- שם הארגון שלכם\n` +
         `- או לינק לאתר\n` +
         `- או תיאור קצר (מה אתם עושים ולמי)\n\n` +
-        `ואני אתחיל ללמוד ולחפש עבורכם!`
-      );
-      return Response.json({ ok: true });
+        `ואני אתחיל ללמוד ולחפש עבורכם!`;
+      const isBridgeOnboard = request.headers.get('x-bridge-mode') === 'true';
+      if (!isBridgeOnboard) await sendWhatsApp(phone, onboardMsg);
+      return Response.json({ ok: true, reply: onboardMsg });
     }
 
     // 2. Handle users without org — onboarding flow
     if (!orgId) {
       orgId = await handleOnboarding(supabase, waUser.id, phone, text, senderName);
+      const isBridgeOnboard2 = request.headers.get('x-bridge-mode') === 'true';
       if (orgId) {
-        await sendWhatsApp(phone,
+        const linkedMsg =
           `מעולה! חיברתי אותך לארגון. אני מתחיל ללמוד עליכם.\n\n` +
           `בינתיים, הנה מה שאני יודע לעשות:\n` +
           `*סריקה* — חיפוש קולות קוראים מותאמים\n` +
           `*התאמות* — ההתאמות שכבר מצאתי\n` +
           `*סטטוס* — מצב ההגשות שלכם\n` +
           `*עזרה* — תפריט מלא\n\n` +
-          `או פשוט כתבו לי מה אתם מחפשים!`
-        );
-        return Response.json({ ok: true });
+          `או פשוט כתבו לי מה אתם מחפשים!`;
+        if (!isBridgeOnboard2) await sendWhatsApp(phone, linkedMsg);
+        return Response.json({ ok: true, reply: linkedMsg });
       } else {
-        await sendWhatsApp(phone,
-          `תודה! שלחו לי עוד פרטים על הארגון — שם, תחום פעילות, אוכלוסיית יעד, ואיזור גיאוגרפי. ככל שאדע יותר, אמצא יותר.`
-        );
-        return Response.json({ ok: true });
+        const moreInfoMsg =
+          `תודה! שלחו לי עוד פרטים על הארגון — שם, תחום פעילות, אוכלוסיית יעד, ואיזור גיאוגרפי. ככל שאדע יותר, אמצא יותר.`;
+        if (!isBridgeOnboard2) await sendWhatsApp(phone, moreInfoMsg);
+        return Response.json({ ok: true, reply: moreInfoMsg });
       }
     }
 
@@ -274,10 +276,13 @@ export async function POST(request: NextRequest) {
       { phone, role: 'assistant', content: reply, org_id: orgId },
     ]);
 
-    // 8. Send reply via WhatsApp
-    await sendWhatsApp(phone, reply);
+    // 8. Send reply via WhatsApp (skip if bridge mode — bridge sends itself)
+    const isBridge = request.headers.get('x-bridge-mode') === 'true';
+    if (!isBridge) {
+      await sendWhatsApp(phone, reply);
+    }
 
-    return Response.json({ ok: true });
+    return Response.json({ ok: true, reply });
   } catch (error) {
     console.error('WhatsApp webhook error:', error);
     return Response.json({ error: 'Internal error' }, { status: 500 });

@@ -1,0 +1,12 @@
+{
+  "name": "fishgold-whatsapp-bridge",
+  "version": "1.0.0",
+  "description": "WhatsApp Web bridge for Fishgold bot",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "whatsapp-web.js": "^1.26.1-alpha.3",
+    "qrcode-terminal": "^0.12.0"
+  }
+}
