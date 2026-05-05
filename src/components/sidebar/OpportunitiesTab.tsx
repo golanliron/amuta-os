@@ -46,7 +46,7 @@ export default function OpportunitiesTab({ stage, orgId }: OpportunitiesTabProps
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedPopulation, setSelectedPopulation] = useState('');
   const [selectedType, setSelectedType] = useState<OpportunityType | ''>('');
-  const [showOnlyMatched, setShowOnlyMatched] = useState(true);
+  const [showOnlyMatched, setShowOnlyMatched] = useState(false);
   const [minMatchScore, setMinMatchScore] = useState<'' | '60' | '70' | '80'>('');
 
   const categories = useMemo(() => taxonomy.filter(t => t.type === 'category'), [taxonomy]);
@@ -200,6 +200,13 @@ export default function OpportunitiesTab({ stage, orgId }: OpportunitiesTabProps
           )}
         </div>
 
+        {/* Onboarding hint when no matches */}
+        {matchedCount === 0 && opportunities.length > 0 && (
+          <div className="bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-[11px] text-amber-800 leading-relaxed">
+            <span className="font-bold">העלו מסמכים על הארגון</span> ו-Fishgold יתאים לכם את הקולות הקוראים הכי רלוונטיים, עם ציון התאמה אישי ונימוקים.
+          </div>
+        )}
+
         {/* Search */}
         <div className="relative">
           <svg className="absolute right-3 top-1/2 -translate-y-1/2 text-muted" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -313,7 +320,7 @@ export default function OpportunitiesTab({ stage, orgId }: OpportunitiesTabProps
         {filtered.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-sm text-muted">לא נמצאו תוצאות</p>
-            <p className="text-xs text-muted2 mt-1">נסי לשנות את החיפוש או הסינון</p>
+            <p className="text-xs text-muted2 mt-1">נסו לשנות את החיפוש או הסינון</p>
           </div>
         ) : (
           filtered.map(opp => <OpportunityCard key={opp.id} opp={opp} match={matchScores.get(opp.id)} />)
@@ -484,6 +491,12 @@ function OpportunityCard({ opp, match }: { opp: Opportunity; match?: MatchScore 
 
           {/* Action buttons */}
           <div className="flex gap-1.5 pt-1">
+            <button
+              onClick={handleWriteSubmission}
+              className="flex-1 py-1.5 text-[10px] font-medium bg-accent text-white rounded-lg hover:opacity-90 transition-opacity"
+            >
+              כתוב הגשה
+            </button>
             {opp.url && (
               <a
                 href={opp.url}
@@ -495,28 +508,33 @@ function OpportunityCard({ opp, match }: { opp: Opportunity; match?: MatchScore 
                 פתח קול קורא
               </a>
             )}
-            <button
-              onClick={handleWriteSubmission}
-              className="flex-1 py-1.5 text-[10px] font-medium bg-accent text-white rounded-lg hover:opacity-90 transition-opacity"
+          </div>
+
+          {/* Share row */}
+          <div className="flex gap-1.5 pt-1">
+            <a
+              href={`mailto:?subject=${encodeURIComponent(opp.title)}&body=${encodeURIComponent(buildShareText(opp))}`}
+              onClick={e => e.stopPropagation()}
+              className="flex-1 py-1.5 text-[10px] font-medium text-center border border-border rounded-lg hover:bg-surf2 transition-colors flex items-center justify-center gap-1"
             >
-              כתוב הגשה
-            </button>
-            <button
-              onClick={e => {
-                e.stopPropagation();
-                setShowShare(!showShare);
-              }}
-              className="px-2.5 py-1.5 text-[10px] border border-border rounded-lg hover:bg-surf2 transition-colors"
-              title="שתף"
-            >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="18" cy="5" r="3" />
-                <circle cx="6" cy="12" r="3" />
-                <circle cx="18" cy="19" r="3" />
-                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
-                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                <polyline points="22,6 12,13 2,6" />
               </svg>
-            </button>
+              שלח במייל
+            </a>
+            <a
+              href={`https://wa.me/?text=${encodeURIComponent(buildShareText(opp))}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={e => e.stopPropagation()}
+              className="flex-1 py-1.5 text-[10px] font-medium text-center border border-green-300 text-green-700 rounded-lg hover:bg-green-50 transition-colors flex items-center justify-center gap-1"
+            >
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
+              </svg>
+              שלח בוואטסאפ
+            </a>
           </div>
 
           {/* Share options */}
