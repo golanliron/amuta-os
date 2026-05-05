@@ -97,7 +97,7 @@ const STATS = [
 const ADVANTAGES = [
   {
     title: 'חוסך 90% מהזמן',
-    desc: 'מה שלוקח 3 שעות חיפוש + 2 ימי כתיבה — פישגולד עושה בדקות.',
+    desc: 'מה שלוקח 3 שעות חיפוש + 2 ימי כתיבה, פישגולד עושה בדקות.',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
         <circle cx="12" cy="12" r="10" />
@@ -240,6 +240,7 @@ export default function LandingPage() {
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-6">
+            <a href="#why" className="text-sm text-text2 hover:text-accent transition-colors">למה פישגולד</a>
             <a href="#how" className="text-sm text-text2 hover:text-accent transition-colors">איך זה עובד</a>
             <a href="#pricing" className="text-sm text-text2 hover:text-accent transition-colors">מחירים</a>
             <button
@@ -269,6 +270,7 @@ export default function LandingPage() {
         {/* Mobile menu */}
         {mobileMenu && (
           <div className="md:hidden mt-3 bg-surf border border-border rounded-2xl p-4 space-y-3 shadow-lg">
+            <a href="#why" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">למה פישגולד</a>
             <a href="#how" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">איך זה עובד</a>
             <a href="#pricing" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">מחירים</a>
             <button
@@ -300,7 +302,7 @@ export default function LandingPage() {
         </h2>
 
         <p className="text-lg sm:text-xl text-text2 max-w-2xl mx-auto mb-12 leading-relaxed fade-up" style={{ animationDelay: '0.45s' }}>
-          סורק מאות קולות קוראים. כותב הגשות חדות. זוכר כל מספר בארגון שלך — ולא הולך לישון.
+          חצי יובל בתחום. עכשיו דיגיטלי. לומד על הארגון שלך וכותב הגשות כמו שצריך.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 fade-up" style={{ animationDelay: '0.6s' }}>
@@ -545,7 +547,7 @@ export default function LandingPage() {
       </RevealSection>
 
       {/* Advantages */}
-      <section className="relative z-10 max-w-5xl mx-auto px-6 pb-24">
+      <section id="why" className="relative z-10 max-w-5xl mx-auto px-6 pb-24">
         <RevealSection>
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-3">למה פישגולד?</h2>
           <p className="text-center text-muted mb-12 max-w-lg mx-auto">
@@ -784,71 +786,25 @@ export default function LandingPage() {
       {/* Pricing */}
       <section id="pricing" className="relative z-10 max-w-5xl mx-auto px-6 pb-24">
         <RevealSection>
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-3">תוכניות ומחירים</h2>
-          <p className="text-center text-muted mb-4 max-w-lg mx-auto">
-            המערכת שמגייסת לך משאבים — אוטומטית.
-          </p>
-          <p className="text-center text-xs text-accent font-medium mb-12">
-            חיסכון של 20% בתוכנית שנתית
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-3">מחיר</h2>
+          <p className="text-center text-muted mb-12 max-w-lg mx-auto">
+            מחיר אחד. הכל כלול.
           </p>
         </RevealSection>
 
-        <div className="grid sm:grid-cols-3 gap-5">
-          {/* Free */}
+        <div className="max-w-md mx-auto">
           <RevealSection type="reveal-scale" delay="stagger-1">
-            <div className="bg-surf border border-border rounded-2xl p-6 hover:border-accent/30 transition-all hover:shadow-md h-full flex flex-col">
-              <div className="mb-4">
-                <h3 className="font-bold text-base mb-1">מתחילים</h3>
-                <p className="text-[11px] text-muted">להכיר את פישגולד</p>
+            <div className="bg-surf border-2 border-accent rounded-2xl p-8 hover:shadow-lg transition-all relative flex flex-col">
+              <div className="mb-5 text-center">
+                <h3 className="font-bold text-xl mb-1">750₪ לחודש</h3>
+                <p className="text-sm text-muted">הכל כלול. בלי הגבלות. בלי הפתעות.</p>
               </div>
-              <div className="mb-5">
-                <span className="text-3xl font-extrabold">0</span>
+              <div className="text-center mb-6">
+                <span className="text-4xl font-extrabold" style={{ color: '#EE7A30' }}>750</span>
                 <span className="text-sm text-muted mr-1">₪ / חודש</span>
+                <p className="text-[11px] text-muted mt-1">או 7,500₪ לשנה (חיסכון 17%)</p>
               </div>
-              <ul className="space-y-2.5 text-[13px] text-text2 mb-6 flex-1">
-                {[
-                  'צפייה ב-10 קולות קוראים',
-                  'העלאת 3 מסמכים',
-                  'ציון התאמה בסיסי',
-                  'צ׳אט עם פישגולד (5 הודעות ביום)',
-                ].map((item, i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22C55E" strokeWidth="2.5" className="flex-shrink-0 mt-0.5">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <button
-                onClick={() => router.push('/dashboard')}
-                className="w-full py-2.5 border border-border text-text2 font-medium rounded-xl text-sm hover:bg-surf2 transition-all"
-              >
-                התחילו בחינם
-              </button>
-            </div>
-          </RevealSection>
-
-          {/* Pro - recommended */}
-          <RevealSection type="reveal-scale" delay="stagger-2">
-            <div className="bg-surf border-2 border-accent rounded-2xl p-6 hover:shadow-lg transition-all relative h-full flex flex-col">
-              <div className="absolute -top-3 right-4 flex gap-1.5">
-                <span className="px-3 py-0.5 bg-accent text-white text-[10px] font-bold rounded-full">מומלץ</span>
-              </div>
-              <div className="mb-4">
-                <h3 className="font-bold text-base mb-1">מקצועי</h3>
-                <p className="text-[11px] text-muted">לעמותות שמגישות ברצינות</p>
-              </div>
-              <div className="mb-1">
-                <span className="text-3xl font-extrabold" style={{ color: '#EE7A30' }}>750</span>
-                <span className="text-sm text-muted mr-1">₪ / חודש</span>
-              </div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-sm text-muted line-through">1,200₪</span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-green/10 text-green">מחיר היכרות</span>
-              </div>
-              <p className="text-[11px] text-muted mb-5">או 7,500₪ לשנה (חיסכון 17%)</p>
-              <ul className="space-y-2.5 text-[13px] text-text2 mb-6 flex-1">
+              <ul className="space-y-2.5 text-[13px] text-text2 mb-8 flex-1">
                 {[
                   'כל קולות הקוראים (428+)',
                   'העלאת מסמכים ללא הגבלה',
@@ -857,6 +813,10 @@ export default function LandingPage() {
                   'לוח דדליינים + התראות מייל',
                   'סנכרון Google Calendar',
                   'צ׳אט ללא הגבלה',
+                  'עד 5 משתמשים',
+                  'חיבור Google Drive',
+                  'דוחות גיוס חודשיים',
+                  'אונבורדינג אישי',
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-2">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#EE7A30" strokeWidth="2.5" className="flex-shrink-0 mt-0.5">
@@ -868,54 +828,15 @@ export default function LandingPage() {
               </ul>
               <button
                 onClick={() => router.push('/dashboard')}
-                className="group w-full py-2.5 bg-accent text-white font-semibold rounded-xl text-sm hover:bg-accent-hover transition-all hover:shadow-md hover:scale-[1.02] active:scale-95"
+                className="group w-full py-3 bg-accent text-white font-semibold rounded-xl text-base hover:bg-accent-hover transition-all hover:shadow-md hover:scale-[1.02] active:scale-95"
               >
                 <span className="flex items-center justify-center gap-2">
                   התחילו עכשיו
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="transition-transform group-hover:-translate-x-1">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="transition-transform group-hover:-translate-x-1">
                     <line x1="19" y1="12" x2="5" y2="12" />
                     <polyline points="12 19 5 12 12 5" />
                   </svg>
                 </span>
-              </button>
-            </div>
-          </RevealSection>
-
-          {/* Enterprise */}
-          <RevealSection type="reveal-scale" delay="stagger-3">
-            <div className="bg-surf border border-border rounded-2xl p-6 hover:border-accent/30 transition-all hover:shadow-md h-full flex flex-col">
-              <div className="mb-4">
-                <h3 className="font-bold text-base mb-1">ארגוני</h3>
-                <p className="text-[11px] text-muted">לארגונים גדולים ורשתות</p>
-              </div>
-              <div className="mb-1">
-                <span className="text-3xl font-extrabold">750</span>
-                <span className="text-sm text-muted mr-1">₪ / חודש</span>
-              </div>
-              <p className="text-[11px] text-muted mb-5">או 7,500₪ לשנה (חיסכון 17%)</p>
-              <ul className="space-y-2.5 text-[13px] text-text2 mb-6 flex-1">
-                {[
-                  'הכל מתוכנית מקצועי',
-                  'עד 5 משתמשים',
-                  'חיבור Google Drive',
-                  'דוחות גיוס חודשיים',
-                  'API לחיבור מערכות',
-                  'אונבורדינג אישי',
-                  'תמיכת פרימיום',
-                ].map((item, i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22C55E" strokeWidth="2.5" className="flex-shrink-0 mt-0.5">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <button
-                onClick={() => router.push('/dashboard')}
-                className="w-full py-2.5 border border-border text-text2 font-medium rounded-xl text-sm hover:bg-surf2 transition-all"
-              >
-                צרו קשר
               </button>
             </div>
           </RevealSection>
@@ -953,7 +874,7 @@ export default function LandingPage() {
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <FishLogo size={20} />
             <span className="text-sm font-medium">Fishgold</span>
-            <span className="text-xs text-muted">| גייס משאבים דיגיטלי</span>
+            <span className="text-xs text-muted">| גייס משאבים מומחה ששוחה במים עמוקים</span>
           </Link>
           <div className="flex items-center gap-4">
             <a href="#how" className="text-xs text-muted2 hover:text-accent transition-colors">איך זה עובד</a>
