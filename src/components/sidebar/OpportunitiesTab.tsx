@@ -65,34 +65,22 @@ export default function OpportunitiesTab({ stage, orgId }: OpportunitiesTabProps
         if (data) setTaxonomy(data as TaxItem[]);
       });
 
-    // Load active opportunities — exclude expired
+    // Load active opportunities — fetch all active, filter expired client-side
     const today = new Date().toISOString().split('T')[0];
     supabase
       .from('opportunities')
       .select('*')
       .eq('active', true)
-      .or(`deadline.is.null,deadline.gte.${today}`)
       .order('deadline', { ascending: true, nullsFirst: false })
+      .limit(200)
       .then(({ data, error }) => {
         if (error) {
           console.error('Opportunities load error:', error);
-          // Fallback: try without or filter
-          supabase
-            .from('opportunities')
-            .select('*')
-            .eq('active', true)
-            .order('deadline', { ascending: true, nullsFirst: false })
-            .limit(100)
-            .then(({ data: fallbackData }) => {
-              if (fallbackData) {
-                const filtered = fallbackData.filter((o: Record<string, unknown>) => !o.deadline || String(o.deadline) >= today);
-                setOpportunities(filtered as unknown as Opportunity[]);
-              }
-              setLoading(false);
-            });
-          return;
         }
-        if (data) setOpportunities(data as unknown as Opportunity[]);
+        if (data && data.length > 0) {
+          const filtered = data.filter((o: Record<string, unknown>) => !o.deadline || String(o.deadline) >= today);
+          setOpportunities(filtered as unknown as Opportunity[]);
+        }
         setLoading(false);
       });
 
