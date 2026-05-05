@@ -613,65 +613,75 @@ async function findSpecificCompany(
   supabase: ReturnType<typeof createAdminClient>,
   userMessage: string
 ): Promise<string | null> {
-  const msg = userMessage.toLowerCase();
-  if (msg.length < 3) return null;
+  if (userMessage.length < 3) return null;
 
-  // Search companies whose name appears in the message OR message words appear in company name
-  const { data: allCompanies } = await supabase
-    .from('companies')
-    .select('name, company_type, description, interests, donation_amount, contact_name, contact_email, contact_phone, contact_role, website')
-    .eq('active', true);
+  // Extract meaningful words (skip common Hebrew words)
+  const stopWords = new Set(['של', 'את', 'על', 'עם', 'אני', 'הוא', 'היא', 'יש', 'אין', 'מה', 'איך', 'למה', 'כמה', 'איפה', 'חברה', 'חברת', 'קרן', 'ארגון', 'עמותה', 'תורם', 'תורמים', 'מידע', 'פרטים', 'לגבי', 'בנוגע', 'תספר', 'ספר', 'מכיר', 'מכירה', 'יודע', 'תגיד', 'בבקשה', 'לי', 'אם', 'גם', 'כל', 'אז', 'רק', 'עוד', 'כן', 'לא', 'או', 'הם', 'זה', 'זאת', 'היה', 'אבל', 'כמו', 'בין', 'אחרי', 'לפני', 'כדי', 'שלי', 'שלך', 'שלו', 'שלה', 'שלנו', 'שלהם']);
+  const msgWords = userMessage.split(/\s+/).filter(w => w.length >= 2 && !stopWords.has(w));
+  if (msgWords.length === 0) return null;
 
-  if (!allCompanies) return null;
+  const selectFields = 'name, company_type, description, interests, donation_amount, contact_name, contact_email, contact_phone, contact_role, website';
+  const matches: { name: string; company_type: string; description: string | null; interests: string[] | null; donation_amount: number | null; contact_name: string | null; contact_email: string | null; contact_phone: string | null; contact_role: string | null; website: string | null }[] = [];
 
-  // Extract meaningful words from message (3+ chars, skip common Hebrew words)
-  const stopWords = new Set(['של', 'את', 'על', 'עם', 'אני', 'הוא', 'היא', 'יש', 'אין', 'מה', 'איך', 'למה', 'כמה', 'איפה', 'חברה', 'חברת', 'קרן', 'ארגון', 'עמותה', 'תורם', 'תורמים', 'מידע', 'פרטים', 'לגבי', 'בנוגע', 'תספר', 'ספר', 'מכיר', 'מכירה']);
-  const msgWords = msg.split(/\s+/).filter(w => w.length >= 2 && !stopWords.has(w));
+  // Strategy 1: Search with multi-word phrases (most specific first)
+  // Try consecutive word pairs from the message
+  for (let i = 0; i < msgWords.length - 1 && matches.length === 0; i++) {
+    const phrase = `${msgWords[i]} ${msgWords[i + 1]}`;
+    const { data } = await supabase
+      .from('companies')
+      .select(selectFields)
+      .eq('active', true)
+      .ilike('name', `%${phrase}%`)
+      .limit(5);
+    if (data?.length) matches.push(...data);
+  }
 
-  // Bidirectional matching: company name in message OR message words in company name
-  const matches = allCompanies.filter(c => {
-    const name = c.name.toLowerCase();
-    if (name.length < 2) return false;
-
-    // Direction 1: full company name appears in message
-    if (msg.includes(name)) return true;
-
-    // Direction 2: significant message words appear in company name
-    // Need at least one 3+ char word match
-    const nameWords = name.split(/[\s\-\.\/,]+/).filter(w => w.length >= 2);
-    for (const mw of msgWords) {
-      if (mw.length < 3) continue;
-      // Exact word match in name
-      if (nameWords.some(nw => nw === mw || nw.startsWith(mw) || mw.startsWith(nw))) return true;
-      // Substring match for longer words (4+ chars)
-      if (mw.length >= 4 && name.includes(mw)) return true;
-    }
-
-    // Direction 3: check description for the search terms too (partial name matches)
-    const desc = (c.description || '').toLowerCase();
-    for (const mw of msgWords) {
-      if (mw.length >= 4 && name.includes(mw.slice(0, 4))) return true;
-      if (mw.length >= 5 && desc.includes(mw)) {
-        // Only match via description if the word is very specific
-        if (nameWords.some(nw => nw.length >= 3 && msg.includes(nw))) return true;
+  // Strategy 2: Search each individual word in name
+  if (matches.length === 0) {
+    for (const word of msgWords) {
+      if (word.length < 2) continue;
+      const { data } = await supabase
+        .from('companies')
+        .select(selectFields)
+        .eq('active', true)
+        .ilike('name', `%${word}%`)
+        .limit(8);
+      if (data?.length) {
+        matches.push(...data);
+        // If we found matches with this word, also check if there's a more specific match
+        // by intersecting with the next word
+        if (data.length > 3 && msgWords.length > 1) {
+          // Too many results — try narrowing with another word
+          const otherWords = msgWords.filter(w => w !== word && w.length >= 2);
+          for (const other of otherWords) {
+            const narrowed = data.filter(c =>
+              c.name.includes(other) ||
+              (c.description || '').includes(other)
+            );
+            if (narrowed.length > 0) {
+              matches.length = 0;
+              matches.push(...narrowed);
+              break;
+            }
+          }
+        }
+        break;
       }
     }
+  }
 
-    return false;
-  });
-
+  // Strategy 3: Search in description too (for words 3+ chars)
   if (matches.length === 0) {
-    // Last resort: try ilike search on DB directly for each significant word
     for (const word of msgWords) {
       if (word.length < 3) continue;
-      const { data: dbMatch } = await supabase
+      const { data } = await supabase
         .from('companies')
-        .select('name, company_type, description, interests, donation_amount, contact_name, contact_email, contact_phone, contact_role, website')
+        .select(selectFields)
         .eq('active', true)
         .or(`name.ilike.%${word}%,description.ilike.%${word}%`)
         .limit(5);
-      if (dbMatch?.length) {
-        matches.push(...dbMatch);
+      if (data?.length) {
+        matches.push(...data);
         break;
       }
     }
@@ -679,8 +689,16 @@ async function findSpecificCompany(
 
   if (matches.length === 0) return null;
 
+  // Deduplicate by name
+  const seen = new Set<string>();
+  const unique = matches.filter(c => {
+    if (seen.has(c.name)) return false;
+    seen.add(c.name);
+    return true;
+  });
+
   // Build context for the matched companies
-  const lines = matches.slice(0, 5).map(c => {
+  const lines = unique.slice(0, 5).map(c => {
     const parts = [`[חברה מהמאגר שלך] "${c.name}" | סוג: ${c.company_type}`];
     if (c.description) parts.push(`תיאור: ${c.description.slice(0, 300)}`);
     if (c.interests?.length) parts.push(`תחומי עניין: ${c.interests.join(', ')}`);
