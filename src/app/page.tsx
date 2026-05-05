@@ -786,7 +786,7 @@ export default function LandingPage() {
         <RevealSection>
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-3">תוכניות ומחירים</h2>
           <p className="text-center text-muted mb-4 max-w-lg mx-auto">
-            14 ימי ניסיון חינם. משדרגים כשפישגולד מוכיח את עצמו.
+            המערכת שמגייסת לך משאבים — אוטומטית.
           </p>
           <p className="text-center text-xs text-accent font-medium mb-12">
             חיסכון של 20% בתוכנית שנתית
@@ -834,7 +834,6 @@ export default function LandingPage() {
             <div className="bg-surf border-2 border-accent rounded-2xl p-6 hover:shadow-lg transition-all relative h-full flex flex-col">
               <div className="absolute -top-3 right-4 flex gap-1.5">
                 <span className="px-3 py-0.5 bg-accent text-white text-[10px] font-bold rounded-full">מומלץ</span>
-                <span className="px-3 py-0.5 bg-green text-white text-[10px] font-bold rounded-full">14 יום חינם</span>
               </div>
               <div className="mb-4">
                 <h3 className="font-bold text-base mb-1">מקצועי</h3>
@@ -872,7 +871,7 @@ export default function LandingPage() {
                 className="group w-full py-2.5 bg-accent text-white font-semibold rounded-xl text-sm hover:bg-accent-hover transition-all hover:shadow-md hover:scale-[1.02] active:scale-95"
               >
                 <span className="flex items-center justify-center gap-2">
-                  נסו 14 יום חינם
+                  התחילו עכשיו
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="transition-transform group-hover:-translate-x-1">
                     <line x1="19" y1="12" x2="5" y2="12" />
                     <polyline points="12 19 5 12 12 5" />
@@ -890,10 +889,10 @@ export default function LandingPage() {
                 <p className="text-[11px] text-muted">לארגונים גדולים ורשתות</p>
               </div>
               <div className="mb-1">
-                <span className="text-3xl font-extrabold">1,490</span>
+                <span className="text-3xl font-extrabold">750</span>
                 <span className="text-sm text-muted mr-1">₪ / חודש</span>
               </div>
-              <p className="text-[11px] text-muted mb-5">או 14,900₪ לשנה (חיסכון 17%)</p>
+              <p className="text-[11px] text-muted mb-5">או 7,500₪ לשנה (חיסכון 17%)</p>
               <ul className="space-y-2.5 text-[13px] text-text2 mb-6 flex-1">
                 {[
                   'הכל מתוכנית מקצועי',
@@ -922,24 +921,6 @@ export default function LandingPage() {
           </RevealSection>
         </div>
 
-        {/* FAQ under pricing */}
-        <RevealSection className="mt-12 max-w-2xl mx-auto">
-          <div className="bg-surf border border-border rounded-2xl p-6 space-y-4">
-            <h3 className="font-bold text-sm text-center mb-2">שאלות נפוצות</h3>
-            {[
-              { q: 'איך הניסיון החינמי עובד?', a: '14 ימים עם כל הפיצ׳רים של תוכנית מקצועי. ללא כרטיס אשראי. אם לא מתאים — פשוט לא ממשיכים.' },
-              { q: 'מה קורה עם הנתונים שלי?', a: 'המסמכים שלכם מוצפנים ושמורים. פישגולד לא חולק מידע בין ארגונים. הנתונים שלכם — רק שלכם.' },
-              { q: 'אפשר לשדרג או לבטל בכל רגע?', a: 'כן. בלי התחייבות, בלי קנסות, בלי שאלות.' },
-              { q: 'יש הנחה לעמותות קטנות?', a: 'עמותות עם מחזור עד 500K ₪ מקבלות 30% הנחה. בנוסף, 20% חיסכון בתוכנית שנתית.' },
-              { q: 'כמה זמן לוקח להתחיל?', a: 'פחות מ-5 דקות. מעלים 2–3 מסמכים ופישגולד כבר מתחיל למצוא התאמות.' },
-            ].map((faq, i) => (
-              <div key={i} className="border-t border-border pt-3 first:border-0 first:pt-0">
-                <p className="text-[13px] font-semibold mb-1">{faq.q}</p>
-                <p className="text-[12px] text-muted leading-relaxed">{faq.a}</p>
-              </div>
-            ))}
-          </div>
-        </RevealSection>
       </section>
 
       {/* CTA */}
@@ -948,18 +929,15 @@ export default function LandingPage() {
           <div className="absolute inset-0 opacity-[0.03]" style={{ background: 'radial-gradient(circle at center, #EE7A30, transparent 70%)' }} />
           <FishLogo size={56} className="swim mx-auto mb-6 relative" />
           <h2 className="text-2xl sm:text-3xl font-bold mb-3 relative">750₪ בחודש. גיוס משאבים אוטומטי.</h2>
-          <p className="text-muted mb-2 max-w-md mx-auto relative">
-            14 ימי ניסיון חינם — בלי כרטיס אשראי, בלי התחייבות.
-          </p>
-          <p className="text-xs text-accent font-medium mb-8 relative">
-            כבר אחרי שבוע תדעו אם זה עובד לכם.
+          <p className="text-muted mb-8 max-w-md mx-auto relative">
+            בלי התחייבות. אפשר לבטל בכל רגע.
           </p>
           <button
             onClick={() => router.push('/dashboard')}
             className="group relative px-10 py-4 bg-accent text-white font-semibold rounded-2xl text-base hover:bg-accent-hover transition-all hover:shadow-xl hover:shadow-accent/25 hover:scale-105 active:scale-95"
           >
             <span className="flex items-center justify-center gap-2">
-              נסו 14 יום חינם
+              התחילו עכשיו
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="transition-transform group-hover:-translate-x-1">
                 <line x1="19" y1="12" x2="5" y2="12" />
                 <polyline points="12 19 5 12 12 5" />
@@ -978,11 +956,22 @@ export default function LandingPage() {
             <span className="text-xs text-muted">| גייס משאבים דיגיטלי</span>
           </Link>
           <div className="flex items-center gap-4">
+            <a href="#how" className="text-xs text-muted2 hover:text-accent transition-colors">איך זה עובד</a>
+            <a href="#pricing" className="text-xs text-muted2 hover:text-accent transition-colors">מחירים</a>
             <Link href="/privacy" className="text-xs text-muted2 hover:text-accent transition-colors">מדיניות פרטיות</Link>
             <p className="text-xs text-muted2">&copy; {new Date().getFullYear()} Fishgold. כל הזכויות שמורות.</p>
           </div>
         </div>
       </footer>
+
+      {/* Floating fish - back to top */}
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className="fixed bottom-6 left-6 z-50 w-12 h-12 bg-accent text-white rounded-full shadow-lg hover:shadow-xl hover:scale-110 active:scale-95 transition-all flex items-center justify-center"
+        aria-label="חזרה למעלה"
+      >
+        <FishLogo size={24} />
+      </button>
     </div>
   );
 }
