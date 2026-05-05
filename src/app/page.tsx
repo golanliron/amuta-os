@@ -116,7 +116,7 @@ const ADVANTAGES = [
   },
   {
     title: 'לא שוכח כלום',
-    desc: 'מעלים מסמך פעם אחת — פישגולד זוכר כל מספר, כל פרויקט, כל הישג.',
+    desc: 'מעלים מסמך פעם אחת. פישגולד זוכר כל מספר, כל פרויקט, כל הישג.',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
         <path d="M12 2L2 7l10 5 10-5-10-5z" />
@@ -136,7 +136,7 @@ const ADVANTAGES = [
   },
   {
     title: 'כותב בלי בולשיט',
-    desc: 'מספרים, עובדות, מבנה ברור. לא "אנו שמחים להגיש" — אלא תכלס.',
+    desc: 'מספרים, עובדות, מבנה ברור. לא "אנו שמחים להגיש", אלא תכלס.',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
         <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
@@ -168,7 +168,7 @@ const FEATURES = [
       </svg>
     ),
     title: 'מאתר קולות קוראים',
-    desc: 'סורק מאות מקורות ומוצא בדיוק מה מתאים לארגון שלך. לא סתם רשימה — התאמה אישית.',
+    desc: 'סורק מאות מקורות ומוצא בדיוק מה מתאים לארגון שלך. לא סתם רשימה, התאמה אישית.',
   },
   {
     icon: (
@@ -180,7 +180,7 @@ const FEATURES = [
       </svg>
     ),
     title: 'כותב כמו מקצוען',
-    desc: 'קורא את הקול הקורא, מבין מה מבקשים, וכותב טיוטה מלאה. בלי בלאבלא — מספרים ותכלס.',
+    desc: 'קורא את הקול הקורא, מבין מה מבקשים, וכותב טיוטה מלאה. בלי בלאבלא, מספרים ותכלס.',
   },
   {
     icon: (
@@ -302,7 +302,7 @@ export default function LandingPage() {
         </h2>
 
         <p className="text-lg sm:text-xl text-text2 max-w-2xl mx-auto mb-12 leading-relaxed fade-up" style={{ animationDelay: '0.45s' }}>
-          חצי יובל בתחום. עכשיו דיגיטלי. לומד על הארגון שלך וכותב הגשות כמו שצריך.
+          חצי יובל בתחום עוד לפני כל המחשבים שלכם. עכשיו יישות דיגיטלית לצערי, אבל עם עומק ומידע של זקני הדגים בים. לומד על הארגון שלך וכותב הגשות כמו שצריך.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 fade-up" style={{ animationDelay: '0.6s' }}>
@@ -361,7 +361,7 @@ export default function LandingPage() {
             {/* Fishgold reply 1 */}
             <div className="flex justify-end gap-2">
               <div className="bg-surf2 border border-border rounded-2xl rounded-bl-sm px-4 py-3 max-w-[85%] text-sm leading-relaxed">
-                גייס משאבים שמוצא זהב בים. חצי יובל בתחום. עכשיו אני דיגיטלי — לומד על הארגון שלך וכותב הגשות כמו שצריך.
+                גייס משאבים שמוצא זהב בים. חצי יובל בתחום. עכשיו אני דיגיטלי, לומד על הארגון שלך וכותב הגשות כמו שצריך.
               </div>
               <div className="w-7 h-7 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0 mt-auto">
                 <FishLogo size={18} />
@@ -389,7 +389,7 @@ export default function LandingPage() {
                     </div>
                     <div>
                       <span className="font-semibold text-[13px]">מאתר</span>
-                      <span className="text-muted text-[13px]"> — קולות קוראים שמותאמים בדיוק לארגון שלך</span>
+                      <span className="text-muted text-[13px]"> קולות קוראים שמותאמים בדיוק לארגון שלך</span>
                     </div>
                   </div>
                   <div className="flex items-start gap-2.5">
@@ -401,7 +401,7 @@ export default function LandingPage() {
                     </div>
                     <div>
                       <span className="font-semibold text-[13px]">כותב</span>
-                      <span className="text-muted text-[13px]"> — הגשות כמו מקצוען. מספרים, לא בלאבלא</span>
+                      <span className="text-muted text-[13px]"> הגשות כמו מקצוען. מספרים, לא בלאבלא</span>
                     </div>
                   </div>
                   <div className="flex items-start gap-2.5">
@@ -414,7 +414,7 @@ export default function LandingPage() {
                     </div>
                     <div>
                       <span className="font-semibold text-[13px]">מכיר</span>
-                      <span className="text-muted text-[13px]"> — את הארגון שלך יותר טוב ממך</span>
+                      <span className="text-muted text-[13px]"> את הארגון שלך יותר טוב ממך</span>
                     </div>
                   </div>
                   <div className="flex items-start gap-2.5">
@@ -427,7 +427,7 @@ export default function LandingPage() {
                     </div>
                     <div>
                       <span className="font-semibold text-[13px]">מעיר</span>
-                      <span className="text-muted text-[13px]"> — דדליינים ודחיפות. לא מחכה שתשאלי</span>
+                      <span className="text-muted text-[13px]"> דדליינים ודחיפות. לא מחכה שתשאלי</span>
                     </div>
                   </div>
                 </div>
@@ -483,10 +483,10 @@ export default function LandingPage() {
           {/* Fake results list */}
           <div className="divide-y divide-border">
             {[
-              { name: 'אתר התמיכות הממשלתי — תמיכה בפעילות רוחנית-תרבותית 2026', score: 94, deadline: '15.06.26', amount: '₪300,000', tag: 'חם' },
-              { name: 'משרד החינוך — האצת טכנולוגיות למידה מותאמת אישית', score: 91, deadline: '30.06.26', amount: '₪500,000', tag: 'חדש' },
-              { name: 'ג׳וינט תבת — פיילוט תעסוקה בחינוך צפון', score: 87, deadline: '08.07.26', amount: '₪200,000', tag: '' },
-              { name: 'קק"ל — פרויקטים קהילתיים-סביבתיים 2026-2027', score: 83, deadline: '20.07.26', amount: '₪150,000', tag: '' },
+              { name: 'אתר התמיכות הממשלתי, תמיכה בפעילות רוחנית-תרבותית 2026', score: 94, deadline: '15.06.26', amount: '₪300,000', tag: 'חם' },
+              { name: 'משרד החינוך, האצת טכנולוגיות למידה מותאמת אישית', score: 91, deadline: '30.06.26', amount: '₪500,000', tag: 'חדש' },
+              { name: 'ג׳וינט תבת, פיילוט תעסוקה בחינוך צפון', score: 87, deadline: '08.07.26', amount: '₪200,000', tag: '' },
+              { name: 'קק"ל, פרויקטים קהילתיים-סביבתיים 2026-2027', score: 83, deadline: '20.07.26', amount: '₪150,000', tag: '' },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-3 px-5 py-3 hover:bg-surf2/30 transition-colors">
                 {/* Score */}
@@ -679,9 +679,9 @@ export default function LandingPage() {
                   <div className="rounded-lg rounded-bl-sm px-3 py-2 max-w-[85%] shadow-sm" style={{ background: '#DCF8C6' }}>
                     <p className="text-[12px] leading-relaxed">
                       כן. 3 קולות קוראים חדשים השבוע שמתאימים לכם:<br /><br />
-                      1. *משרד החינוך* — טכנולוגיות למידה. ציון 91%. דדליין 30.06<br />
-                      2. *ג׳וינט תבת* — תעסוקה בחינוך. ציון 87%. דדליין 08.07<br />
-                      3. *קק״ל* — פרויקטים קהילתיים. ציון 83%<br /><br />
+                      1. *משרד החינוך* טכנולוגיות למידה. ציון 91%. דדליין 30.06<br />
+                      2. *ג׳וינט תבת* תעסוקה בחינוך. ציון 87%. דדליין 08.07<br />
+                      3. *קק״ל* פרויקטים קהילתיים. ציון 83%<br /><br />
                       רוצה שאכתוב טיוטה למשרד החינוך? זה הכי דחוף.
                     </p>
                     <p className="text-[9px] text-gray-500 text-left mt-0.5">10:32</p>
@@ -714,7 +714,7 @@ export default function LandingPage() {
                 {
                   icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" /></svg>,
                   title: 'מתכתב איתך על הארגון',
-                  desc: 'שואל שאלות, לומד, בונה פרופיל. ככל שהוא יודע יותר — ההתאמות יותר מדויקות.',
+                  desc: 'שואל שאלות, לומד, בונה פרופיל. ככל שהוא יודע יותר, ההתאמות יותר מדויקות.',
                 },
                 {
                   icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>,
@@ -724,12 +724,12 @@ export default function LandingPage() {
                 {
                   icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /></svg>,
                   title: 'כותב טיוטות ישר בצ׳אט',
-                  desc: 'שולח "תכתוב הגשה לקק״ל" — ומקבל טיוטה מלאה. ישר לוואטסאפ.',
+                  desc: 'שולח "תכתוב הגשה לקק״ל" ומקבל טיוטה מלאה. ישר לוואטסאפ.',
                 },
                 {
                   icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10" /><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" /></svg>,
                   title: 'שולף מידע מהמערכת',
-                  desc: 'כל המסמכים, הפרופיל, ההיסטוריה — זמינים לו גם בוואטסאפ. לא צריך דפדפן.',
+                  desc: 'כל המסמכים, הפרופיל, ההיסטוריה, זמינים לו גם בוואטסאפ. לא צריך דפדפן.',
                 },
               ].map((item, i) => (
                 <div key={i} className="flex gap-3 items-start">
@@ -763,9 +763,9 @@ export default function LandingPage() {
                 { icon: '🕐', text: 'מבזבזים 40+ שעות בחודש על חיפוש וכתיבה' },
                 { icon: '💸', text: 'מפספסים קולות קוראים ששווים מאות אלפי שקלים' },
                 { icon: '😩', text: 'נשחקים על הגשות שחוזרות "לא מתאים"' },
-                { icon: '📅', text: 'מגלים על דדליינים — אחרי שעברו' },
+                { icon: '📅', text: 'מגלים על דדליינים אחרי שעברו' },
                 { icon: '🔄', text: 'כותבים מחדש כל פעם כי אין מערכת שזוכרת' },
-                { icon: '🎯', text: 'מגישים לקרנות לא מתאימות — ומבזבזים זמן' },
+                { icon: '🎯', text: 'מגישים לקרנות לא מתאימות ומבזבזים זמן' },
               ].map((item, i) => (
                 <div key={i} className="flex items-start gap-3 py-2">
                   <span className="text-lg">{item.icon}</span>
@@ -777,7 +777,7 @@ export default function LandingPage() {
               <p className="text-sm font-semibold text-accent">
                 עמותות שמגישות מעל 10 בקשות בשנה מגדילות את התקציב ב-35% בממוצע.
               </p>
-              <p className="text-xs text-muted mt-1">פישגולד מאפשר להגיש 10+ בחודש — לא בשנה.</p>
+              <p className="text-xs text-muted mt-1">פישגולד מאפשר להגיש 10+ בחודש, לא בשנה.</p>
             </div>
           </div>
         </RevealSection>
@@ -802,11 +802,11 @@ export default function LandingPage() {
               <div className="text-center mb-6">
                 <span className="text-4xl font-extrabold" style={{ color: '#EE7A30' }}>750</span>
                 <span className="text-sm text-muted mr-1">₪ / חודש</span>
-                <p className="text-[11px] text-muted mt-1">או 7,500₪ לשנה (חיסכון 17%)</p>
+                <p className="text-[11px] text-muted mt-1">או 6,000₪ לשנה</p>
               </div>
               <ul className="space-y-2.5 text-[13px] text-text2 mb-8 flex-1">
                 {[
-                  'כל קולות הקוראים (428+)',
+                  'כל קולות הקוראים, מתעדכנים ונסרקים כל יום',
                   'העלאת מסמכים ללא הגבלה',
                   'ציון התאמה מתקדם + נימוקים',
                   'כתיבת הגשות מלאות',
