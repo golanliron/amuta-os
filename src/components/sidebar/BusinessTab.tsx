@@ -57,7 +57,7 @@ export default function BusinessTab({ orgId, companyTypeFilter }: BusinessTabPro
   const [selectedType, setSelectedType] = useState(companyTypeFilter || '');
   const [showFilters, setShowFilters] = useState(false);
   const [matchedOnly, setMatchedOnly] = useState(true);
-  const [minRelevance, setMinRelevance] = useState<'' | '40' | '60' | '80'>('');
+  const [minRelevance, setMinRelevance] = useState<string>('');
   const [fundSubType, setFundSubType] = useState<'' | 'fund' | 'federation'>('');
 
   useEffect(() => {
@@ -113,11 +113,11 @@ export default function BusinessTab({ orgId, companyTypeFilter }: BusinessTabPro
     return result;
   }, [companies, search, minRelevance, fundSubType]);
 
-  // Count companies by relevance level
+  // Count companies by relevance level (matched = score >= 20 from API)
   const relevanceCounts = useMemo(() => {
-    const high = companies.filter(c => (c.relevance_score || 0) >= 80).length;
-    const medium = companies.filter(c => (c.relevance_score || 0) >= 60 && (c.relevance_score || 0) < 80).length;
-    const low = companies.filter(c => (c.relevance_score || 0) >= 40 && (c.relevance_score || 0) < 60).length;
+    const high = companies.filter(c => (c.relevance_score || 0) >= 70).length;
+    const medium = companies.filter(c => (c.relevance_score || 0) >= 40 && (c.relevance_score || 0) < 70).length;
+    const low = companies.filter(c => (c.relevance_score || 0) >= 20 && (c.relevance_score || 0) < 40).length;
     return { high, medium, low };
   }, [companies]);
 
@@ -282,25 +282,25 @@ export default function BusinessTab({ orgId, companyTypeFilter }: BusinessTabPro
             <div className="flex gap-1 pt-1">
               <span className="text-[9px] text-muted2 self-center ml-1">התאמה:</span>
               <button
-                onClick={() => setMinRelevance(minRelevance === '80' ? '' : '80')}
+                onClick={() => setMinRelevance(minRelevance === '70' ? '' : '70')}
                 className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors ${
-                  minRelevance === '80' ? 'bg-green-600 text-white' : 'bg-green-50 text-green-700 hover:bg-green-100'
+                  minRelevance === '70' ? 'bg-green-600 text-white' : 'bg-green-50 text-green-700 hover:bg-green-100'
                 }`}
               >
                 גבוהה ({relevanceCounts.high})
               </button>
               <button
-                onClick={() => setMinRelevance(minRelevance === '60' ? '' : '60')}
+                onClick={() => setMinRelevance(minRelevance === '40' ? '' : '40')}
                 className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors ${
-                  minRelevance === '60' ? 'bg-amber-500 text-white' : 'bg-amber-50 text-amber-700 hover:bg-amber-100'
+                  minRelevance === '40' ? 'bg-amber-500 text-white' : 'bg-amber-50 text-amber-700 hover:bg-amber-100'
                 }`}
               >
                 בינונית ({relevanceCounts.medium})
               </button>
               <button
-                onClick={() => setMinRelevance(minRelevance === '40' ? '' : '40')}
+                onClick={() => setMinRelevance(minRelevance === '20' ? '' : '20')}
                 className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors ${
-                  minRelevance === '40' ? 'bg-gray-500 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  minRelevance === '20' ? 'bg-gray-500 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
                 נמוכה ({relevanceCounts.low})
