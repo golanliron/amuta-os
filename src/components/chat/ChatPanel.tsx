@@ -277,7 +277,7 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
     chat: 'כתבו ל-Goldfish...',
     org: 'שלחו חומרים, לינק לאתר, או ספרו על הארגון...',
     opportunities: 'על איזה קול קורא לעבוד? כתבו שם או הדביקו לינק...',
-    history: 'כתבו ל-Goldfish...',
+
     business: 'שאלו על חברה, קרן, או בקשו ניסוח מייל פנייה...',
   };
 
@@ -494,7 +494,7 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
       </div>
 
       {/* Tab-specific quick actions */}
-      {activeTab !== 'chat' && activeTab !== 'history' && (
+      {activeTab !== 'chat' && (
         <div className="mx-4 mb-1 flex flex-wrap gap-1.5">
           {(TAB_QUICK_ACTIONS[activeTab] || []).map((action, i) => (
             <button
