@@ -137,18 +137,19 @@ export default function OpportunitiesTab({ stage, orgId }: OpportunitiesTabProps
       <div className="p-3 border-b border-border space-y-2">
         {/* Stats banner */}
         <div className="bg-accent/5 border border-accent/15 rounded-xl px-3 py-2.5">
-          <div className="flex items-center justify-between mb-1.5">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green animate-pulse" />
-              <span className="text-[12px] font-bold text-text">
-                {opportunities.length} הגשות פתוחות
-              </span>
+          {/* Main stat: matched for you */}
+          {matchedCount > 0 && (
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-[14px] font-extrabold text-accent">{matchedCount}</span>
+              <span className="text-[12px] font-bold text-accent">הגשות מותאמות לארגון שלכם</span>
             </div>
-            {matchedCount > 0 && (
-              <span className="text-[11px] font-bold text-accent">
-                {matchedCount} מותאמות לארגון שלכם
-              </span>
-            )}
+          )}
+          {/* Secondary: total open */}
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-2 h-2 rounded-full bg-green animate-pulse" />
+            <span className="text-[11px] text-muted">
+              מתוך {opportunities.length} הגשות פתוחות במאגר
+            </span>
           </div>
           {matchedCount > 0 && (
             <>
@@ -171,12 +172,12 @@ export default function OpportunitiesTab({ stage, orgId }: OpportunitiesTabProps
                       : 'bg-surf2 text-muted hover:text-text'
                   }`}
                 >
-                  הכל ({opportunities.length})
+                  כל ההגשות ({opportunities.length})
                 </button>
               </div>
               {/* Quick match % filter */}
               <div className="flex gap-1">
-                {(['60', '70', '80', '90'] as const).map(pct => {
+                {(['60', '70', '80'] as const).map(pct => {
                   const count = opportunities.filter(o => (matchScores.get(o.id)?.score || 0) >= parseInt(pct)).length;
                   if (count === 0) return null;
                   return (
