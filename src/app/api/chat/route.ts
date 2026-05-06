@@ -902,7 +902,7 @@ async function scanCompanies(
       .from('companies')
       .select('id, name, company_type, description, interests, donation_amount, csr_rank, contact_name, contact_email, contact_phone, contact_role, website')
       .eq('active', true)
-      .limit(954);
+      .limit(1100);
 
     if (error || !companies?.length) return '';
 
