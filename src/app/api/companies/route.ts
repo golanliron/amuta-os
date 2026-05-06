@@ -68,7 +68,7 @@ export async function GET(req: NextRequest) {
   }
 
   // Always load all companies for accurate matched count
-  const { data: companies, error } = await query.limit(954);
+  const { data: companies, error } = await query.limit(1100);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

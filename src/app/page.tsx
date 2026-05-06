@@ -91,7 +91,7 @@ function AnimatedCounter({ target, suffix = '' }: { target: string; suffix?: str
 const STATS = [
   { number: '428', suffix: '+', label: 'קולות קוראים במאגר' },
   { number: '75', suffix: '', label: 'מקורות מימון' },
-  { number: '954', suffix: '', label: 'חברות וארגונים במאגר' },
+  { number: '1,014', suffix: '', label: 'חברות וארגונים במאגר' },
   { number: '3', suffix: ' דק׳', label: 'לטיוטת הגשה ראשונה', prefix: '< ' },
 ];
 
@@ -769,7 +769,7 @@ export default function LandingPage() {
         <RevealSection>
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-3">הכל במקום אחד</h2>
           <p className="text-center text-muted mb-12 max-w-lg mx-auto">
-            428 קולות קוראים. 954 חברות וקרנות. Goldfish מחבר ביניהם.
+            428 קולות קוראים. 1,014 חברות וקרנות. Goldfish מחבר ביניהם.
           </p>
         </RevealSection>
 
@@ -817,22 +817,22 @@ export default function LandingPage() {
               </div>
               <h3 className="font-bold text-lg mb-2">חברות וארגונים</h3>
               <p className="text-[13px] text-muted leading-relaxed mb-3">
-                954 חברות, קרנות וארגונים פילנתרופיים. Goldfish מתאים לפי פרופיל הארגון ומנסח מיילי פנייה.
+                1,014 חברות, קרנות וארגונים פילנתרופיים. Goldfish מתאים לפי פרופיל הארגון ומנסח מיילי פנייה.
               </p>
               <div className="flex flex-wrap gap-1.5 mb-3">
                 {['טבע', 'אזריאלי', 'הפועלים', 'מזרחי טפחות', 'UJA', 'קרן באר שבע', 'מגדל', 'ICL'].map(name => (
                   <span key={name} className="text-[10px] px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full font-medium">{name}</span>
                 ))}
-                <span className="text-[10px] px-2 py-0.5 bg-surf2 text-muted rounded-full">+946</span>
+                <span className="text-[10px] px-2 py-0.5 bg-surf2 text-muted rounded-full">+1,006</span>
               </div>
               <div className="flex items-center gap-3 text-xs text-muted">
                 <span className="flex items-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-green-500" />
-                  954 במאגר
+                  1,014 במאגר
                 </span>
                 <span className="flex items-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-blue-500" />
-                  92 קרנות
+                  152 קרנות
                 </span>
                 <span className="flex items-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-purple-500" />
