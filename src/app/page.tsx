@@ -234,7 +234,8 @@ export default function LandingPage() {
       />
 
       {/* Nav */}
-      <nav className={`sticky top-0 z-40 px-6 py-4 max-w-6xl mx-auto fade-up transition-all duration-300 ${scrolled ? 'bg-bg/95 backdrop-blur-lg shadow-sm border-b border-border' : 'bg-bg/80'}`}>
+      <div className={`sticky top-0 z-40 w-full transition-all duration-300 ${scrolled ? 'bg-bg/95 backdrop-blur-lg shadow-sm border-b border-border' : ''}`}>
+      <nav className="px-6 py-4 max-w-6xl mx-auto fade-up">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <FishLogo size={32} />
@@ -287,6 +288,7 @@ export default function LandingPage() {
           </div>
         )}
       </nav>
+      </div>
 
       {/* Hero */}
       <section className="relative z-10 max-w-4xl mx-auto px-6 pt-20 pb-12 text-center">
