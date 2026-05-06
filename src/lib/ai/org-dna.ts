@@ -57,9 +57,10 @@ const DOMAIN_PATTERNS: { key: string; label: string; patterns: RegExp }[] = [
   { key: 'coexistence', label: 'דו-קיום', patterns: /דו.?קיום|שותפות|ערבים.{0,5}יהודים|חברה משותפת/ },
   { key: 'housing', label: 'דיור', patterns: /דיור|שכירות|מגורים|בינוי|נדל"ן|שיכון/ },
   { key: 'sport', label: 'ספורט', patterns: /ספורט|כדורגל|כדורסל|פעילות גופנית|אתלטיקה/ },
-  { key: 'community', label: 'קהילה', patterns: /קהילה|קהילתי|שכונה|מתנ"ס|מרכז קהילתי/ },
+  { key: 'community', label: 'קהילה וחברה', patterns: /קהילה|קהילתי|שכונה|מתנ"ס|מרכז קהילתי|חברתי|חברתית|שינוי חברתי/ },
+  { key: 'social_innovation', label: 'חדשנות חברתית', patterns: /חדשנות חברתית|שינוי חברתי|מוביליות חברתית|אימפקט|impact|social.?innovation|social.?tech/ },
   { key: 'legal', label: 'משפטי', patterns: /משפטי|זכויות|ייצוג|פרקליט|סיוע משפטי/ },
-  { key: 'science', label: 'מדע ומחקר', patterns: /מדע|מחקר|אקדמי|מעבדה|פטנט/ },
+  { key: 'science', label: 'מדע ומחקר', patterns: /מדע(?!.{0,5}(חברתי|קדמה))|מחקר מדעי|מעבדה|פטנט/ },
   { key: 'religion', label: 'דת', patterns: /דת|דתי|יהדות|תורה|בית כנסת|רבנות/ },
   { key: 'infrastructure', label: 'תשתיות', patterns: /תשתית|בינוי|שיפוץ|הקמה|מבנה/ },
 ];
@@ -158,6 +159,9 @@ export function extractOrgDNA(
   if (/יזמות|סטארט/.test(fullText)) themes.push('entrepreneurship');
   if (/שפה|אנגלית|עברית/.test(fullText)) themes.push('language');
   if (/הורים|משפחה/.test(fullText)) themes.push('family');
+  if (/מוביליות|ניעות חברתית|שוויון הזדמנויות/.test(fullText)) themes.push('social_mobility');
+  if (/מיצוי זכויות|זכויות סוציאליות/.test(fullText)) themes.push('rights_advocacy');
+  if (/בוגרי מערכת|בוגרים|יוצאי מערכת/.test(fullText)) themes.push('care_leavers');
 
   // Build exclude lists — populations the org clearly doesn't serve
   const allPopKeys = POPULATION_PATTERNS.map(p => p.key);
