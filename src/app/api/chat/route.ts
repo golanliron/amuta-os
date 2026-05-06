@@ -443,9 +443,12 @@ async function loadAllChunks(
       // Build a rich summary of ALL documents Goldfish has access to
       const docLines = allDocs.map(d => {
         const preview = d.parsed_text ? d.parsed_text.slice(0, 500) : '';
-        return `[${d.category || 'other'}] ${d.filename}${preview ? `:\n${preview}` : ''}`;
+        return `[${d.category || 'other'}] ${d.filename} (id: ${d.id})${preview ? `:\n${preview}` : ''}`;
       });
-      docSummary = `\n\n===== כל המסמכים שקראת (${allDocs.length} מסמכים) =====\n${docLines.join('\n\n')}`;
+      docSummary = `\n\n===== כל המסמכים שקראת (${allDocs.length} מסמכים) =====
+כשמישהו מבקש מסמך — תן לינק הורדה בפורמט: [שם הקובץ](/api/documents/ID/download)
+דוגמה: [דוח כספי 2025.pdf](/api/documents/abc-123/download)
+\n${docLines.join('\n\n')}`;
 
       // Truncate if too long, but keep as much as possible
       if (docSummary.length > 20000) {
