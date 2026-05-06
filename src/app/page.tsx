@@ -835,6 +835,10 @@ export default function LandingPage() {
                   92 קרנות
                 </span>
                 <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-purple-500" />
+                  פדרציות
+                </span>
+                <span className="flex items-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-blue-400" />
                   התאמה חכמה
                 </span>
