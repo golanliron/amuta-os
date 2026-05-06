@@ -58,6 +58,7 @@ export default function BusinessTab({ orgId, companyTypeFilter }: BusinessTabPro
   const [showFilters, setShowFilters] = useState(false);
   const [matchedOnly, setMatchedOnly] = useState(true);
   const [minRelevance, setMinRelevance] = useState<'' | '40' | '60' | '80'>('');
+  const [fundSubType, setFundSubType] = useState<'' | 'fund' | 'federation'>('');
 
   useEffect(() => {
     loadCompanies();
@@ -84,9 +85,17 @@ export default function BusinessTab({ orgId, companyTypeFilter }: BusinessTabPro
     setLoading(false);
   };
 
-  // Client-side search + relevance filtering
+  const isFederation = (name: string) =>
+    /פדרציה|federation|united jewish|jewish federations|ujc|uja/i.test(name);
+
+  // Client-side search + relevance + sub-type filtering
   const filtered = useMemo(() => {
     let result = companies;
+    if (fundSubType) {
+      result = result.filter(c =>
+        fundSubType === 'federation' ? isFederation(c.name) : !isFederation(c.name)
+      );
+    }
     if (minRelevance) {
       const min = Number(minRelevance);
       result = result.filter(c => (c.relevance_score || 0) >= min);
@@ -102,7 +111,7 @@ export default function BusinessTab({ orgId, companyTypeFilter }: BusinessTabPro
       );
     }
     return result;
-  }, [companies, search, minRelevance]);
+  }, [companies, search, minRelevance, fundSubType]);
 
   // Count companies by relevance level
   const relevanceCounts = useMemo(() => {
@@ -110,6 +119,12 @@ export default function BusinessTab({ orgId, companyTypeFilter }: BusinessTabPro
     const medium = companies.filter(c => (c.relevance_score || 0) >= 60 && (c.relevance_score || 0) < 80).length;
     const low = companies.filter(c => (c.relevance_score || 0) >= 40 && (c.relevance_score || 0) < 60).length;
     return { high, medium, low };
+  }, [companies]);
+
+  // Count funds vs federations (only relevant when companyTypeFilter is set)
+  const fundSubCounts = useMemo(() => {
+    const feds = companies.filter(c => isFederation(c.name)).length;
+    return { funds: companies.length - feds, federations: feds };
   }, [companies]);
 
   const buildCompanyContext = (company: Company) => {
@@ -166,7 +181,7 @@ export default function BusinessTab({ orgId, companyTypeFilter }: BusinessTabPro
     window.dispatchEvent(new CustomEvent('fishgold:closeSidebar'));
   };
 
-  const activeFilters = [selectedType, minRelevance].filter(Boolean).length;
+  const activeFilters = [selectedType, minRelevance, fundSubType].filter(Boolean).length;
 
   if (loading && companies.length === 0) {
     return (
@@ -233,6 +248,35 @@ export default function BusinessTab({ orgId, companyTypeFilter }: BusinessTabPro
               ))}
             </div>
           )}
+          {/* Sub-type filter for funds tab: קרנות vs פדרציות */}
+          {companyTypeFilter === 'fund' && (
+            <div className="flex gap-1">
+              <button
+                onClick={() => setFundSubType(fundSubType === '' ? '' : '')}
+                className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors ${
+                  fundSubType === '' ? 'bg-accent text-white' : 'bg-surf2 text-muted hover:text-text'
+                }`}
+              >
+                הכל ({companies.length})
+              </button>
+              <button
+                onClick={() => setFundSubType(fundSubType === 'fund' ? '' : 'fund')}
+                className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors ${
+                  fundSubType === 'fund' ? 'bg-emerald-600 text-white' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                }`}
+              >
+                קרנות ({fundSubCounts.funds})
+              </button>
+              <button
+                onClick={() => setFundSubType(fundSubType === 'federation' ? '' : 'federation')}
+                className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors ${
+                  fundSubType === 'federation' ? 'bg-blue-600 text-white' : 'bg-blue-50 text-blue-700 hover:bg-blue-100'
+                }`}
+              >
+                פדרציות ({fundSubCounts.federations})
+              </button>
+            </div>
+          )}
           {/* Relevance level filter */}
           {matchedOnly && matchedCount > 0 && (
             <div className="flex gap-1 pt-1">
@@ -295,7 +339,7 @@ export default function BusinessTab({ orgId, companyTypeFilter }: BusinessTabPro
           </span>
           {activeFilters > 0 && (
             <button
-              onClick={() => { setSelectedType(''); setMinRelevance(''); }}
+              onClick={() => { setSelectedType(''); setMinRelevance(''); setFundSubType(''); }}
               className="text-[10px] text-accent hover:underline"
             >
               נקה סינון
