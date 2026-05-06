@@ -1,5 +1,7 @@
 import { NextRequest } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
+
+export const maxDuration = 60;
 import { createAdminClient } from '@/lib/supabase/admin';
 import { createGrantsClient } from '@/lib/supabase/grants-db';
 import { FISHGOLD_SYSTEM_PROMPT, FISHGOLD_GRANT_EXPERTISE, FISHGOLD_SECTOR_KNOWLEDGE, buildContext, buildOrgContext } from '@/lib/ai/fishgold';
