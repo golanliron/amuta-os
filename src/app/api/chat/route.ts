@@ -1355,7 +1355,7 @@ export async function POST(request: NextRequest) {
       console.warn(`System prompt too large: ${systemPrompt.length} chars, truncating to ${MAX_SYSTEM_CHARS}`);
       systemPrompt = systemPrompt.slice(0, MAX_SYSTEM_CHARS) + '\n[... חלק מהמידע נחתך בגלל מגבלת גודל]';
     }
-    console.log(`System prompt size: ${systemPrompt.length} chars, messages: ${chatMessages.length}`);
+    console.log(`System prompt size: ${systemPrompt.length} chars`);
 
     // Load conversation history
     let chatMessages: { role: 'user' | 'assistant'; content: string }[] = [];
