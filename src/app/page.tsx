@@ -304,7 +304,7 @@ export default function LandingPage() {
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight mb-2 shimmer-text fade-up" style={{ animationDelay: '0.3s' }}>
           דג זהב שדג מענקים מהמים
         </h2>
-        <p className="text-sm text-muted mb-8 fade-up" style={{ animationDelay: '0.35s' }}>מערכת AI לגיוס משאבים לעמותות</p>
+        <p className="text-sm text-muted mb-8 fade-up" style={{ animationDelay: '0.35s' }}>סורק · מתאים · כותב הגשות</p>
 
         <p className="text-lg sm:text-xl text-text2 max-w-2xl mx-auto mb-12 leading-relaxed fade-up" style={{ animationDelay: '0.45s' }}>
           מכיר את הארגון שלך בעל פה. סורק מאות קולות קוראים כל יום. יודע בדיוק מה מתאים לך. וכותב הגשות שקרנות לא יכולות לסרב להן.
@@ -366,7 +366,7 @@ export default function LandingPage() {
             {/* Goldfish reply 1 */}
             <div className="flex justify-end gap-2">
               <div className="bg-surf2 border border-border rounded-2xl rounded-bl-sm px-4 py-3 max-w-[85%] text-sm leading-relaxed">
-                לא בינה מלאכותית. דג זהב עתיק. חי מאות שנים בין קרנות, ממשלות ותורמים. תשלחו חומרים. תקנון, דוחות, הגשות, מה שיש. שמעתי את זה כבר אלף פעם, אבל בואו נראה מה יש לכם.
+                דג זהב. שוחה בין קרנות, ממשלות ותורמים. מכיר את כולם בשם. תשלחו חומרים. תקנון, דוחות, הגשות, מה שיש. אני קורא, מבין ומסווג. אחר כך נדבר תכלס.
               </div>
               <div className="w-7 h-7 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0 mt-auto">
                 <FishLogo size={18} />
@@ -603,7 +603,7 @@ export default function LandingPage() {
             {
               step: '1',
               title: 'מעלים מסמכים',
-              desc: 'One pager באנגלית, מצגת, דוח כספי. כל מה שצריך לדעת על העמותה שלכם.',
+              desc: 'One pager, מצגת, דוח כספי. Goldfish קורא, מבין ומסווג אוטומטית.',
             },
             {
               step: '2',
@@ -904,7 +904,7 @@ export default function LandingPage() {
               <button
                 onClick={() => {
                   if (navigator.share) {
-                    navigator.share({ title: 'Goldfish', text: 'דג זהב עתיק שדג מענקים מהמים. מערכת גיוס משאבים חכמה לעמותות.', url: 'https://goldfish.co.il' });
+                    navigator.share({ title: 'Goldfish', text: 'דג זהב שדג מענקים מהמים. סורק, מתאים, כותב הגשות.', url: 'https://goldfish.co.il' });
                   } else {
                     navigator.clipboard.writeText('https://goldfish.co.il');
                     alert('הלינק הועתק!');
