@@ -973,11 +973,30 @@ export default function LandingPage() {
       {/* Floating fish - back to top (appears after scroll) */}
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className={`fixed bottom-6 left-6 z-50 w-14 h-14 bg-accent/10 border border-accent/20 rounded-full shadow-md hover:shadow-lg hover:scale-110 active:scale-95 transition-all flex items-center justify-center ${showBackToTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}
+        className={`fixed bottom-20 left-6 z-50 w-14 h-14 bg-accent/10 border border-accent/20 rounded-full shadow-md hover:shadow-lg hover:scale-110 active:scale-95 transition-all flex items-center justify-center ${showBackToTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}
         aria-label="חזרה למעלה"
       >
         <FishLogo size={32} />
       </button>
+
+      {/* Fixed bottom bar — always visible, app-like */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-bg/95 backdrop-blur-lg border-t border-border safe-area-bottom">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 min-w-0">
+            <FishLogo size={24} />
+            <span className="text-xs text-muted hidden sm:block">סורק. מתאים. כותב הגשות.</span>
+          </div>
+          <button
+            onClick={() => router.push('/dashboard')}
+            className="px-6 py-2.5 bg-accent text-white text-sm font-semibold rounded-xl hover:bg-accent-hover transition-all hover:scale-105 active:scale-95 whitespace-nowrap shadow-lg shadow-accent/20"
+          >
+            כניסה למערכת
+          </button>
+        </div>
+      </div>
+
+      {/* Bottom spacer so content doesn't hide behind fixed bar */}
+      <div className="h-16" />
     </div>
   );
 }
