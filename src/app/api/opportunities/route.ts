@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
           );
           return { opportunity_id: String(opp.id), score, reasoning, isNegativeMatch };
         })
-        .filter(m => !m.isNegativeMatch && m.score >= 20)
+        .filter(m => !m.isNegativeMatch && m.score >= 50)
         .sort((a, b) => b.score - a.score);
 
       matches = scored;
