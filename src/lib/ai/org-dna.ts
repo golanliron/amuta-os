@@ -205,14 +205,27 @@ export function scoreDNAMatch(
   let isNegativeMatch = false;
 
   // 1. NEGATIVE MATCH CHECK — critical, do first
+
   // Check if the opportunity targets a population the org doesn't serve
   for (const pop of POPULATION_PATTERNS) {
     if (pop.patterns.test(oppText) && orgDna.excludePopulations.includes(pop.key) && !orgDna.populations.includes(pop.key)) {
-      // The opportunity is for a population the org doesn't serve
       isNegativeMatch = true;
       reasons.push(`לא מתאים: מיועד ל${pop.label} והארגון לא עובד עם אוכלוסייה זו`);
       return { score: Math.min(score, 15), reasoning: reasons.join('. '), isNegativeMatch: true };
     }
+  }
+
+  // Check if the opportunity is in a domain the org doesn't work in
+  const oppDetectedDomainsEarly = DOMAIN_PATTERNS.filter(d => d.patterns.test(oppText)).map(d => d.key);
+  const excludedDomainHits = oppDetectedDomainsEarly.filter(d => orgDna.excludeDomains.includes(d));
+  const matchedDomainHits = oppDetectedDomainsEarly.filter(d => orgDna.domains.includes(d));
+
+  // If more excluded domains than matching domains, it's a negative match
+  if (excludedDomainHits.length > 0 && excludedDomainHits.length >= matchedDomainHits.length) {
+    const excludeLabels = excludedDomainHits.map(k => DOMAIN_PATTERNS.find(d => d.key === k)?.label || k);
+    isNegativeMatch = true;
+    reasons.push(`לא מתאים: תחום ${excludeLabels.join(', ')} לא רלוונטי לארגון`);
+    return { score: Math.min(score, 15), reasoning: reasons.join('. '), isNegativeMatch: true };
   }
 
   // 2. Population match (30 points max)
@@ -229,15 +242,22 @@ export function scoreDNAMatch(
 
   // 3. Domain match (30 points max)
   const oppDetectedDomains = DOMAIN_PATTERNS.filter(d => d.patterns.test(oppText)).map(d => d.key);
-  const catOverlap = [
-    ...oppCategories.filter(c => orgDna.domains.includes(c)),
-    ...oppDetectedDomains.filter(d => orgDna.domains.includes(d)),
-  ];
+  // Combine DB categories + text-detected domains, but prioritize text-detected
+  const allOppDomains = [...new Set([...oppCategories, ...oppDetectedDomains])];
+  const catOverlap = allOppDomains.filter(c => orgDna.domains.includes(c));
   const uniqueCatOverlap = [...new Set(catOverlap)];
+
+  // Penalize when the opportunity has excluded domains even if some categories match
+  const hasExcludedDomains = allOppDomains.some(d => orgDna.excludeDomains.includes(d));
+
   if (uniqueCatOverlap.length > 0) {
-    score += Math.min(30, uniqueCatOverlap.length * 12);
+    // Reduce points if excluded domains are also present (mixed relevance)
+    const domainPoints = hasExcludedDomains
+      ? Math.min(15, uniqueCatOverlap.length * 6)  // Half points for mixed-domain opps
+      : Math.min(30, uniqueCatOverlap.length * 12);
+    score += domainPoints;
     const domainLabels = uniqueCatOverlap.map(k => DOMAIN_PATTERNS.find(d => d.key === k)?.label || k);
-    reasons.push(`תחום: ${domainLabels.join(', ')}`);
+    reasons.push(`תחום: ${domainLabels.join(', ')}${hasExcludedDomains ? ' (חפיפה חלקית)' : ''}`);
   }
 
   // 4. Geography match (20 points max)
