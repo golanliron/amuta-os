@@ -5,7 +5,7 @@ export const maxDuration = 60;
 import { createAdminClient } from '@/lib/supabase/admin';
 import { createGrantsClient } from '@/lib/supabase/grants-db';
 import { FISHGOLD_SYSTEM_PROMPT, FISHGOLD_GRANT_EXPERTISE, FISHGOLD_SECTOR_KNOWLEDGE, buildContext, buildOrgContext } from '@/lib/ai/fishgold';
-import pdfParse from 'pdf-parse';
+// pdf-parse imported dynamically where needed to avoid serverless init failures
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -112,6 +112,7 @@ async function fetchWithJinaReader(url: string): Promise<string | null> {
 // Parse PDF buffer with pdf-parse + Claude OCR fallback
 async function parsePdfBuffer(buffer: Buffer): Promise<string> {
   try {
+    const pdfParse = (await import('pdf-parse')).default;
     const result = await pdfParse(buffer);
     if (result.text && result.text.trim().length > 20) {
       return result.text;
