@@ -240,7 +240,7 @@ export interface UploadResponse {
 
 // ===== App State =====
 
-export type SidebarTab = 'org' | 'opportunities' | 'history' | 'business';
+export type SidebarTab = 'org' | 'opportunities' | 'history' | 'business' | 'foundations';
 
 export type AppStage =
   | 0  // welcome, no docs

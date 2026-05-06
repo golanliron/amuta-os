@@ -44,16 +44,17 @@ const TYPE_ICONS: Record<string, string> = {
 interface BusinessTabProps {
   stage?: number;
   orgId?: string | null;
+  companyTypeFilter?: string;
 }
 
-export default function BusinessTab({ orgId }: BusinessTabProps) {
+export default function BusinessTab({ orgId, companyTypeFilter }: BusinessTabProps) {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [total, setTotal] = useState(0);
   const [matchedCount, setMatchedCount] = useState(0);
   const [typeCounts, setTypeCounts] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [selectedType, setSelectedType] = useState('');
+  const [selectedType, setSelectedType] = useState(companyTypeFilter || '');
   const [showFilters, setShowFilters] = useState(false);
   const [matchedOnly, setMatchedOnly] = useState(true);
   const [minRelevance, setMinRelevance] = useState<'' | '40' | '60' | '80'>('');
@@ -197,21 +198,23 @@ export default function BusinessTab({ orgId }: BusinessTabProps) {
               </button>
             </div>
           )}
-          <div className="flex flex-wrap gap-1">
-            {Object.entries(typeCounts).map(([type, count]) => (
-              <button
-                key={type}
-                onClick={() => setSelectedType(selectedType === type ? '' : type)}
-                className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors ${
-                  selectedType === type
-                    ? 'bg-accent text-white'
-                    : 'bg-surf2 text-muted hover:text-text'
-                }`}
-              >
-                {TYPE_LABELS[type] || type} ({count})
-              </button>
-            ))}
-          </div>
+          {!companyTypeFilter && (
+            <div className="flex flex-wrap gap-1">
+              {Object.entries(typeCounts).map(([type, count]) => (
+                <button
+                  key={type}
+                  onClick={() => setSelectedType(selectedType === type ? '' : type)}
+                  className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors ${
+                    selectedType === type
+                      ? 'bg-accent text-white'
+                      : 'bg-surf2 text-muted hover:text-text'
+                  }`}
+                >
+                  {TYPE_LABELS[type] || type} ({count})
+                </button>
+              ))}
+            </div>
+          )}
           {/* Relevance level filter */}
           {matchedOnly && matchedCount > 0 && (
             <div className="flex gap-1 pt-1">

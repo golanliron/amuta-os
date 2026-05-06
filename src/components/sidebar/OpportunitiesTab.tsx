@@ -141,12 +141,12 @@ export default function OpportunitiesTab({ stage, orgId }: OpportunitiesTabProps
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-green animate-pulse" />
               <span className="text-[12px] font-bold text-text">
-                {opportunities.length} קולות קוראים פתוחים
+                {opportunities.length} הגשות פתוחות
               </span>
             </div>
             {matchedCount > 0 && (
               <span className="text-[11px] font-bold text-accent">
-                {matchedCount} מתאימים לכם
+                {matchedCount} מותאמות לארגון שלכם
               </span>
             )}
           </div>
@@ -171,7 +171,7 @@ export default function OpportunitiesTab({ stage, orgId }: OpportunitiesTabProps
                       : 'bg-surf2 text-muted hover:text-text'
                   }`}
                 >
-                  כל הקולות ({opportunities.length})
+                  הכל ({opportunities.length})
                 </button>
               </div>
               {/* Quick match % filter */}
@@ -215,7 +215,7 @@ export default function OpportunitiesTab({ stage, orgId }: OpportunitiesTabProps
             </svg>
             <input
               type="text"
-              placeholder="חיפוש קול קורא, קרן, מממן..."
+              placeholder="חיפוש הגשה, קרן, מממן..."
               value={search}
               onChange={e => setSearch(e.target.value)}
               className="w-full pr-9 pl-3 py-2 text-xs bg-surf2 border border-border rounded-lg focus:border-accent focus:outline-none transition-colors"
@@ -470,7 +470,7 @@ function OpportunityCard({ opp, match }: { opp: Opportunity; match?: MatchScore 
             <polyline points="15 3 21 3 21 9" />
             <line x1="10" y1="14" x2="21" y2="3" />
           </svg>
-          לינק לקול קורא
+          לינק להגשה
         </a>
       )}
 
@@ -539,7 +539,7 @@ function OpportunityCard({ opp, match }: { opp: Opportunity; match?: MatchScore 
                 onClick={e => e.stopPropagation()}
                 className="flex-1 py-1.5 text-[10px] font-medium text-center border border-border rounded-lg hover:bg-surf2 transition-colors"
               >
-                פתח קול קורא
+                פתח הגשה
               </a>
             )}
           </div>
