@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 
-export const maxDuration = 60;
+export const maxDuration = 120;
 import { createAdminClient } from '@/lib/supabase/admin';
 import { createGrantsClient } from '@/lib/supabase/grants-db';
 import { FISHGOLD_SYSTEM_PROMPT, FISHGOLD_GRANT_EXPERTISE, FISHGOLD_SECTOR_KNOWLEDGE, buildContext, buildOrgContext } from '@/lib/ai/fishgold';
@@ -977,7 +977,11 @@ async function loadCompaniesIndex(
       return `## ${label} (${comps.length})\n${lines.join(' | ')}`;
     });
 
-    return `\n\n===== מאגר חברות וארגונים — ${companies.length} במאגר =====\nאתה מכיר את כל החברות האלה. כשמשתמש שואל על חברה — חפש במאגר הזה קודם!\n${sections.join('\n\n')}`;
+    let result = `\n\n===== מאגר חברות וארגונים — ${companies.length} במאגר =====\nאתה מכיר את כל החברות האלה. כשמשתמש שואל על חברה — חפש במאגר הזה קודם!\n${sections.join('\n\n')}`;
+    if (result.length > 30000) {
+      result = result.slice(0, 30000) + '\n[... עוד חברות]';
+    }
+    return result;
   } catch {
     return '';
   }
@@ -1058,8 +1062,8 @@ async function loadGrantsIndex(): Promise<string> {
     }
 
     // Truncate if too long (grants can be verbose)
-    if (result.length > 40000) {
-      result = result.slice(0, 40000) + '\n[... עוד קולות קוראים]';
+    if (result.length > 25000) {
+      result = result.slice(0, 25000) + '\n[... עוד קולות קוראים]';
     }
 
     return result;
@@ -1342,7 +1346,16 @@ export async function POST(request: NextRequest) {
     };
     const tabFocus = (active_tab && TAB_FOCUS[active_tab]) || '';
 
-    const systemPrompt = FISHGOLD_SYSTEM_PROMPT + FISHGOLD_GRANT_EXPERTISE + FISHGOLD_SECTOR_KNOWLEDGE + tabFocus + orgContext + docSummary + knowledge + rag + opportunityContext + companyContext + companiesIndex + grantsIndex + fundersIndex + sectorContext;
+    let systemPrompt = FISHGOLD_SYSTEM_PROMPT + FISHGOLD_GRANT_EXPERTISE + FISHGOLD_SECTOR_KNOWLEDGE + tabFocus + orgContext + docSummary + knowledge + rag + opportunityContext + companyContext + companiesIndex + grantsIndex + fundersIndex + sectorContext;
+
+    // Safety: truncate system prompt if too large (Claude Sonnet context = 200K tokens ~ 600K chars)
+    // Leave room for conversation history + response
+    const MAX_SYSTEM_CHARS = 180000;
+    if (systemPrompt.length > MAX_SYSTEM_CHARS) {
+      console.warn(`System prompt too large: ${systemPrompt.length} chars, truncating to ${MAX_SYSTEM_CHARS}`);
+      systemPrompt = systemPrompt.slice(0, MAX_SYSTEM_CHARS) + '\n[... חלק מהמידע נחתך בגלל מגבלת גודל]';
+    }
+    console.log(`System prompt size: ${systemPrompt.length} chars, messages: ${chatMessages.length}`);
 
     // Load conversation history
     let chatMessages: { role: 'user' | 'assistant'; content: string }[] = [];
@@ -1380,12 +1393,24 @@ export async function POST(request: NextRequest) {
 
     const readable = new ReadableStream({
       async start(controller) {
-        for await (const event of stream) {
-          if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
-            const text = event.delta.text;
-            fullResponse += text;
-            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text })}\n\n`));
+        try {
+          for await (const event of stream) {
+            if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
+              const text = event.delta.text;
+              fullResponse += text;
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text })}\n\n`));
+            }
           }
+        } catch (streamError) {
+          console.error('Stream error:', streamError);
+          const errMsg = streamError instanceof Error ? streamError.message : 'Unknown stream error';
+          // Send error as text so the user sees what happened
+          if (!fullResponse) {
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text: `שגיאה: ${errMsg}` })}\n\n`));
+          }
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true })}\n\n`));
+          controller.close();
+          return;
         }
 
         // Save conversation after streaming completes
