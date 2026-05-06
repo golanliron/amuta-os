@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
 
       // Send onboarding message
       const onboardMsg =
-        `שלום ${senderName || ''}! אני *Fishgold* — מומחה גיוס משאבים דיגיטלי.\n\n` +
+        `שלום ${senderName || ''}! אני *Goldfish* — מומחה גיוס משאבים דיגיטלי.\n\n` +
         `אני יודע למצוא קולות קוראים, לנתח התאמה, ולכתוב הגשות.\n\n` +
         `כדי להתחיל, שלחו לי:\n` +
         `- שם הארגון שלכם\n` +
@@ -452,7 +452,7 @@ async function handleCommand(
 
     case 'help': {
       await sendWhatsApp(phone,
-        `*Fishgold — תפריט*\n\n` +
+        `*Goldfish — תפריט*\n\n` +
         `*סריקה* — חיפוש קולות קוראים מותאמים\n` +
         `*התאמות* — ההתאמות שמצאתי\n` +
         `*הגשות* — סטטוס ההגשות\n` +

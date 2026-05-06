@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Fishgold - גייס משאבים עתיק ששוחה במים",
+  title: "Goldfish - גייס משאבים עתיק ששוחה במים",
   description: "צ'אטבוט AI לגיוס משאבים לעמותות. סריקת קולות קוראים, כתיבת הגשות, וזיכרון ארגוני.",
 };
 

@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
           Authorization: `Bearer ${resendKey}`,
         },
         body: JSON.stringify({
-          from: from_name ? `${from_name} <onboarding@resend.dev>` : 'Fishgold <onboarding@resend.dev>',
+          from: from_name ? `${from_name} <onboarding@resend.dev>` : 'Goldfish <onboarding@resend.dev>',
           to: [to],
           subject,
           html: body.replace(/\n/g, '<br>'),

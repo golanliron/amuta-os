@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 
 // GET /api/conversations?org_id=xxx&user_id=xxx
-// Returns the most recent conversation so Fishgold "remembers" the user
+// Returns the most recent conversation so Goldfish "remembers" the user
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const orgId = searchParams.get('org_id');

@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     try {
       const res = await fetch(url, {
         signal: controller.signal,
-        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; Fishgold/1.0)' },
+        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; Goldfish/1.0)' },
       });
       clearTimeout(timeout);
 

@@ -356,7 +356,7 @@ function buildShareText(opp: Opportunity): string {
   }
   if (opp.description) parts.push(`\n${opp.description.slice(0, 200)}${opp.description.length > 200 ? '...' : ''}`);
   if (opp.url) parts.push(`\nקישור: ${opp.url}`);
-  parts.push('\n-- נשלח מ-Fishgold');
+  parts.push('\n-- נשלח מ-Goldfish');
   return parts.join('\n');
 }
 

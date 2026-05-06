@@ -9,7 +9,7 @@ interface OrgTabProps {
 }
 
 // ===== Document Knowledge Categories =====
-// Each category tells Fishgold what kind of knowledge it has about the org
+// Each category tells Goldfish what kind of knowledge it has about the org
 
 interface DocCategory {
   key: string;
@@ -30,7 +30,7 @@ const DOC_CATEGORIES: DocCategory[] = [
       </svg>
     ),
     examples: 'תקנון, מצגת היכרות, חזון ומשימה',
-    whyNeeded: 'Fishgold צריך להכיר את העמותה כדי לכתוב על מי אתם',
+    whyNeeded: 'Goldfish צריך להכיר את העמותה כדי לכתוב על מי אתם',
   },
   {
     key: 'programs',
@@ -43,7 +43,7 @@ const DOC_CATEGORIES: DocCategory[] = [
       </svg>
     ),
     examples: 'תיאורי תוכניות, מודל הפעלה, קהלי יעד',
-    whyNeeded: 'בלי זה Fishgold לא יודע מה העמותה עושה בפועל',
+    whyNeeded: 'בלי זה Goldfish לא יודע מה העמותה עושה בפועל',
   },
   {
     key: 'budget',
@@ -93,7 +93,7 @@ const DOC_CATEGORIES: DocCategory[] = [
       </svg>
     ),
     examples: 'בקשות מענק שהגשתם, מכתבי בקשה, דוחות לקרנות',
-    whyNeeded: 'Fishgold לומד מההגשות שלכם ומהטעויות שלכם. לא בטוח שכתבתם טוב עד עכשיו?',
+    whyNeeded: 'Goldfish לומד מההגשות שלכם ומהטעויות שלכם. לא בטוח שכתבתם טוב עד עכשיו?',
   },
 ];
 
@@ -186,7 +186,7 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
   // Delete document
   const handleDelete = async (docId: string) => {
     if (!orgId) return;
-    if (!confirm('למחוק את המסמך? Fishgold ישכח את מה שלמד ממנו.')) return;
+    if (!confirm('למחוק את המסמך? Goldfish ישכח את מה שלמד ממנו.')) return;
 
     try {
       await fetch(`/api/documents/${docId}`, {
@@ -225,10 +225,10 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
     return acc;
   }, {});
 
-  // Calculate completeness — honest assessment of what Fishgold actually knows
+  // Calculate completeness — honest assessment of what Goldfish actually knows
   const filledCategories = DOC_CATEGORIES.filter(c => (docsByCategory[c.key]?.length || 0) > 0);
 
-  // 18-point knowledge assessment — each checkpoint is something Fishgold needs to write quality submissions
+  // 18-point knowledge assessment — each checkpoint is something Goldfish needs to write quality submissions
   interface KnowledgeCheck {
     id: string;
     label: string;
@@ -469,7 +469,7 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
       {/* Knowledge completeness bar */}
       <div className="bg-surf rounded-xl border border-border p-4">
         <div className="flex items-center justify-between mb-2">
-          <h4 className="text-xs font-semibold">מה Fishgold יודע עליכם</h4>
+          <h4 className="text-xs font-semibold">מה Goldfish יודע עליכם</h4>
           <span className={`text-[11px] font-bold ${
             completeness >= 90 ? 'text-green-600' : completeness >= 60 ? 'text-amber-600' : 'text-red-500'
           }`}>
@@ -487,12 +487,12 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
         </div>
         <p className="text-[10px] text-muted2">
           {completeness >= 90
-            ? 'מצוין! Fishgold מכיר את הארגון לעומק ויכתוב הגשות מדויקות.'
+            ? 'מצוין! Goldfish מכיר את הארגון לעומק ויכתוב הגשות מדויקות.'
             : completeness >= 60
-            ? 'Fishgold מכיר אתכם חלקית. עוד חומרים וההגשות יהיו מדויקות יותר.'
+            ? 'Goldfish מכיר אתכם חלקית. עוד חומרים וההגשות יהיו מדויקות יותר.'
             : completeness >= 30
-            ? 'Fishgold צריך עוד חומר. בלי מסמכים מספיקים ההגשות לא יהיו טובות.'
-            : 'העלו מסמכים ומלאו פרטי פרופיל כדי ש-Fishgold יכיר את הארגון.'}
+            ? 'Goldfish צריך עוד חומר. בלי מסמכים מספיקים ההגשות לא יהיו טובות.'
+            : 'העלו מסמכים ומלאו פרטי פרופיל כדי ש-Goldfish יכיר את הארגון.'}
         </p>
         {/* Show what's missing — always, unless 90%+ */}
         {missingChecks.length > 0 && completeness < 90 && (
@@ -520,7 +520,7 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
           <h4 className="text-xs font-semibold">ספרו על הארגון בטקסט חופשי</h4>
         </div>
         <p className="text-[10px] text-muted2 mb-2">
-          הדביקו תיאור, העתיקו מהאתר, או פשוט כתבו. Fishgold ילמד מזה.
+          הדביקו תיאור, העתיקו מהאתר, או פשוט כתבו. Goldfish ילמד מזה.
         </p>
         <textarea
           value={freeText}
@@ -554,7 +554,7 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
             disabled={savingText}
             className="mt-2 w-full py-1.5 text-[11px] font-medium bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors disabled:opacity-50"
           >
-            {savingText ? 'שומר...' : 'שמור. Fishgold ילמד את זה'}
+            {savingText ? 'שומר...' : 'שמור. Goldfish ילמד את זה'}
           </button>
         )}
       </div>
@@ -569,7 +569,7 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
           <h4 className="text-xs font-semibold">הוסיפו קישור לאתר הארגון</h4>
         </div>
         <p className="text-[10px] text-muted2 mb-2">
-          הדביקו קישור לאתר העמותה, דף אודות, או כל דף רלוונטי. Fishgold יקרא וישמור.
+          הדביקו קישור לאתר העמותה, דף אודות, או כל דף רלוונטי. Goldfish יקרא וישמור.
         </p>
         <div className="flex gap-1.5">
           <input
@@ -593,7 +593,7 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
                 });
                 const data = await res.json();
                 if (res.ok) {
-                  setLinkStatus(`Fishgold למד מ-"${data.title || linkUrl}"`);
+                  setLinkStatus(`Goldfish למד מ-"${data.title || linkUrl}"`);
                   setLinkUrl('');
                   loadData();
                 } else {
@@ -628,7 +628,7 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
           <h4 className="text-xs font-semibold">חיבור Google Drive</h4>
         </div>
         <p className="text-[10px] text-muted2 mb-2">
-          הדביקו קישור לתיקיית Drive משותפת. Fishgold יקרא את המסמכים משם.
+          הדביקו קישור לתיקיית Drive משותפת. Goldfish יקרא את המסמכים משם.
         </p>
         <div className="flex gap-1.5">
           <input
@@ -684,7 +684,7 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
           <h4 className="text-xs font-semibold text-amber-800 dark:text-amber-400">מסמכים רשמיים מומלצים</h4>
         </div>
         <p className="text-[10px] text-muted2 mb-2">
-          העלו את המסמכים האלה כדי ש-Fishgold יוכל לצרף אותם להגשות ולמסור לקרנות כשיבקשו.
+          העלו את המסמכים האלה כדי ש-Goldfish יוכל לצרף אותם להגשות ולמסור לקרנות כשיבקשו.
         </p>
         <div className="space-y-1">
           {[

@@ -67,7 +67,7 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  // Load last conversation on mount - Fishgold remembers you
+  // Load last conversation on mount - Goldfish remembers you
   useEffect(() => {
     if (!orgId || !userId || loaded) return;
 
@@ -269,10 +269,10 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
   }, [orgId]);
 
   const placeholderByTab: Record<string, string> = {
-    chat: 'כתבו ל-Fishgold...',
+    chat: 'כתבו ל-Goldfish...',
     org: 'שלחו חומרים, לינק לאתר, או ספרו על הארגון...',
     opportunities: 'על איזה קול קורא לעבוד? כתבו שם או הדביקו לינק...',
-    history: 'כתבו ל-Fishgold...',
+    history: 'כתבו ל-Goldfish...',
     business: 'שאלו על חברה, קרן, או בקשו ניסוח מייל פנייה...',
   };
 
@@ -322,7 +322,7 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
 
         onStageChange?.(1);
 
-        // Now ask Fishgold to respond intelligently about what he learned
+        // Now ask Goldfish to respond intelligently about what he learned
         const fishgoldMsg: ChatMessage = {
           id: crypto.randomUUID(),
           role: 'assistant',
@@ -332,7 +332,7 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
         setMessages(prev => [...prev, fishgoldMsg]);
         setIsStreaming(true);
 
-        // Send the upload summary to Fishgold so he can analyze it
+        // Send the upload summary to Goldfish so he can analyze it
         const fields = data.extracted_fields ? JSON.stringify(data.extracted_fields, null, 2) : '';
         const chatPrompt = `[קובץ: "${file.name}" | קטגוריה: ${data.category || '?'}]
 סיכום: ${data.summary || 'לא זמין'}
@@ -428,7 +428,7 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
     <div className="flex flex-col h-full">
       {/* Chat header with new chat button */}
       <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-bg2/50 flex-shrink-0">
-        <span className="text-xs text-muted">Fishgold Chat</span>
+        <span className="text-xs text-muted">Goldfish Chat</span>
         <button
           onClick={startNewChat}
           className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] text-muted hover:text-accent hover:bg-surf2 rounded-lg transition-colors"
@@ -528,7 +528,7 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
               value={input}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
-              placeholder={placeholderByTab[activeTab] || 'כתבי ל-Fishgold...'}
+              placeholder={placeholderByTab[activeTab] || 'כתבי ל-Goldfish...'}
               rows={1}
               className="w-full resize-none rounded-xl border border-border bg-surf px-4 py-3 pr-12 text-sm focus:outline-none focus:border-accent transition-colors"
             />

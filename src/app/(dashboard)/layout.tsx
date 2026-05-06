@@ -59,7 +59,7 @@ function FeedbackModal({ onClose }: { onClose: () => void }) {
         ) : (
           <>
             <h3 className="font-bold text-lg mb-1">יש לכם מה להגיד?</h3>
-            <p className="text-sm text-muted mb-4">תלונות, באגים, רעיונות. Fishgold לא רגיש, תכתבו מה שיש.</p>
+            <p className="text-sm text-muted mb-4">תלונות, באגים, רעיונות. Goldfish לא רגיש, תכתבו מה שיש.</p>
             <div className="flex gap-2 mb-4">
               {types.map(t => (
                 <button
@@ -126,7 +126,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
         <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-l from-accent via-accent/40 to-transparent" />
         <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
           <FishLogo size={28} className="swim" />
-          <span className="font-semibold text-sm">Fishgold</span>
+          <span className="font-semibold text-sm">Goldfish</span>
           <span className="text-xs text-muted hidden sm:inline">| מילה של דג זהב</span>
         </Link>
         <div className="flex items-center gap-2">
@@ -142,9 +142,9 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
           <button
             onClick={() => {
               if (navigator.share) {
-                navigator.share({ title: 'Fishgold', text: 'דג זהב עתיק שדג מענקים. מערכת גיוס חכמה לעמותות.', url: 'https://amuta-os.vercel.app' });
+                navigator.share({ title: 'Goldfish', text: 'דג זהב עתיק שדג מענקים. מערכת גיוס חכמה לעמותות.', url: 'https://goldfish.co.il' });
               } else {
-                navigator.clipboard.writeText('https://amuta-os.vercel.app');
+                navigator.clipboard.writeText('https://goldfish.co.il');
                 alert('הלינק הועתק!');
               }
             }}

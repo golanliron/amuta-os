@@ -73,7 +73,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
         className="text-4xl font-bold mb-1 tracking-tight"
         style={{ color: 'var(--color-text)' }}
       >
-        Fishgold
+        Goldfish
       </h1>
       <p className="text-sm text-muted mb-10 font-light">
 מילה של דג זהב

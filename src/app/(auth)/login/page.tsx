@@ -34,7 +34,7 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <FishLogo size={64} className="mx-auto swim mb-3" />
-          <h1 className="text-2xl font-bold">Fishgold</h1>
+          <h1 className="text-2xl font-bold">Goldfish</h1>
           <p className="text-sm text-muted mt-1">גייס משאבים עתיק ששוחה במים</p>
         </div>
 

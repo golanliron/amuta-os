@@ -32,7 +32,7 @@ function buildGoogleCalendarUrl(item: DeadlineItem): string {
     `קול קורא: ${item.title}\n` +
     (item.funder ? `מממן: ${item.funder}\n` : '') +
     (item.url ? `קישור: ${item.url}\n` : '') +
-    '\n— Fishgold'
+    '\n— Goldfish'
   );
 
   return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dateStr}/${endStr}&details=${details}`;

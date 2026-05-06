@@ -437,7 +437,7 @@ async function loadAllChunks(
 
     let docSummary = '';
     if (allDocs?.length) {
-      // Build a rich summary of ALL documents Fishgold has access to
+      // Build a rich summary of ALL documents Goldfish has access to
       const docLines = allDocs.map(d => {
         const preview = d.parsed_text ? d.parsed_text.slice(0, 500) : '';
         return `[${d.category || 'other'}] ${d.filename}${preview ? `:\n${preview}` : ''}`;

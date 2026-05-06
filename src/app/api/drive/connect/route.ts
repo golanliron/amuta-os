@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
       file_type: 'link',
       storage_path: `drive://${folderId}`,
       category: 'other',
-      parsed_text: `קישור Google Drive: ${drive_url}\nFolder ID: ${folderId}\nוודאו שהתיקייה משותפת כדי שFishgold יוכל לגשת.`,
+      parsed_text: `קישור Google Drive: ${drive_url}\nFolder ID: ${folderId}\nוודאו שהתיקייה משותפת כדי שGoldfish יוכל לגשת.`,
       metadata: { drive_folder_id: folderId, drive_url, type: 'drive_link' },
       status: 'ready',
     });
@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
       folder_id: folderId,
       files_found: filesImported,
       message: filesImported > 0
-        ? `נמצאו ${filesImported} קבצים. Fishgold מעבד.`
+        ? `נמצאו ${filesImported} קבצים. Goldfish מעבד.`
         : 'קישור Drive נשמר. ודאו שהתיקייה משותפת (Anyone with the link).',
     });
   } catch (error) {

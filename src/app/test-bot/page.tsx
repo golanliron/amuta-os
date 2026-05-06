@@ -80,7 +80,7 @@ export default function TestBotPage() {
             F
           </div>
           <div>
-            <div className="text-white font-medium">Fishgold</div>
+            <div className="text-white font-medium">Goldfish</div>
             <div className="text-xs text-gray-400">סימולציה — לא נשלח לוואטסאפ אמיתי</div>
           </div>
         </div>

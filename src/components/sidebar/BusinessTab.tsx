@@ -111,7 +111,7 @@ export default function BusinessTab({ orgId }: BusinessTabProps) {
     return { high, medium, low };
   }, [companies]);
 
-  const handleAskFishgold = (company: Company) => {
+  const handleAskGoldfish = (company: Company) => {
     const typeLabel = TYPE_LABELS[company.company_type] || company.company_type;
     const parts = [
       `[חברה מהמאגר שלך — השתמש במידע הזה!]`,
@@ -295,7 +295,7 @@ export default function BusinessTab({ orgId }: BusinessTabProps) {
             <CompanyCard
               key={company.id}
               company={company}
-              onAskFishgold={handleAskFishgold}
+              onAskGoldfish={handleAskGoldfish}
               onDraftEmail={handleDraftEmail}
             />
           ))
@@ -307,11 +307,11 @@ export default function BusinessTab({ orgId }: BusinessTabProps) {
 
 function CompanyCard({
   company,
-  onAskFishgold,
+  onAskGoldfish,
   onDraftEmail,
 }: {
   company: Company;
-  onAskFishgold: (c: Company) => void;
+  onAskGoldfish: (c: Company) => void;
   onDraftEmail: (c: Company) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
@@ -490,7 +490,7 @@ function CompanyCard({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                onAskFishgold(company);
+                onAskGoldfish(company);
               }}
               className="flex-1 py-1.5 text-[10px] font-medium bg-accent text-white rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-1"
             >
@@ -504,7 +504,7 @@ function CompanyCard({
               >
                 <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
               </svg>
-              שאל את Fishgold
+              שאל את Goldfish
             </button>
             <button
               onClick={(e) => {

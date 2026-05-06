@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'מדיניות פרטיות | Fishgold',
+  title: 'מדיניות פרטיות | Goldfish',
 };
 
 export default function PrivacyPage() {
@@ -9,7 +9,7 @@ export default function PrivacyPage() {
     <div className="min-h-screen bg-bg" dir="rtl">
       <nav className="flex items-center justify-between px-6 py-4 max-w-4xl mx-auto">
         <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <span className="font-bold text-lg">Fishgold</span>
+          <span className="font-bold text-lg">Goldfish</span>
         </Link>
       </nav>
 
@@ -20,7 +20,7 @@ export default function PrivacyPage() {
         <div className="space-y-8 text-sm text-text2 leading-relaxed">
           <section>
             <h2 className="text-lg font-semibold text-text mb-3">1. כללי</h2>
-            <p>Fishgold ("המערכת", "אנחנו") מחויבת להגנה על פרטיות המשתמשים. מדיניות זו מסבירה אילו נתונים אנו אוספים, כיצד אנו משתמשים בהם ומהן זכויותיכם.</p>
+            <p>Goldfish ("המערכת", "אנחנו") מחויבת להגנה על פרטיות המשתמשים. מדיניות זו מסבירה אילו נתונים אנו אוספים, כיצד אנו משתמשים בהם ומהן זכויותיכם.</p>
           </section>
 
           <section>
@@ -85,13 +85,13 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-lg font-semibold text-text mb-3">9. יצירת קשר</h2>
-            <p>לשאלות בנושא פרטיות, פנו אלינו: <a href="mailto:support@fishgold.co.il" className="text-accent hover:underline">support@fishgold.co.il</a></p>
+            <p>לשאלות בנושא פרטיות, פנו אלינו: <a href="mailto:support@goldfish.co.il" className="text-accent hover:underline">support@goldfish.co.il</a></p>
           </section>
         </div>
       </main>
 
       <footer className="border-t border-border py-6 px-6 text-center">
-        <p className="text-xs text-muted2">&copy; {new Date().getFullYear()} Fishgold. כל הזכויות שמורות.</p>
+        <p className="text-xs text-muted2">&copy; {new Date().getFullYear()} Goldfish. כל הזכויות שמורות.</p>
       </footer>
     </div>
   );

@@ -125,7 +125,7 @@ export default function HistoryTab({ stage, orgId }: HistoryTabProps) {
                 <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
               </svg>
               <p className="text-xs text-muted2">עדיין אין שיחות</p>
-              <p className="text-[10px] text-muted2 mt-1">שלחו הודעה ל-Fishgold כדי להתחיל</p>
+              <p className="text-[10px] text-muted2 mt-1">שלחו הודעה ל-Goldfish כדי להתחיל</p>
             </div>
           ) : (
             conversations.map(conv => (
@@ -160,7 +160,7 @@ export default function HistoryTab({ stage, orgId }: HistoryTabProps) {
                 <polyline points="14 2 14 8 20 8" />
               </svg>
               <p className="text-xs text-muted2">עדיין אין הגשות</p>
-              <p className="text-[10px] text-muted2 mt-1">בקשו מ-Fishgold לכתוב הגשה</p>
+              <p className="text-[10px] text-muted2 mt-1">בקשו מ-Goldfish לכתוב הגשה</p>
             </div>
           ) : (
             submissions.map(sub => {

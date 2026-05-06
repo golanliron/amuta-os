@@ -98,7 +98,7 @@ const STATS = [
 const ADVANTAGES = [
   {
     title: 'חוסך 90% מהזמן',
-    desc: 'מה שלוקח 3 שעות חיפוש + 2 ימי כתיבה, Fishgold עושה בדקות.',
+    desc: 'מה שלוקח 3 שעות חיפוש + 2 ימי כתיבה, Goldfish עושה בדקות.',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
         <circle cx="12" cy="12" r="10" />
@@ -108,7 +108,7 @@ const ADVANTAGES = [
   },
   {
     title: 'מכיר 75 מקורות מימון',
-    desc: 'ממשלתי, פרטי, בינלאומי, עסקי. Fishgold מכסה את כולם.',
+    desc: 'ממשלתי, פרטי, בינלאומי, עסקי. Goldfish מכסה את כולם.',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
         <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" />
@@ -117,7 +117,7 @@ const ADVANTAGES = [
   },
   {
     title: 'לא שוכח כלום',
-    desc: 'מעלים מסמך פעם אחת. Fishgold זוכר כל מספר, כל פרויקט, כל הישג.',
+    desc: 'מעלים מסמך פעם אחת. Goldfish זוכר כל מספר, כל פרויקט, כל הישג.',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
         <path d="M12 2L2 7l10 5 10-5-10-5z" />
@@ -192,7 +192,7 @@ const FEATURES = [
       </svg>
     ),
     title: 'מכיר את הארגון שלך',
-    desc: 'מעלים מסמכים פעם אחת. Fishgold זוכר הכל ויודע לשלוף כל נתון ברגע.',
+    desc: 'מעלים מסמכים פעם אחת. Goldfish זוכר הכל ויודע לשלוף כל נתון ברגע.',
   },
   {
     icon: (
@@ -203,7 +203,7 @@ const FEATURES = [
       </svg>
     ),
     title: 'מעיר אותך',
-    desc: 'דדליינים, דחיפות, הזדמנויות שעומדות לפוג. Fishgold לא מחכה שתשאלו.',
+    desc: 'דדליינים, דחיפות, הזדמנויות שעומדות לפוג. Goldfish לא מחכה שתשאלו.',
   },
 ];
 
@@ -234,12 +234,12 @@ export default function LandingPage() {
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <FishLogo size={32} />
-            <span className="font-bold text-lg tracking-tight">Fishgold</span>
+            <span className="font-bold text-lg tracking-tight">Goldfish</span>
           </Link>
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-6">
-            <a href="#why" className="text-sm text-text2 hover:text-accent transition-colors">למה Fishgold</a>
+            <a href="#why" className="text-sm text-text2 hover:text-accent transition-colors">למה Goldfish</a>
             <a href="#how" className="text-sm text-text2 hover:text-accent transition-colors">איך זה עובד</a>
             <a href="#whatsapp" className="text-sm text-text2 hover:text-accent transition-colors">גם בוואטסאפ שלך</a>
             <a href="#pricing" className="text-sm text-text2 hover:text-accent transition-colors">מחירים</a>
@@ -270,7 +270,7 @@ export default function LandingPage() {
         {/* Mobile menu */}
         {mobileMenu && (
           <div className="md:hidden mt-3 bg-surf border border-border rounded-2xl p-4 space-y-3 shadow-lg fade-up">
-            <a href="#why" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">למה Fishgold</a>
+            <a href="#why" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">למה Goldfish</a>
             <a href="#how" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">איך זה עובד</a>
             <a href="#whatsapp" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">גם בוואטסאפ שלך</a>
             <a href="#pricing" onClick={() => setMobileMenu(false)} className="block text-sm font-medium py-2 px-3 rounded-xl hover:bg-surf2 transition-colors">מחירים</a>
@@ -299,7 +299,7 @@ export default function LandingPage() {
         </div>
 
         <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold leading-tight mb-3 tracking-tight fade-up" style={{ animationDelay: '0.15s' }}>
-          Fishgold
+          Goldfish
         </h1>
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight mb-2 shimmer-text fade-up" style={{ animationDelay: '0.3s' }}>
           דג זהב שדג מענקים מהמים
@@ -332,7 +332,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* About Fishgold - Chat simulation */}
+      {/* About Goldfish - Chat simulation */}
       <RevealSection className="relative z-10 max-w-3xl mx-auto px-6 pb-20" type="reveal-scale">
         <div className="bg-surf border border-border rounded-3xl overflow-hidden border-glow relative">
           {/* Chat header */}
@@ -344,7 +344,7 @@ export default function LandingPage() {
               <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green rounded-full border-2 border-white" />
             </div>
             <div className="flex-1">
-              <h3 className="font-bold text-sm">Fishgold</h3>
+              <h3 className="font-bold text-sm">Goldfish</h3>
               <p className="text-[10px] text-green font-medium">אונליין עכשיו</p>
             </div>
             <div className="flex gap-1">
@@ -363,7 +363,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Fishgold reply 1 */}
+            {/* Goldfish reply 1 */}
             <div className="flex justify-end gap-2">
               <div className="bg-surf2 border border-border rounded-2xl rounded-bl-sm px-4 py-3 max-w-[85%] text-sm leading-relaxed">
                 לא בינה מלאכותית. דג זהב עתיק. חי מאות שנים בין קרנות, ממשלות ותורמים. תשלחו חומרים. תקנון, דוחות, הגשות, מה שיש. שמעתי את זה כבר אלף פעם, אבל בואו נראה מה יש לכם.
@@ -380,7 +380,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Fishgold reply 2 - capabilities */}
+            {/* Goldfish reply 2 - capabilities */}
             <div className="flex justify-end gap-2">
               <div className="bg-surf2 border border-border rounded-2xl rounded-bl-sm px-4 py-3 max-w-[85%] text-sm leading-relaxed space-y-3">
                 <p>אני לא נחמד וגם לא מפרגן סתם. ככה זה:</p>
@@ -461,7 +461,7 @@ export default function LandingPage() {
           {/* Fake input bar */}
           <div className="px-6 py-3 border-t border-border bg-surf flex items-center gap-2">
             <div className="flex-1 bg-surf2 rounded-xl px-4 py-2.5 text-[13px] text-muted2">
-              כתבו לFishgold...
+              כתבו לGoldfish...
             </div>
             <button
               onClick={() => router.push('/dashboard')}
@@ -566,7 +566,7 @@ export default function LandingPage() {
       {/* Advantages */}
       <section id="why" className="relative z-10 max-w-5xl mx-auto px-6 pb-24">
         <RevealSection>
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-3">למה Fishgold?</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-3">למה Goldfish?</h2>
           <p className="text-center text-muted mb-12 max-w-lg mx-auto">
             6 סיבות לתת לדג עתיק לעשות את העבודה
           </p>
@@ -613,7 +613,7 @@ export default function LandingPage() {
             {
               step: '3',
               title: 'לוחצים "כתוב הגשה"',
-              desc: 'Fishgold קורא את הקול הקורא, ומוציא טיוטה מלאה. תוך דקות.',
+              desc: 'Goldfish קורא את הקול הקורא, ומוציא טיוטה מלאה. תוך דקות.',
             },
           ].map((item, i) => (
             <RevealSection key={item.step} type="reveal-scale" delay={`stagger-${i + 1}`}>
@@ -635,7 +635,7 @@ export default function LandingPage() {
       {/* Features grid */}
       <section className="relative z-10 max-w-5xl mx-auto px-6 pb-24">
         <RevealSection>
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-12">מה Fishgold עושה</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-12">מה Goldfish עושה</h2>
         </RevealSection>
         <div className="grid sm:grid-cols-2 gap-5">
           {FEATURES.map((f, i) => (
@@ -662,7 +662,7 @@ export default function LandingPage() {
         <RevealSection>
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-3">גם בוואטסאפ</h2>
           <p className="text-center text-muted mb-12 max-w-lg mx-auto">
-            לא צריך לפתוח דפדפן. Fishgold עובד ישר מהוואטסאפ.
+            לא צריך לפתוח דפדפן. Goldfish עובד ישר מהוואטסאפ.
           </p>
         </RevealSection>
 
@@ -676,7 +676,7 @@ export default function LandingPage() {
                   <FishLogo size={22} />
                 </div>
                 <div className="flex-1">
-                  <p className="text-white text-sm font-semibold">Fishgold</p>
+                  <p className="text-white text-sm font-semibold">Goldfish</p>
                   <p className="text-white/70 text-[10px]">online</p>
                 </div>
               </div>
@@ -691,7 +691,7 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                {/* Fishgold reply */}
+                {/* Goldfish reply */}
                 <div className="flex justify-end">
                   <div className="rounded-lg rounded-bl-sm px-3 py-2 max-w-[85%] shadow-sm" style={{ background: '#DCF8C6' }}>
                     <p className="text-[12px] leading-relaxed">
@@ -713,7 +713,7 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                {/* Fishgold writing */}
+                {/* Goldfish writing */}
                 <div className="flex justify-end">
                   <div className="rounded-lg rounded-bl-sm px-3 py-2 shadow-sm" style={{ background: '#DCF8C6' }}>
                     <p className="text-[12px]">כותב. 3 דקות.</p>
@@ -736,7 +736,7 @@ export default function LandingPage() {
                 {
                   icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>,
                   title: 'מתריע על הגשות דחופות',
-                  desc: 'דדליין עוד 5 ימים? Fishgold שולח הודעה. לא מחכה שתפתחו את המחשב.',
+                  desc: 'דדליין עוד 5 ימים? Goldfish שולח הודעה. לא מחכה שתפתחו את המחשב.',
                 },
                 {
                   icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /></svg>,
@@ -769,7 +769,7 @@ export default function LandingPage() {
         <RevealSection>
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-3">הכל במקום אחד</h2>
           <p className="text-center text-muted mb-12 max-w-lg mx-auto">
-            428 קולות קוראים. 954 חברות וקרנות. Fishgold מחבר ביניהם.
+            428 קולות קוראים. 954 חברות וקרנות. Goldfish מחבר ביניהם.
           </p>
         </RevealSection>
 
@@ -817,7 +817,7 @@ export default function LandingPage() {
               </div>
               <h3 className="font-bold text-lg mb-2">חברות וארגונים</h3>
               <p className="text-[13px] text-muted leading-relaxed mb-3">
-                954 חברות, קרנות וארגונים פילנתרופיים. Fishgold מתאים לפי פרופיל הארגון ומנסח מיילי פנייה.
+                954 חברות, קרנות וארגונים פילנתרופיים. Goldfish מתאים לפי פרופיל הארגון ומנסח מיילי פנייה.
               </p>
               <div className="flex flex-wrap gap-1.5 mb-3">
                 {['טבע', 'אזריאלי', 'הפועלים', 'מזרחי טפחות', 'UJA', 'קרן באר שבע', 'מגדל', 'ICL'].map(name => (
@@ -875,7 +875,7 @@ export default function LandingPage() {
                   'לוח דדליינים + התראות מייל',
                   'סנכרון Google Calendar',
                   'צ׳אט ללא הגבלה',
-                  'וואטסאפ ישיר להתכתבות עם Fishgold',
+                  'וואטסאפ ישיר להתכתבות עם Goldfish',
                   'עד 5 משתמשים',
                   'חיבור Google Drive',
                   'דוחות גיוס חודשיים',
@@ -904,9 +904,9 @@ export default function LandingPage() {
               <button
                 onClick={() => {
                   if (navigator.share) {
-                    navigator.share({ title: 'Fishgold', text: 'דג זהב עתיק שדג מענקים מהמים. מערכת גיוס משאבים חכמה לעמותות.', url: 'https://amuta-os.vercel.app' });
+                    navigator.share({ title: 'Goldfish', text: 'דג זהב עתיק שדג מענקים מהמים. מערכת גיוס משאבים חכמה לעמותות.', url: 'https://goldfish.co.il' });
                   } else {
-                    navigator.clipboard.writeText('https://amuta-os.vercel.app');
+                    navigator.clipboard.writeText('https://goldfish.co.il');
                     alert('הלינק הועתק!');
                   }
                 }}
@@ -954,14 +954,14 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <FishLogo size={20} />
-            <span className="text-sm font-medium">Fishgold</span>
+            <span className="text-sm font-medium">Goldfish</span>
             <span className="text-xs text-muted">| מילה של דג זהב</span>
           </Link>
           <div className="flex items-center gap-4">
             <a href="#how" className="text-xs text-muted2 hover:text-accent transition-colors">איך זה עובד</a>
             <a href="#pricing" className="text-xs text-muted2 hover:text-accent transition-colors">מחירים</a>
             <Link href="/privacy" className="text-xs text-muted2 hover:text-accent transition-colors">מדיניות פרטיות</Link>
-            <p className="text-xs text-muted2">&copy; {new Date().getFullYear()} Fishgold. כל הזכויות שמורות.</p>
+            <p className="text-xs text-muted2">&copy; {new Date().getFullYear()} Goldfish. כל הזכויות שמורות.</p>
           </div>
         </div>
       </footer>
