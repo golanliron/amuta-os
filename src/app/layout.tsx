@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import CookieConsent from "@/components/CookieConsent";
 
 export const metadata: Metadata = {
   title: "Goldfish - גייס משאבים עתיק ששוחה במים",
@@ -15,6 +16,7 @@ export default function RootLayout({
     <html lang="he" dir="rtl" className="h-full">
       <body className="min-h-full bg-bg text-text font-rubik antialiased">
         {children}
+        <CookieConsent />
       </body>
     </html>
   );
