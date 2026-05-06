@@ -270,6 +270,56 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
     .sort((a, b) => b.weight - a.weight)
     .slice(0, 4); // Show top 4 missing items
 
+  // ===== Document Alerts: expiry + required docs =====
+  interface DocAlert {
+    type: 'expired' | 'expiring' | 'missing';
+    label: string;
+    detail: string;
+  }
+
+  const docAlerts: DocAlert[] = [];
+  const now = new Date();
+
+  // Check for expired / expiring documents
+  documents.forEach(doc => {
+    const meta = (doc.metadata || {}) as Record<string, unknown>;
+    const validUntil = meta.valid_until as string | undefined;
+    if (validUntil) {
+      const expDate = new Date(validUntil);
+      const daysLeft = Math.floor((expDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      const docType = (meta.doc_type as string) || doc.filename;
+      if (daysLeft < 0) {
+        docAlerts.push({ type: 'expired', label: docType, detail: `פג תוקף ב-${validUntil}` });
+      } else if (daysLeft < 90) {
+        docAlerts.push({ type: 'expiring', label: docType, detail: `פג בעוד ${daysLeft} ימים` });
+      }
+    }
+  });
+
+  // Check for required documents that are missing
+  const REQUIRED_DOCS = [
+    { pattern: /ניהול תקין/i, label: 'אישור ניהול תקין' },
+    { pattern: /סעיף 46|saif.?46/i, label: 'אישור סעיף 46' },
+    { pattern: /ניכוי מס/i, label: 'אישור ניכוי מס' },
+    { pattern: /רישום עמותה|תעודת רישום/i, label: 'תעודת רישום עמותה' },
+    { pattern: /דוח כספי|כספי.*מבוקר/i, label: 'דוח כספי מבוקר' },
+    { pattern: /תקציב.*מאושר|מאושר.*תקציב/i, label: 'תקציב מאושר' },
+    { pattern: /מילולי|דוח פעילות/i, label: 'דוח מילולי / דוח פעילות' },
+    { pattern: /ניהול ספרים/i, label: 'אישור ניהול ספרים' },
+  ];
+
+  const docTexts = documents.map(d => {
+    const meta = (d.metadata || {}) as Record<string, unknown>;
+    return `${d.filename} ${(meta.doc_type as string) || ''} ${(meta.summary as string) || ''}`;
+  });
+
+  REQUIRED_DOCS.forEach(req => {
+    const found = docTexts.some(t => req.pattern.test(t));
+    if (!found) {
+      docAlerts.push({ type: 'missing', label: req.label, detail: 'נדרש להגשות' });
+    }
+  });
+
   return (
     <div className="space-y-4">
       {/* Hidden file input */}
@@ -509,6 +559,41 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
           </div>
         )}
       </div>
+
+      {/* Document alerts — expired, expiring, missing */}
+      {docAlerts.length > 0 && (
+        <div className="bg-red-50 dark:bg-red-950/30 rounded-xl border border-red-200 dark:border-red-900 p-3">
+          <div className="flex items-center gap-1.5 mb-2">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-red-500 flex-shrink-0">
+              <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+              <line x1="12" y1="9" x2="12" y2="13" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+            <h4 className="text-[11px] font-bold text-red-600 dark:text-red-400">התראות מסמכים</h4>
+            <span className="text-[10px] text-red-400 mr-auto">{docAlerts.length}</span>
+          </div>
+          <ul className="space-y-1">
+            {docAlerts.map((alert, i) => (
+              <li key={i} className="flex items-start gap-1.5 text-[10px]">
+                <span className={`mt-0.5 w-2 h-2 rounded-full flex-shrink-0 ${
+                  alert.type === 'expired' ? 'bg-red-500' :
+                  alert.type === 'expiring' ? 'bg-amber-500' : 'bg-gray-400'
+                }`} />
+                <div>
+                  <span className={`font-medium ${
+                    alert.type === 'expired' ? 'text-red-600 dark:text-red-400' :
+                    alert.type === 'expiring' ? 'text-amber-600 dark:text-amber-400' : 'text-muted'
+                  }`}>
+                    {alert.type === 'expired' ? '⏰ ' : alert.type === 'expiring' ? '⚠️ ' : '📋 '}
+                    {alert.label}
+                  </span>
+                  <span className="text-muted2 mr-1">— {alert.detail}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {/* Quick text description */}
       <div className="rounded-xl border border-border bg-surf p-3">

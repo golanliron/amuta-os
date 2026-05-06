@@ -434,7 +434,7 @@ async function loadAllChunks(
     // Load ALL documents list (for completeness awareness)
     const { data: allDocs } = await supabase
       .from('documents')
-      .select('id, filename, category, file_type, parsed_text, created_at')
+      .select('id, filename, category, file_type, parsed_text, created_at, metadata')
       .eq('org_id', orgId)
       .order('created_at', { ascending: false });
 
@@ -450,6 +450,59 @@ async function loadAllChunks(
       // Truncate if too long, but keep as much as possible
       if (docSummary.length > 20000) {
         docSummary = docSummary.slice(0, 20000) + '\n[... עוד מסמכים]';
+      }
+
+      // ===== Document Alerts: expired, expiring, missing =====
+      const now = new Date();
+      const alertLines: string[] = [];
+
+      // Check expiry dates
+      allDocs.forEach(d => {
+        const meta = (d.metadata || {}) as Record<string, unknown>;
+        const validUntil = meta.valid_until as string | undefined;
+        if (validUntil) {
+          const expDate = new Date(validUntil);
+          const daysLeft = Math.floor((expDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+          const docType = (meta.doc_type as string) || d.filename;
+          if (daysLeft < 0) {
+            alertLines.push(`🔴 פג תוקף: ${docType} (פג ב-${validUntil})`);
+          } else if (daysLeft < 90) {
+            alertLines.push(`🟡 עומד לפוג: ${docType} (בעוד ${daysLeft} ימים, ${validUntil})`);
+          }
+        }
+      });
+
+      // Check required documents
+      const REQUIRED_DOCS = [
+        { pattern: /ניהול תקין/i, label: 'אישור ניהול תקין' },
+        { pattern: /סעיף 46|saif.?46/i, label: 'אישור סעיף 46' },
+        { pattern: /ניכוי מס/i, label: 'אישור ניכוי מס' },
+        { pattern: /רישום עמותה|תעודת רישום/i, label: 'תעודת רישום עמותה' },
+        { pattern: /דוח כספי|כספי.*מבוקר/i, label: 'דוח כספי מבוקר' },
+        { pattern: /תקציב.*מאושר|מאושר.*תקציב/i, label: 'תקציב מאושר' },
+        { pattern: /מילולי|דוח פעילות/i, label: 'דוח מילולי / דוח פעילות' },
+        { pattern: /ניהול ספרים/i, label: 'אישור ניהול ספרים' },
+      ];
+
+      const docTexts = allDocs.map(d => {
+        const meta = (d.metadata || {}) as Record<string, unknown>;
+        return `${d.filename} ${(meta.doc_type as string) || ''} ${(meta.summary as string) || ''}`;
+      });
+
+      REQUIRED_DOCS.forEach(req => {
+        const found = docTexts.some(t => req.pattern.test(t));
+        if (!found) {
+          alertLines.push(`⚪ חסר: ${req.label}`);
+        }
+      });
+
+      if (alertLines.length > 0) {
+        docSummary += `\n\n===== התראות מסמכים =====
+${alertLines.join('\n')}
+
+**חובה:** כשהמשתמש שואל על הגשות, מסמכים, או מוכנות — ציין את ההתראות הללו.
+אם יש מסמכים שפג תוקפם או עומדים לפוג — הזהר את המשתמש באופן יזום.
+אם חסרים מסמכים בסיסיים — ציין אילו חסרים ומדוע הם נדרשים.`;
       }
     }
 
@@ -1343,6 +1396,9 @@ export async function POST(request: NextRequest) {
 - ניתוח חוזקות וחולשות של המצגת הארגונית
 - המלצות לשדרוג התיאור, החזון והמשימה
 - זיהוי מידע חסר שישפר את ההתאמה למענקים ולתורמים
+- **מסמכים רשמיים:** אם יש התראות מסמכים (פגי תוקף, חסרים) — הזכר אותן באופן יזום. עמותה שמגישה בקשה בלי מסמכים תקפים תיפסל.
+- מסמכים נדרשים בכל הגשה: ניהול תקין, סעיף 46, ניכוי מס, רישום עמותה, דוח כספי מבוקר, תקציב מאושר
+- מסמכים נדרשים ברוב ההגשות: דוח מילולי, ניהול ספרים, פרוטוקול אסיפה, CV מנכ"ל/ית
 אם המשתמש שואל שאלה כללית, ענה רגיל. אבל אם ההודעה לא ברורה, הנח שהיא קשורה לפרופיל הארגון.`,
     };
     const tabFocus = (active_tab && TAB_FOCUS[active_tab]) || '';
