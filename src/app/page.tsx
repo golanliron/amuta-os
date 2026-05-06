@@ -211,15 +211,19 @@ export default function LandingPage() {
   const router = useRouter();
   const [mobileMenu, setMobileMenu] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setShowBackToTop(window.scrollY > 400);
+    const onScroll = () => {
+      setShowBackToTop(window.scrollY > 400);
+      setScrolled(window.scrollY > 20);
+    };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   return (
-    <div className="min-h-screen bg-bg overflow-hidden" dir="rtl">
+    <div className="min-h-screen bg-bg overflow-x-clip" dir="rtl">
       {/* Subtle dot pattern - static, no GPU cost */}
       <div
         className="absolute inset-0 opacity-[0.02] pointer-events-none"
@@ -230,7 +234,7 @@ export default function LandingPage() {
       />
 
       {/* Nav */}
-      <nav className="sticky top-0 z-40 px-6 py-4 max-w-6xl mx-auto fade-up bg-bg/90 md:bg-bg/80 md:backdrop-blur-lg">
+      <nav className={`sticky top-0 z-40 px-6 py-4 max-w-6xl mx-auto fade-up transition-all duration-300 ${scrolled ? 'bg-bg/95 backdrop-blur-lg shadow-sm border-b border-border' : 'bg-bg/80'}`}>
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <FishLogo size={32} />
