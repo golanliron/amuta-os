@@ -112,7 +112,7 @@ export default function BusinessTab({ orgId, companyTypeFilter }: BusinessTabPro
     return { high, medium, low };
   }, [companies]);
 
-  const handleAskGoldfish = (company: Company) => {
+  const buildCompanyContext = (company: Company) => {
     const typeLabel = TYPE_LABELS[company.company_type] || company.company_type;
     const parts = [
       `[חברה מהמאגר שלך — השתמש במידע הזה!]`,
@@ -127,7 +127,25 @@ export default function BusinessTab({ orgId, companyTypeFilter }: BusinessTabPro
     if (company.website) parts.push(`אתר: ${company.website}`);
     if (company.donation_amount) parts.push(`סכום תרומות: ${formatAmount(company.donation_amount)} ש"ח`);
     if (company.csr_rank) parts.push(`דירוג CSR: #${company.csr_rank}`);
+    return parts;
+  };
+
+  const handleAskGoldfish = (company: Company) => {
+    const parts = buildCompanyContext(company);
     parts.push(`\nנתח את החברה הזאת. למי הם תורמים? למה שווה לפנות אליהם? מה החיבור לארגון שלנו? תציע דרך פנייה.`);
+    window.dispatchEvent(new CustomEvent('fishgold:send', { detail: parts.join('\n') }));
+    window.dispatchEvent(new CustomEvent('fishgold:closeSidebar'));
+  };
+
+  const handleScanFund = (company: Company) => {
+    const parts = buildCompanyContext(company);
+    parts.push(`\nסרוק לעומק את ${company.name}:`);
+    parts.push(`1. למי הם תרמו? באיזה תחומים? באילו סכומים?`);
+    parts.push(`2. מה הנושאים המרכזיים שלהם? מה מניע אותם?`);
+    parts.push(`3. מה אחוז ההתאמה לארגון שלנו? למה? פרט לפי נושאים, אוכלוסיות ואזורים.`);
+    parts.push(`4. אם יש התאמה — מה בדיוק הכי מחבר? איזה פרויקט שלנו הכי רלוונטי?`);
+    parts.push(`5. מה הדרך הטובה ביותר לפנות אליהם? מי איש הקשר? מה הטון?`);
+    parts.push(`\nתן תשובה מסודרת עם כותרות. אם יש מידע שאתה לא בטוח בו — אמור.`);
     window.dispatchEvent(new CustomEvent('fishgold:send', { detail: parts.join('\n') }));
     window.dispatchEvent(new CustomEvent('fishgold:closeSidebar'));
   };
@@ -299,6 +317,7 @@ export default function BusinessTab({ orgId, companyTypeFilter }: BusinessTabPro
               key={company.id}
               company={company}
               onAskGoldfish={handleAskGoldfish}
+              onScanFund={handleScanFund}
               onDraftEmail={handleDraftEmail}
             />
           ))
@@ -311,10 +330,12 @@ export default function BusinessTab({ orgId, companyTypeFilter }: BusinessTabPro
 function CompanyCard({
   company,
   onAskGoldfish,
+  onScanFund,
   onDraftEmail,
 }: {
   company: Company;
   onAskGoldfish: (c: Company) => void;
+  onScanFund: (c: Company) => void;
   onDraftEmail: (c: Company) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
@@ -488,6 +509,25 @@ function CompanyCard({
             </div>
           )}
 
+          {/* Scan fund button — prominent for funds */}
+          {(company.company_type === 'fund' || company.company_type === 'public') && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onScanFund(company);
+              }}
+              className="w-full py-2 text-[11px] font-bold bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-1.5"
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                <line x1="11" y1="8" x2="11" y2="14" />
+                <line x1="8" y1="11" x2="14" y2="11" />
+              </svg>
+              סרוק קרן — תרומות, התאמה, דרך פנייה
+            </button>
+          )}
+
           {/* Action buttons */}
           <div className="flex gap-1.5 pt-1">
             <button
@@ -497,14 +537,7 @@ function CompanyCard({
               }}
               className="flex-1 py-1.5 text-[10px] font-medium bg-accent text-white rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-1"
             >
-              <svg
-                width="11"
-                height="11"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
               </svg>
               שאל את Goldfish
@@ -516,14 +549,7 @@ function CompanyCard({
               }}
               className="flex-1 py-1.5 text-[10px] font-medium border border-border rounded-lg hover:bg-surf2 transition-colors flex items-center justify-center gap-1"
             >
-              <svg
-                width="11"
-                height="11"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                 <polyline points="22,6 12,13 2,6" />
               </svg>
