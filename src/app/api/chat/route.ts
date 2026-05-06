@@ -1463,7 +1463,8 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Chat API error:', error);
-    return Response.json({ error: 'Internal server error' }, { status: 500 });
+    const errMsg = error instanceof Error ? error.message : String(error);
+    console.error('Chat API error:', errMsg, error);
+    return Response.json({ error: errMsg }, { status: 500 });
   }
 }

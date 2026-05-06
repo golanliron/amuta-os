@@ -159,7 +159,11 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
         }),
       });
 
-      if (!res.ok) throw new Error('Chat failed');
+      if (!res.ok) {
+        const errBody = await res.text().catch(() => '');
+        console.error('Chat API response:', res.status, errBody);
+        throw new Error(`Chat failed (${res.status}): ${errBody.slice(0, 200)}`);
+      }
 
       const reader = res.body?.getReader();
       const decoder = new TextDecoder();
@@ -201,11 +205,12 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
       }
     } catch (error) {
       console.error('Chat error:', error);
+      const errMsg = error instanceof Error ? error.message : 'Unknown error';
       setMessages(prev => {
         const updated = [...prev];
         const last = updated[updated.length - 1];
         if (last.role === 'assistant' && !last.content) {
-          last.content = 'משהו השתבש. נסו שוב.';
+          last.content = `שגיאה: ${errMsg}`;
         }
         return updated;
       });
