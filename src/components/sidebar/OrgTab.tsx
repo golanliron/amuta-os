@@ -404,22 +404,22 @@ export default function OrgTab({ stage, orgId }: OrgTabProps) {
               {/* Contact info */}
               {((profile as Record<string, unknown>).contact_name || (profile as Record<string, unknown>).contact_email || (profile as Record<string, unknown>).contact_phone) && (
                 <div className="mt-3 pt-2 border-t border-border/30 space-y-1">
-                  {(profile as Record<string, unknown>).contact_name && (
+                  {!!(profile as Record<string, unknown>).contact_name && (
                     <div className="flex items-center gap-1.5 text-[11px] text-text2">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted2 flex-shrink-0"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                      {(profile as Record<string, unknown>).contact_name as string}
+                      {String((profile as Record<string, unknown>).contact_name)}
                     </div>
                   )}
-                  {(profile as Record<string, unknown>).contact_email && (
+                  {!!(profile as Record<string, unknown>).contact_email && (
                     <div className="flex items-center gap-1.5 text-[11px] text-text2">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted2 flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                      <a href={`mailto:${(profile as Record<string, unknown>).contact_email}`} className="hover:text-accent transition-colors" dir="ltr">{(profile as Record<string, unknown>).contact_email as string}</a>
+                      <a href={`mailto:${(profile as Record<string, unknown>).contact_email}`} className="hover:text-accent transition-colors" dir="ltr">{String((profile as Record<string, unknown>).contact_email)}</a>
                     </div>
                   )}
-                  {(profile as Record<string, unknown>).contact_phone && (
+                  {!!(profile as Record<string, unknown>).contact_phone && (
                     <div className="flex items-center gap-1.5 text-[11px] text-text2">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted2 flex-shrink-0"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-                      <a href={`tel:${(profile as Record<string, unknown>).contact_phone}`} className="hover:text-accent transition-colors" dir="ltr">{(profile as Record<string, unknown>).contact_phone as string}</a>
+                      <a href={`tel:${(profile as Record<string, unknown>).contact_phone}`} className="hover:text-accent transition-colors" dir="ltr">{String((profile as Record<string, unknown>).contact_phone)}</a>
                     </div>
                   )}
                 </div>

@@ -325,7 +325,7 @@ export default function OpportunitiesTab({ stage, orgId }: OpportunitiesTabProps
         <div className="border-b border-border">
           <Suspense fallback={<div className="flex items-center justify-center py-8"><div className="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin" /></div>}>
             <div className="p-4">
-              <TimelineTab stage={stage} orgId={orgId} />
+              <TimelineTab stage={stage as 0 | 1 | 2} orgId={orgId} />
             </div>
           </Suspense>
         </div>
