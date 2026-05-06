@@ -252,7 +252,7 @@ export default function BusinessTab({ orgId, companyTypeFilter }: BusinessTabPro
           {companyTypeFilter === 'fund' && (
             <div className="flex gap-1">
               <button
-                onClick={() => setFundSubType(fundSubType === '' ? '' : '')}
+                onClick={() => setFundSubType('')}
                 className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors ${
                   fundSubType === '' ? 'bg-accent text-white' : 'bg-surf2 text-muted hover:text-text'
                 }`}
