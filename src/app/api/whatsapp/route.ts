@@ -253,11 +253,9 @@ export async function POST(request: NextRequest) {
 
         if (opps && opps.length > 0) {
           const oppLines = opps.map(o => {
-            const match = matches.find(m => m.opportunity_id === o.id);
-            const deadline = o.deadline ? new Date(o.deadline).toLocaleDateString('he-IL') : 'לא צוין';
-            return `- ${o.title} (${o.funder || 'לא צוין'}) | ציון: ${match?.score}% | דדליין: ${deadline} | עד ${o.amount_max ? (o.amount_max / 1000).toFixed(0) + 'K' : '?'} ש"ח`;
+            return `- ${o.title}${o.url ? ` — ${o.url}` : ''}`;
           });
-          matchesContext = `\n\n===== קולות קוראים מותאמים =====\n${oppLines.join('\n')}`;
+          matchesContext = `\n\n===== קולות קוראים מותאמים (TOP ${opps.length}) =====\n${oppLines.join('\n')}`;
         }
       }
 
@@ -389,13 +387,13 @@ async function handleCommand(
         const scanData = await scanRes.json();
 
         if (scanData.matches && scanData.matches.length > 0) {
-          const lines = scanData.matches.slice(0, 5).map((m: { title: string; score: number; deadline: string | null; funder: string | null; url: string | null }, i: number) => {
-            const deadline = m.deadline ? new Date(m.deadline).toLocaleDateString('he-IL') : 'לא צוין';
-            return `${i + 1}. ${m.title}\n   ${m.funder || ''} | ציון ${m.score}/10 | דדליין: ${deadline}${m.url ? `\n   ${m.url}` : ''}`;
+          const top = scanData.matches.slice(0, 5);
+          const lines = top.map((m: { title: string; score: number; deadline: string | null; funder: string | null; url: string | null }, i: number) => {
+            return `${i + 1}. ${m.title}${m.url ? `\n   ${m.url}` : ''}`;
           });
           await sendWhatsApp(phone,
-            `מצאתי ${scanData.matches.length} דברים שכדאי לבדוק:\n\n${lines.join('\n\n')}\n\n` +
-            `תגידו מספר ואני כותב טיוטה. או שתשאלו אותי על אחד מהם.`
+            `מצאתי ${scanData.matches.length} התאמות. הנה ה-TOP:\n\n${lines.join('\n\n')}\n\n` +
+            `תגידו מספר ואני מנתח לעומק.`
           );
         } else {
           await sendWhatsApp(phone, scanData.message || 'חיפשתי. כרגע אין דבר שמתאים לכם ברמה גבוהה. אני סורק כל יום, אחזור כשיהיה משהו.');
@@ -428,9 +426,7 @@ async function handleCommand(
         .in('id', oppIds);
 
       const lines = (opps || []).map((o, i) => {
-        const match = matches.find(m => m.opportunity_id === o.id);
-        const deadline = o.deadline ? new Date(o.deadline).toLocaleDateString('he-IL') : '';
-        return `${i + 1}. ${o.title}\n   ${o.funder || ''} | ציון ${match?.score}%${deadline ? ` | עד ${deadline}` : ''}${o.url ? `\n   ${o.url}` : ''}`;
+        return `${i + 1}. ${o.title}${o.url ? `\n   ${o.url}` : ''}`;
       });
 
       await sendWhatsApp(phone, `זה מה שמצאתי לכם:\n\n${lines.join('\n\n')}\n\nתגידו מספר ואני מנתח לעומק.`);
