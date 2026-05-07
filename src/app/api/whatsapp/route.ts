@@ -130,36 +130,55 @@ export async function POST(request: NextRequest) {
         .select('id')
         .single();
 
-      // Send onboarding message — sales mode (not registered yet)
+      // Send onboarding message — ask who they are, Goldfish style
       const onboardMsg =
         `שלום${senderName ? ' ' + senderName : ''}. אני Goldfish. דג זהב עתיק שחי מאות שנים בים של גיוס משאבים.\n\n` +
-        `אני לא בוט ולא מערכת. אני דג עם ידע של מאות שנים על קרנות, מענקים, וחברות שתורמות.\n\n` +
-        `אם יש לכם עמותה או ארגון ואתם רוצים שאתחיל לחפור בשבילכם — תגידו לי את השם ואני מתחיל.\n` +
-        `ואם אתם סתם רוצים להבין מה אני יודע לעשות — שאלו. אני פה.`;
+        `מקווה שזה חשוב, כי אתה מפריע למנוחת הצהריים של דג.\n\n` +
+        `תגיד לי מי אתה:\n` +
+        `1. מתעניין חדש — רוצה להבין מה אני יודע לעשות\n` +
+        `2. משתמש קיים — יש לי כבר ארגון ואני רוצה להתחיל לעבוד`;
       const isBridgeOnboard = request.headers.get('x-bridge-mode') === 'true';
       if (!isBridgeOnboard) await sendWhatsApp(phone, onboardMsg);
       return Response.json({ ok: true, reply: onboardMsg });
     }
 
-    // 2. Handle users without org — try to link, or enter sales mode
+    // 2. Handle users without org — route by intent
     if (!orgId) {
-      orgId = await handleOnboarding(supabase, waUser.id, phone, text, senderName);
-      if (orgId) {
-        // Successfully linked to org — send confirmation and switch to advisor mode
-        const linkedMsg =
-          `טוב, רשמתי. אני מתחיל לחפור עליכם.\n\n` +
-          `תכתבו לי מה אתם מחפשים, או תכתבו סריקה ואני אחפש קולות קוראים מותאמים. אני דג, לא תפריט.`;
-        const isBridgeLinked = request.headers.get('x-bridge-mode') === 'true';
-        if (!isBridgeLinked) await sendWhatsApp(phone, linkedMsg);
+      const trimmed = text.trim();
+      const isBridgeMode = request.headers.get('x-bridge-mode') === 'true';
 
-        // Save messages
+      // Check if user chose "existing user" (option 2) — ask for org name
+      const isExistingUser = trimmed === '2' || trimmed.includes('משתמש קיים') || trimmed.includes('קיים');
+      if (isExistingUser) {
+        const askOrgMsg = `טוב, אז יש לך ארגון. תגיד לי את השם ואני מתחיל לחפור.`;
+        if (!isBridgeMode) await sendWhatsApp(phone, askOrgMsg);
         await supabase.from('whatsapp_messages').insert([
-          { phone, role: 'user', content: text, org_id: orgId },
-          { phone, role: 'assistant', content: linkedMsg, org_id: orgId },
+          { phone, role: 'user', content: text, org_id: null },
+          { phone, role: 'assistant', content: askOrgMsg, org_id: null },
         ]);
-        return Response.json({ ok: true, reply: linkedMsg });
+        return Response.json({ ok: true, reply: askOrgMsg });
       }
-      // No org found — fall through to sales mode AI chat below
+
+      // Check if user chose "new visitor" (option 1) — enter sales mode chat
+      const isNewVisitor = trimmed === '1' || trimmed.includes('מתעניין') || trimmed.includes('חדש');
+      if (isNewVisitor) {
+        // Fall through to sales mode AI chat below
+      } else {
+        // Try to match as org name
+        orgId = await handleOnboarding(supabase, waUser.id, phone, text, senderName);
+        if (orgId) {
+          const linkedMsg =
+            `טוב, רשמתי. אני מתחיל לחפור עליכם.\n\n` +
+            `תכתבו לי מה אתם מחפשים, או תכתבו סריקה ואני אחפש קולות קוראים מותאמים. אני דג, לא תפריט.`;
+          if (!isBridgeMode) await sendWhatsApp(phone, linkedMsg);
+          await supabase.from('whatsapp_messages').insert([
+            { phone, role: 'user', content: text, org_id: orgId },
+            { phone, role: 'assistant', content: linkedMsg, org_id: orgId },
+          ]);
+          return Response.json({ ok: true, reply: linkedMsg });
+        }
+        // Not a recognized org name — fall through to sales mode AI chat
+      }
     }
 
     // 3. Handle quick commands (only for registered users with org)
