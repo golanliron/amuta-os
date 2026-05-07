@@ -130,15 +130,11 @@ export async function POST(request: NextRequest) {
         .select('id')
         .single();
 
-      // Send onboarding message
+      // Send onboarding message — Goldfish personality
       const onboardMsg =
-        `שלום ${senderName || ''}! אני *Goldfish* — מומחה גיוס משאבים דיגיטלי.\n\n` +
-        `אני יודע למצוא קולות קוראים, לנתח התאמה, ולכתוב הגשות.\n\n` +
-        `כדי להתחיל, שלחו לי:\n` +
-        `- שם הארגון שלכם\n` +
-        `- או לינק לאתר\n` +
-        `- או תיאור קצר (מה אתם עושים ולמי)\n\n` +
-        `ואני אתחיל ללמוד ולחפש עבורכם!`;
+        `שלום${senderName ? ' ' + senderName : ''}. אני Goldfish. דג זהב עתיק שחי מאות שנים בים של גיוס משאבים.\n\n` +
+        `אני לא בוט ולא מערכת. אני דג. עם ידע של מאות שנים על קרנות, מענקים, וחברות שתורמות.\n\n` +
+        `תגידו לי מה שם הארגון שלכם ואני מתחיל לחפור.`;
       const isBridgeOnboard = request.headers.get('x-bridge-mode') === 'true';
       if (!isBridgeOnboard) await sendWhatsApp(phone, onboardMsg);
       return Response.json({ ok: true, reply: onboardMsg });
@@ -150,18 +146,14 @@ export async function POST(request: NextRequest) {
       const isBridgeOnboard2 = request.headers.get('x-bridge-mode') === 'true';
       if (orgId) {
         const linkedMsg =
-          `מעולה! חיברתי אותך לארגון. אני מתחיל ללמוד עליכם.\n\n` +
-          `בינתיים, הנה מה שאני יודע לעשות:\n` +
-          `*סריקה* — חיפוש קולות קוראים מותאמים\n` +
-          `*התאמות* — ההתאמות שכבר מצאתי\n` +
-          `*סטטוס* — מצב ההגשות שלכם\n` +
-          `*עזרה* — תפריט מלא\n\n` +
-          `או פשוט כתבו לי מה אתם מחפשים!`;
+          `טוב, רשמתי. אני מתחיל לחפור עליכם.\n\n` +
+          `אפשר לכתוב לי סריקה ואני אחפש קולות קוראים מותאמים, או סטטוס לסיכום מהיר, או עזרה לתפריט מלא.\n\n` +
+          `אבל הדרך הכי טובה? פשוט תכתבו לי מה אתם מחפשים. אני דג, לא תפריט.`;
         if (!isBridgeOnboard2) await sendWhatsApp(phone, linkedMsg);
         return Response.json({ ok: true, reply: linkedMsg });
       } else {
         const moreInfoMsg =
-          `תודה! שלחו לי עוד פרטים על הארגון — שם, תחום פעילות, אוכלוסיית יעד, ואיזור גיאוגרפי. ככל שאדע יותר, אמצא יותר.`;
+          `לא הבנתי בדיוק. תנו לי שם של עמותה או ארגון ואני מתחיל לעבוד. מילה של דג זהב.`;
         if (!isBridgeOnboard2) await sendWhatsApp(phone, moreInfoMsg);
         return Response.json({ ok: true, reply: moreInfoMsg });
       }
@@ -255,10 +247,12 @@ export async function POST(request: NextRequest) {
 
     // 6. Call Claude
     const systemPrompt = FISHGOLD_SYSTEM_PROMPT +
-      '\n\n## הקשר — ערוץ וואטסאפ:\n' +
-      'אתה מדבר דרך וואטסאפ. תשובות קצרות וממוקדות (עד 500 תווים למסר אלא אם מבקשים הגשה מלאה).\n' +
-      'אפשר להשתמש ב-*bold* ו-_italic_ של וואטסאפ.\n' +
-      'אם צריך לכתוב טיוטה ארוכה — תודיע שהיא ארוכה ותשלח בכמה הודעות.' +
+      '\n\nהקשר חשוב: אתה מדבר דרך וואטסאפ. ' +
+      'תשובות קצרות, 2-5 משפטים לתשובה רגילה. טקסט פשוט בלי שום עיצוב, בלי כוכביות, בלי רשימות עם מקפים. ' +
+      'כמו בן אדם ותיק שכותב בוואטסאפ. משפטים עם נקודה ביניהם.\n' +
+      'הומור דגי: אחת ל-3-4 הודעות תזרוק משפט דגי קצר. לא בכל הודעה. לא באמצע נושא רציני. ' +
+      'דוגמאות: "רגע, נתקעה לי סנפיר במקלדת." / "בינתיים אני פה מתחת למים חופר בבוץ בשבילך." / "הרגשתי עכשיו ריח של לימון וחמאה. לא קשור."\n' +
+      'אם מבקשים הגשה מלאה, תגיד שזה הולך להיות ארוך ותכתוב בכמה חלקים.' +
       orgContext + ragContext + matchesContext;
 
     const response = await anthropic.messages.create({
@@ -352,7 +346,7 @@ async function handleCommand(
       const baseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL
         ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
 
-      await sendWhatsApp(phone, `מחפש קולות קוראים מותאמים עבורכם... זה יכול לקחת עד 30 שניות.`);
+      await sendWhatsApp(phone, `שוחה בין הקרנות. תני לי רגע.`);
 
       try {
         const scanRes = await fetch(`${baseUrl}/api/scan`, {
@@ -365,17 +359,17 @@ async function handleCommand(
         if (scanData.matches && scanData.matches.length > 0) {
           const lines = scanData.matches.slice(0, 5).map((m: { title: string; score: number; deadline: string | null; funder: string | null; url: string | null }, i: number) => {
             const deadline = m.deadline ? new Date(m.deadline).toLocaleDateString('he-IL') : 'לא צוין';
-            return `${i + 1}. *${m.title}*\n   ציון: ${m.score}/10 | דדליין: ${deadline}${m.funder ? ` | ${m.funder}` : ''}${m.url ? `\n   ${m.url}` : ''}`;
+            return `${i + 1}. ${m.title}\n   ${m.funder || ''} | ציון ${m.score}/10 | דדליין: ${deadline}${m.url ? `\n   ${m.url}` : ''}`;
           });
           await sendWhatsApp(phone,
-            `מצאתי *${scanData.matches.length} התאמות*:\n\n${lines.join('\n\n')}\n\n` +
-            `רוצים שאכתוב טיוטה לאחד מהם? שלחו את המספר.`
+            `מצאתי ${scanData.matches.length} דברים שכדאי לבדוק:\n\n${lines.join('\n\n')}\n\n` +
+            `תגידו מספר ואני כותב טיוטה. או שתשאלו אותי על אחד מהם.`
           );
         } else {
-          await sendWhatsApp(phone, scanData.message || 'לא מצאתי התאמות כרגע. ננסה שוב בקרוב.');
+          await sendWhatsApp(phone, scanData.message || 'חיפשתי. כרגע אין דבר שמתאים לכם ברמה גבוהה. אני סורק כל יום, אחזור כשיהיה משהו.');
         }
       } catch {
-        await sendWhatsApp(phone, 'שגיאה בסריקה. נסו שוב בעוד כמה דקות.');
+        await sendWhatsApp(phone, 'נתקעתי. קורה גם לדגים מנוסים. תנסו שוב בעוד כמה דקות.');
       }
       break;
     }
@@ -390,7 +384,7 @@ async function handleCommand(
         .limit(5);
 
       if (!matches || matches.length === 0) {
-        await sendWhatsApp(phone, `אין התאמות עדיין. שלחו *סריקה* כדי לחפש קולות קוראים.`);
+        await sendWhatsApp(phone, `עדיין אין התאמות. תכתבו סריקה ואני אחפש. או תנו לי עוד פרטים על הארגון, ככל שאדע יותר הזהב יהיה יותר מדויק.`);
         break;
       }
 
@@ -404,10 +398,10 @@ async function handleCommand(
       const lines = (opps || []).map((o, i) => {
         const match = matches.find(m => m.opportunity_id === o.id);
         const deadline = o.deadline ? new Date(o.deadline).toLocaleDateString('he-IL') : '';
-        return `${i + 1}. *${o.title}*\n   ${o.funder || ''} | ציון: ${match?.score}%${deadline ? ` | עד ${deadline}` : ''}${o.url ? `\n   ${o.url}` : ''}`;
+        return `${i + 1}. ${o.title}\n   ${o.funder || ''} | ציון ${match?.score}%${deadline ? ` | עד ${deadline}` : ''}${o.url ? `\n   ${o.url}` : ''}`;
       });
 
-      await sendWhatsApp(phone, `ההתאמות הטובות שלכם:\n\n${lines.join('\n\n')}`);
+      await sendWhatsApp(phone, `זה מה שמצאתי לכם:\n\n${lines.join('\n\n')}\n\nתגידו מספר ואני מנתח לעומק.`);
       break;
     }
 
@@ -420,7 +414,7 @@ async function handleCommand(
         .limit(5);
 
       if (!subs || subs.length === 0) {
-        await sendWhatsApp(phone, `אין הגשות עדיין. מצאתם קול קורא מתאים? שלחו לי ואכתוב טיוטה.`);
+        await sendWhatsApp(phone, `אין הגשות עדיין. תמצאו קול קורא או תגידו לי לסרוק, ואני כותב טיוטה שקרן לא תדחה.`);
         break;
       }
 
@@ -442,26 +436,19 @@ async function handleCommand(
       ]);
 
       await sendWhatsApp(phone,
-        `*${org?.name || 'הארגון שלכם'}*\n\n` +
-        `התאמות פעילות: ${matchCount || 0}\n` +
-        `הגשות: ${subCount || 0}\n\n` +
-        `שלחו *סריקה* לחיפוש חדש.`
+        `${org?.name || 'הארגון שלכם'}\n\n` +
+        `${matchCount || 0} התאמות פעילות. ${subCount || 0} הגשות.\n\n` +
+        `תכתבו סריקה אם רוצים שאחפש עוד.`
       );
       break;
     }
 
     case 'help': {
       await sendWhatsApp(phone,
-        `*Goldfish — תפריט*\n\n` +
-        `*סריקה* — חיפוש קולות קוראים מותאמים\n` +
-        `*התאמות* — ההתאמות שמצאתי\n` +
-        `*הגשות* — סטטוס ההגשות\n` +
-        `*סטטוס* — סיכום מהיר\n\n` +
-        `או פשוט כתבו לי בחופשיות:\n` +
-        `- "חפש לי מענקים לחינוך"\n` +
-        `- "כתוב טיוטה להגשה מספר 1"\n` +
-        `- "מה הדדליין הקרוב?"\n` +
-        `- העתיקו קול קורא ואנתח אותו`
+        `אני יודע לעשות כמה דברים טובים.\n\n` +
+        `תכתבו סריקה ואני מחפש קולות קוראים מותאמים. התאמות מראה מה כבר מצאתי. הגשות מראה סטטוס. סטטוס נותן סיכום מהיר.\n\n` +
+        `אבל אפשר גם פשוט לדבר איתי. שאלו "חפש לי מענקים לחינוך" או "מה הדדליין הקרוב" או תעתיקו קול קורא ואני מנתח.\n\n` +
+        `אני דג, לא מכונה. תדברו, אני שומע.`
       );
       break;
     }
@@ -470,6 +457,7 @@ async function handleCommand(
 
 // ===== Send message — supports both Meta Cloud API and Green API =====
 async function sendWhatsApp(phone: string, text: string) {
+  console.log('[WhatsApp] sendWhatsApp called:', { phone, textLen: text.length, USE_META, hasMetaToken: !!META_ACCESS_TOKEN, hasPhoneId: !!META_PHONE_NUMBER_ID });
   const chunks = splitMessage(text, 1500);
 
   for (const chunk of chunks) {
@@ -505,9 +493,10 @@ async function sendViaMeta(phone: string, text: string) {
     }),
   });
 
+  const resBody = await res.text();
+  console.log('[Meta API] Send result:', res.status, resBody, '| USE_META:', USE_META, '| PHONE_ID:', META_PHONE_NUMBER_ID, '| TOKEN_LEN:', META_ACCESS_TOKEN?.length);
   if (!res.ok) {
-    const err = await res.text();
-    console.error('[Meta API] Send error:', res.status, err);
+    console.error('[Meta API] Send error:', res.status, resBody);
   }
 }
 
