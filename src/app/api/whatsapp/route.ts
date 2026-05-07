@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { createGrantsClient } from '@/lib/supabase/grants-db';
-import { FISHGOLD_SYSTEM_PROMPT, buildContext, buildOrgContext } from '@/lib/ai/fishgold';
+import { FISHGOLD_SYSTEM_PROMPT, FISHGOLD_SALES_PROMPT, buildContext, buildOrgContext } from '@/lib/ai/fishgold';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -130,48 +130,63 @@ export async function POST(request: NextRequest) {
         .select('id')
         .single();
 
-      // Send onboarding message — Goldfish personality
+      // Send onboarding message — sales mode (not registered yet)
       const onboardMsg =
         `שלום${senderName ? ' ' + senderName : ''}. אני Goldfish. דג זהב עתיק שחי מאות שנים בים של גיוס משאבים.\n\n` +
-        `אני לא בוט ולא מערכת. אני דג. עם ידע של מאות שנים על קרנות, מענקים, וחברות שתורמות.\n\n` +
-        `תגידו לי מה שם הארגון שלכם ואני מתחיל לחפור.`;
+        `אני לא בוט ולא מערכת. אני דג עם ידע של מאות שנים על קרנות, מענקים, וחברות שתורמות.\n\n` +
+        `אם יש לכם עמותה או ארגון ואתם רוצים שאתחיל לחפור בשבילכם — תגידו לי את השם ואני מתחיל.\n` +
+        `ואם אתם סתם רוצים להבין מה אני יודע לעשות — שאלו. אני פה.`;
       const isBridgeOnboard = request.headers.get('x-bridge-mode') === 'true';
       if (!isBridgeOnboard) await sendWhatsApp(phone, onboardMsg);
       return Response.json({ ok: true, reply: onboardMsg });
     }
 
-    // 2. Handle users without org — onboarding flow
+    // 2. Handle users without org — try to link, or enter sales mode
     if (!orgId) {
       orgId = await handleOnboarding(supabase, waUser.id, phone, text, senderName);
-      const isBridgeOnboard2 = request.headers.get('x-bridge-mode') === 'true';
       if (orgId) {
+        // Successfully linked to org — send confirmation and switch to advisor mode
         const linkedMsg =
           `טוב, רשמתי. אני מתחיל לחפור עליכם.\n\n` +
-          `אפשר לכתוב לי סריקה ואני אחפש קולות קוראים מותאמים, או סטטוס לסיכום מהיר, או עזרה לתפריט מלא.\n\n` +
-          `אבל הדרך הכי טובה? פשוט תכתבו לי מה אתם מחפשים. אני דג, לא תפריט.`;
-        if (!isBridgeOnboard2) await sendWhatsApp(phone, linkedMsg);
+          `תכתבו לי מה אתם מחפשים, או תכתבו סריקה ואני אחפש קולות קוראים מותאמים. אני דג, לא תפריט.`;
+        const isBridgeLinked = request.headers.get('x-bridge-mode') === 'true';
+        if (!isBridgeLinked) await sendWhatsApp(phone, linkedMsg);
+
+        // Save messages
+        await supabase.from('whatsapp_messages').insert([
+          { phone, role: 'user', content: text, org_id: orgId },
+          { phone, role: 'assistant', content: linkedMsg, org_id: orgId },
+        ]);
         return Response.json({ ok: true, reply: linkedMsg });
-      } else {
-        const moreInfoMsg =
-          `לא הבנתי בדיוק. תנו לי שם של עמותה או ארגון ואני מתחיל לעבוד. מילה של דג זהב.`;
-        if (!isBridgeOnboard2) await sendWhatsApp(phone, moreInfoMsg);
-        return Response.json({ ok: true, reply: moreInfoMsg });
+      }
+      // No org found — fall through to sales mode AI chat below
+    }
+
+    // 3. Handle quick commands (only for registered users with org)
+    if (orgId) {
+      const command = QUICK_COMMANDS[text.trim()];
+      if (command) {
+        await handleCommand(supabase, phone, orgId, command);
+        return Response.json({ ok: true });
       }
     }
 
-    // 3. Handle quick commands
-    const command = QUICK_COMMANDS[text.trim()];
-    if (command) {
-      await handleCommand(supabase, phone, orgId, command);
-      return Response.json({ ok: true });
-    }
+    // 4. Load context — different per mode
+    const WA_PROMPT_ADDON =
+      '\n\nהקשר חשוב: אתה מדבר דרך וואטסאפ. ' +
+      'תשובות קצרות, 2-5 משפטים לתשובה רגילה. טקסט פשוט בלי שום עיצוב, בלי כוכביות, בלי רשימות עם מקפים. ' +
+      'כמו בן אדם ותיק שכותב בוואטסאפ. משפטים עם נקודה ביניהם.\n' +
+      'הומור דגי: אחת ל-3-4 הודעות תזרוק משפט דגי קצר. לא בכל הודעה. לא באמצע נושא רציני. ' +
+      'דוגמאות: "רגע, נתקעה לי סנפיר במקלדת." / "בינתיים אני פה מתחת למים חופר בבוץ בשבילך." / "הרגשתי עכשיו ריח של לימון וחמאה. לא קשור."';
 
-    // 4. Load org context if we have an org
-    let orgContext = '';
-    let ragContext = '';
-    let matchesContext = '';
+    let systemPrompt: string;
 
     if (orgId) {
+      // ===== ADVISOR MODE — registered customer with org =====
+      let orgContext = '';
+      let ragContext = '';
+      let matchesContext = '';
+
       // Load org profile
       const { data: orgProfile } = await supabase
         .from('org_profiles')
@@ -226,6 +241,14 @@ export async function POST(request: NextRequest) {
           matchesContext = `\n\n===== קולות קוראים מותאמים =====\n${oppLines.join('\n')}`;
         }
       }
+
+      systemPrompt = FISHGOLD_SYSTEM_PROMPT + WA_PROMPT_ADDON +
+        '\nאם מבקשים הגשה מלאה, תגיד שזה הולך להיות ארוך ותכתוב בכמה חלקים.' +
+        orgContext + ragContext + matchesContext;
+
+    } else {
+      // ===== SALES MODE — visitor without org, exploring the product =====
+      systemPrompt = FISHGOLD_SALES_PROMPT + WA_PROMPT_ADDON;
     }
 
     // 5. Load conversation history (last 10 messages)
@@ -244,16 +267,6 @@ export async function POST(request: NextRequest) {
       }
     }
     messages.push({ role: 'user', content: text });
-
-    // 6. Call Claude
-    const systemPrompt = FISHGOLD_SYSTEM_PROMPT +
-      '\n\nהקשר חשוב: אתה מדבר דרך וואטסאפ. ' +
-      'תשובות קצרות, 2-5 משפטים לתשובה רגילה. טקסט פשוט בלי שום עיצוב, בלי כוכביות, בלי רשימות עם מקפים. ' +
-      'כמו בן אדם ותיק שכותב בוואטסאפ. משפטים עם נקודה ביניהם.\n' +
-      'הומור דגי: אחת ל-3-4 הודעות תזרוק משפט דגי קצר. לא בכל הודעה. לא באמצע נושא רציני. ' +
-      'דוגמאות: "רגע, נתקעה לי סנפיר במקלדת." / "בינתיים אני פה מתחת למים חופר בבוץ בשבילך." / "הרגשתי עכשיו ריח של לימון וחמאה. לא קשור."\n' +
-      'אם מבקשים הגשה מלאה, תגיד שזה הולך להיות ארוך ותכתוב בכמה חלקים.' +
-      orgContext + ragContext + matchesContext;
 
     const response = await anthropic.messages.create({
       model: 'claude-haiku-4-5-20251001',
