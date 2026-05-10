@@ -89,9 +89,9 @@ function AnimatedCounter({ target, suffix = '' }: { target: string; suffix?: str
 
 // ===== Data =====
 const STATS = [
-  { number: '428', suffix: '+', label: 'קולות קוראים במאגר' },
+  { number: '411', suffix: '+', label: 'קולות קוראים במאגר' },
   { number: '75', suffix: '', label: 'מקורות מימון' },
-  { number: '1,044', suffix: '', label: 'חברות וארגונים במאגר' },
+  { number: '957', suffix: '', label: 'חברות וארגונים במאגר' },
   { number: '3', suffix: ' דק׳', label: 'לטיוטת הגשה ראשונה', prefix: '< ' },
 ];
 
@@ -775,7 +775,7 @@ export default function LandingPage() {
         <RevealSection>
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-3">הכל במקום אחד</h2>
           <p className="text-center text-muted mb-12 max-w-lg mx-auto">
-            428 קולות קוראים. 1,044 חברות וקרנות. Goldfish מחבר ביניהם.
+            411 קולות קוראים. 957 חברות וקרנות. Goldfish מחבר ביניהם.
           </p>
         </RevealSection>
 
@@ -799,7 +799,7 @@ export default function LandingPage() {
               <div className="flex items-center gap-4 text-xs text-muted">
                 <span className="flex items-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-green-500" />
-                  428 קולות קוראים
+                  411 קולות קוראים
                 </span>
                 <span className="flex items-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-accent" />
@@ -823,7 +823,7 @@ export default function LandingPage() {
               </div>
               <h3 className="font-bold text-lg mb-2">חברות וארגונים</h3>
               <p className="text-[13px] text-muted leading-relaxed mb-3">
-                1,044 חברות, קרנות וארגונים פילנתרופיים. Goldfish מתאים לפי פרופיל הארגון ומנסח מיילי פנייה.
+                957 חברות, קרנות וארגונים פילנתרופיים. Goldfish מתאים לפי פרופיל הארגון ומנסח מיילי פנייה.
               </p>
               <div className="flex flex-wrap gap-1.5 mb-3">
                 {['טבע', 'אזריאלי', 'הפועלים', 'מזרחי טפחות', 'UJA', 'קרן באר שבע', 'מגדל', 'ICL'].map(name => (
@@ -834,7 +834,7 @@ export default function LandingPage() {
               <div className="flex items-center gap-3 text-xs text-muted">
                 <span className="flex items-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-green-500" />
-                  1,044 במאגר
+                  957 במאגר
                 </span>
                 <span className="flex items-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-blue-500" />
