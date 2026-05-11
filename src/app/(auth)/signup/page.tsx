@@ -15,6 +15,7 @@ export default function SignupPage() {
 
 function SignupInner() {
   const [orgName, setOrgName] = useState('');
+  const [contactName, setContactName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -36,7 +37,7 @@ function SignupInner() {
       email,
       password,
       options: {
-        data: { org_name: orgName },
+        data: { org_name: orgName, full_name: contactName },
       },
     });
 
@@ -53,6 +54,7 @@ function SignupInner() {
       body: JSON.stringify({
         user_id: authData.user.id,
         email,
+        full_name: contactName,
         org_name: orgName || 'הארגון שלי',
         invite_code: invite || undefined,
       }),
@@ -88,8 +90,8 @@ function SignupInner() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <FishLogo size={64} className="mx-auto swim mb-3" />
-          <h1 className="text-2xl font-bold">{invite ? 'הצטרפי לצוות' : 'הצטרפי ל-Goldfish'}</h1>
-          <p className="text-sm text-muted mt-1">{invite ? 'קיבלת הזמנה להצטרף לארגון' : 'חשבון חינמי. בלי כרטיס אשראי.'}</p>
+          <h1 className="text-2xl font-bold">{invite ? 'הצטרפי לצוות' : 'ברוכה הבאה ל-Goldfish'}</h1>
+          <p className="text-sm text-muted mt-1">{invite ? 'קיבלת הזמנה להצטרף לארגון' : 'בואי נתחיל בהקמת הארגון שלך'}</p>
         </div>
 
         <div className="bg-bg2 rounded-2xl border border-border p-6">
@@ -114,10 +116,10 @@ function SignupInner() {
             <div className="flex-1 h-px bg-border" />
           </div>
 
-          <form onSubmit={handleSignup} className="space-y-4">
+          <form onSubmit={handleSignup} className="space-y-3">
             {!invite && (
               <div>
-                <label className="block text-xs font-medium text-muted mb-1">שם הארגון/עמותה</label>
+                <label className="block text-xs font-medium text-muted mb-1">שם הארגון / עמותה</label>
                 <input
                   type="text"
                   value={orgName}
@@ -129,7 +131,18 @@ function SignupInner() {
               </div>
             )}
             <div>
-              <label className="block text-xs font-medium text-muted mb-1">מייל</label>
+              <label className="block text-xs font-medium text-muted mb-1">שם איש קשר</label>
+              <input
+                type="text"
+                value={contactName}
+                onChange={e => setContactName(e.target.value)}
+                className="w-full px-3 py-2.5 rounded-xl border border-border bg-surf text-sm focus:outline-none focus:border-accent"
+                placeholder="השם המלא שלך"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-muted mb-1">אימייל</label>
               <input
                 type="email"
                 value={email}
@@ -161,12 +174,12 @@ function SignupInner() {
               disabled={loading}
               className="w-full py-2.5 rounded-xl bg-accent text-white text-sm font-medium hover:bg-accent-hover disabled:opacity-50 transition-colors"
             >
-              {loading ? 'יוצר חשבון...' : 'צור חשבון חינם'}
+              {loading ? 'יוצר חשבון...' : 'יצירת חשבון והתחלה'}
             </button>
           </form>
 
           <p className="text-center text-[10px] text-muted2 mt-4">
-            כבר יש לך חשבון?{' '}
+            כבר יש לי חשבון?{' '}
             <a href="/login" className="text-accent hover:underline">התחברות</a>
           </p>
         </div>
