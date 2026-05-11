@@ -623,7 +623,7 @@ async function scanOpportunities(
         const lines = matches.map((m) => {
           const opp = grantsMap.get(m.opportunity_id);
           if (!opp) return null;
-          return `- **${opp.title}** (ציון: ${m.score}/100)${opp.deadline ? ` | דדליין: ${opp.deadline}` : ''}${opp.funder ? ` | ${opp.funder}` : ''}${opp.amount ? ` | עד ${(opp.amount / 1000).toFixed(0)}K ש"ח` : ''}${opp.url ? ` | לינק: ${opp.url}` : ''}\n  ${m.reasoning}${opp.description ? `\n  תיאור: ${opp.description.slice(0, 200)}` : ''}`;
+          return `- **${opp.title}** (ציון: ${m.score}/100)${opp.deadline ? ` | דדליין: ${opp.deadline}` : ''}${opp.funder ? ` | ${opp.funder}` : ''}${opp.amount ? ` | עד ${(opp.amount / 1000).toFixed(0)}K ש"ח` : ''}${opp.url ? `\n  🔗 קרא את הקול הקורא: ${opp.url}` : ''}\n  ${m.reasoning}${opp.description ? `\n  תיאור: ${opp.description.slice(0, 200)}` : ''}`;
         }).filter(Boolean);
 
         if (lines.length > 0) {
@@ -642,6 +642,8 @@ async function scanOpportunities(
       .from('grants')
       .select('id, title, description, deadline, categories, target_populations, funder, url')
       .eq('is_database', true)
+      .not('url', 'is', null)
+      .neq('url', '')
       .or(`deadline.is.null,deadline.gte.${today}`)
       .order('deadline', { ascending: true, nullsFirst: false })
       .limit(60);
@@ -721,7 +723,7 @@ async function scanOpportunities(
       const opp = filtered[item.index - 1];
       if (!opp) continue;
 
-      lines.push(`- **${opp.title}** (ציון: ${item.score}/10)${opp.deadline ? ` | דדליין: ${opp.deadline}` : ''}${opp.funder ? ` | ${opp.funder}` : ''}${opp.url ? ` | לינק: ${opp.url}` : ''}\n  ${item.reasoning}${opp.description ? `\n  תיאור: ${opp.description.slice(0, 200)}` : ''}`);
+      lines.push(`- **${opp.title}** (ציון: ${item.score}/10)${opp.deadline ? ` | דדליין: ${opp.deadline}` : ''}${opp.funder ? ` | ${opp.funder}` : ''}${opp.url ? `\n  🔗 קרא את הקול הקורא: ${opp.url}` : ''}\n  ${item.reasoning}${opp.description ? `\n  תיאור: ${opp.description.slice(0, 200)}` : ''}`);
 
       // Save to DB
       const { error: matchErr } = await supabase.from('matches').upsert(
@@ -1056,6 +1058,8 @@ async function loadGrantsIndex(): Promise<string> {
       .from('grants')
       .select('id, title, funder, deadline, description, categories, target_populations, url, amount, type, eligibility, how_to_apply, contact_info, tags')
       .eq('is_database', true)
+      .not('url', 'is', null)
+      .neq('url', '')
       .order('deadline', { ascending: true, nullsFirst: false });
 
     if (!grants?.length) return '';
