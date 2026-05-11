@@ -723,7 +723,20 @@ async function scanOpportunities(
       const opp = filtered[item.index - 1];
       if (!opp) continue;
 
-      lines.push(`- **${opp.title}** (ציון: ${item.score}/10)${opp.deadline ? ` | דדליין: ${opp.deadline}` : ''}${opp.funder ? ` | ${opp.funder}` : ''}${opp.url ? `\n  🔗 קרא את הקול הקורא: ${opp.url}` : ''}\n  ${item.reasoning}${opp.description ? `\n  תיאור: ${opp.description.slice(0, 200)}` : ''}`);
+      // Fetch the actual grant page content so Goldfish can read it
+      let pageContent = '';
+      if (opp.url) {
+        try {
+          const fetched = await fetchUrlContent(opp.url);
+          if (fetched && fetched.length > 100) {
+            pageContent = `\n  📄 תוכן הקול הקורא:\n${fetched.slice(0, 1500)}`;
+          }
+        } catch {
+          // silently skip if fetch fails
+        }
+      }
+
+      lines.push(`- **${opp.title}** (ציון: ${item.score}/10)${opp.deadline ? ` | דדליין: ${opp.deadline}` : ''}${opp.funder ? ` | ${opp.funder}` : ''}${opp.url ? `\n  🔗 ${opp.url}` : ''}\n  ${item.reasoning}${opp.description ? `\n  תיאור: ${opp.description.slice(0, 200)}` : ''}${pageContent}`);
 
       // Save to DB
       const { error: matchErr } = await supabase.from('matches').upsert(
