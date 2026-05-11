@@ -66,6 +66,7 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
   const [loaded, setLoaded] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // Load last conversation on mount - Goldfish remembers you
   useEffect(() => {
@@ -120,7 +121,14 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
 
   const sendMessage = useCallback(async (externalText?: string) => {
     const text = (externalText || input).trim();
-    if (!text || isStreaming) return;
+    if (!text) return;
+
+    // Abort any in-progress request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
 
     const userMsg: ChatMessage = {
       id: crypto.randomUUID(),
@@ -157,6 +165,7 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
           user_id: userId,
           active_tab: activeTab,
         }),
+        signal: controller.signal,
       });
 
       if (!res.ok) {
@@ -204,6 +213,10 @@ export default function ChatPanel({ orgId, userId, onStageChange }: ChatPanelPro
         }
       }
     } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        // Silently cancel — user sent a new message
+        return;
+      }
       console.error('Chat error:', error);
       const errMsg = error instanceof Error ? error.message : 'Unknown error';
       setMessages(prev => {

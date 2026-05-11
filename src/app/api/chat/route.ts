@@ -1362,18 +1362,23 @@ export async function POST(request: NextRequest) {
     const urlContent = formatUrlsForMessage(fetchedUrls);
     const orgContext = buildOrgContext(profile?.data ?? null, org?.name ?? null);
 
-    // Load all knowledge layers in parallel
+    // Detect what the user is asking about (to avoid loading heavy indexes unnecessarily)
+    const needsGrants = userAsksForOpportunities(message) || /קול קורא|הגש|מענק|מימון|דדליין/i.test(message);
+    const needsCompanies = userAsksAboutCompanies(message) || /חברה|קרן|תורם|שותף|CSR/i.test(message);
+    const needsSector = userAsksAboutSector(message);
+
+    // Load all knowledge layers in parallel — heavy indexes only when relevant
     const [opportunityContext, companyContext, sectorContext, companiesIndex, grantsIndex, fundersIndex] = await Promise.all([
-      scanOpportunities(
-        supabase, org_id, profile?.data as Record<string, unknown> | null, org?.name ?? null, message
-      ),
-      scanCompanies(
-        supabase, profile?.data as Record<string, unknown> | null, org?.name ?? null, message
-      ),
-      loadSectorIntelligence(supabase, message),
-      loadCompaniesIndex(supabase),
-      loadGrantsIndex(),
-      loadFundersIndex(supabase),
+      needsGrants || active_tab === 'opportunities'
+        ? scanOpportunities(supabase, org_id, profile?.data as Record<string, unknown> | null, org?.name ?? null, message)
+        : Promise.resolve(''),
+      needsCompanies || active_tab === 'business'
+        ? scanCompanies(supabase, profile?.data as Record<string, unknown> | null, org?.name ?? null, message)
+        : Promise.resolve(''),
+      needsSector ? loadSectorIntelligence(supabase, message) : Promise.resolve(''),
+      needsCompanies || active_tab === 'business' ? loadCompaniesIndex(supabase) : Promise.resolve(''),
+      needsGrants || active_tab === 'opportunities' ? loadGrantsIndex() : Promise.resolve(''),
+      needsGrants || needsCompanies ? loadFundersIndex(supabase) : Promise.resolve(''),
     ]);
 
     // Tab-specific focus instructions
