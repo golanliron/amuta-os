@@ -39,9 +39,23 @@ export async function updateSession(request: NextRequest) {
   }
 
   if (user && isAuthRoute) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/dashboard';
-    return NextResponse.redirect(url);
+    // Check if user actually has a record in the users table
+    // If not (deleted account), sign them out instead of redirecting
+    const { data: userRecord } = await supabase
+      .from('users')
+      .select('id')
+      .eq('id', user.id)
+      .single();
+
+    if (userRecord) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/dashboard';
+      return NextResponse.redirect(url);
+    }
+
+    // User auth exists but no DB record — clear session
+    await supabase.auth.signOut();
+    return supabaseResponse;
   }
 
   return supabaseResponse;
