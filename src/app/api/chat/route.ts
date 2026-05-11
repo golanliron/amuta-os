@@ -1339,47 +1339,69 @@ export async function POST(request: NextRequest) {
 
     const supabase = createAdminClient();
 
-    // Step 1: Fetch URLs + org info in parallel
-    const [fetchedUrls, { data: org }, { data: profileBefore }] = await Promise.all([
-      fetchUrls(message),
+    const hasUrl = URL_REGEX.test(message);
+    const needsGrants = userAsksForOpportunities(message) || /קול קורא|הגש|מענק|מימון|דדליין/i.test(message);
+    const needsCompanies = userAsksAboutCompanies(message) || /חברה|קרן|תורם|שותף|CSR/i.test(message);
+    const needsSector = userAsksAboutSector(message);
+    const needsHeavyLoad = hasUrl || needsGrants || needsCompanies || needsSector || active_tab === 'opportunities' || active_tab === 'business';
+
+    // Fast path: org info + profile only (2 fast queries)
+    const [{ data: org }, { data: profileRow }] = await Promise.all([
       supabase.from('organizations').select('name, domain').eq('id', org_id).single(),
       supabase.from('org_profiles').select('data').eq('org_id', org_id).single(),
     ]);
 
-    // Step 2: Learn from URLs BEFORE building context (so this response already knows the org)
-    if (fetchedUrls.length > 0) {
-      await learnFromUrls(supabase, org_id, fetchedUrls);
+    let fetchedUrls: FetchedUrl[] = [];
+    let profileData: Record<string, unknown> | null = (profileRow?.data as Record<string, unknown>) ?? null;
+    let knowledge = '';
+    let rag = '';
+    let docSummary = '';
+    let opportunityContext = '';
+    let companyContext = '';
+    let sectorContext = '';
+    let companiesIndex = '';
+    let grantsIndex = '';
+    let fundersIndex = '';
+
+    if (needsHeavyLoad) {
+      // Heavy path: URLs + documents + indexes (only when needed)
+      if (hasUrl) {
+        fetchedUrls = await fetchUrls(message);
+        if (fetchedUrls.length > 0) {
+          await learnFromUrls(supabase, org_id, fetchedUrls);
+          const { data: updatedRow } = await supabase.from('org_profiles').select('data').eq('org_id', org_id).single();
+          profileData = (updatedRow?.data as Record<string, unknown>) ?? profileData;
+        }
+      }
+
+      const [chunksResult, ...indexResults] = await Promise.all([
+        loadAllChunks(supabase, org_id, message),
+        needsGrants || active_tab === 'opportunities'
+          ? scanOpportunities(supabase, org_id, profileData, org?.name ?? null, message)
+          : Promise.resolve(''),
+        needsCompanies || active_tab === 'business'
+          ? scanCompanies(supabase, profileData, org?.name ?? null, message)
+          : Promise.resolve(''),
+        needsSector ? loadSectorIntelligence(supabase, message) : Promise.resolve(''),
+        needsCompanies || active_tab === 'business' ? loadCompaniesIndex(supabase) : Promise.resolve(''),
+        needsGrants || active_tab === 'opportunities' ? loadGrantsIndex() : Promise.resolve(''),
+        needsGrants || needsCompanies ? loadFundersIndex(supabase) : Promise.resolve(''),
+      ]);
+
+      knowledge = chunksResult.knowledge;
+      rag = chunksResult.rag;
+      docSummary = chunksResult.docSummary;
+      [opportunityContext, companyContext, sectorContext, companiesIndex, grantsIndex, fundersIndex] = indexResults;
+    } else {
+      // Light path: only load documents (fast, important for context)
+      const chunksResult = await loadAllChunks(supabase, org_id, message);
+      knowledge = chunksResult.knowledge;
+      rag = chunksResult.rag;
+      docSummary = chunksResult.docSummary;
     }
 
-    // Step 3: Re-fetch profile (may have been updated by learnFromUrls) + load knowledge in parallel
-    const [{ data: profile }, { knowledge, rag, docSummary }] = await Promise.all([
-      fetchedUrls.length > 0
-        ? supabase.from('org_profiles').select('data').eq('org_id', org_id).single()
-        : Promise.resolve({ data: profileBefore }),
-      loadAllChunks(supabase, org_id, message),
-    ]);
-
     const urlContent = formatUrlsForMessage(fetchedUrls);
-    const orgContext = buildOrgContext(profile?.data ?? null, org?.name ?? null);
-
-    // Detect what the user is asking about (to avoid loading heavy indexes unnecessarily)
-    const needsGrants = userAsksForOpportunities(message) || /קול קורא|הגש|מענק|מימון|דדליין/i.test(message);
-    const needsCompanies = userAsksAboutCompanies(message) || /חברה|קרן|תורם|שותף|CSR/i.test(message);
-    const needsSector = userAsksAboutSector(message);
-
-    // Load all knowledge layers in parallel — heavy indexes only when relevant
-    const [opportunityContext, companyContext, sectorContext, companiesIndex, grantsIndex, fundersIndex] = await Promise.all([
-      needsGrants || active_tab === 'opportunities'
-        ? scanOpportunities(supabase, org_id, profile?.data as Record<string, unknown> | null, org?.name ?? null, message)
-        : Promise.resolve(''),
-      needsCompanies || active_tab === 'business'
-        ? scanCompanies(supabase, profile?.data as Record<string, unknown> | null, org?.name ?? null, message)
-        : Promise.resolve(''),
-      needsSector ? loadSectorIntelligence(supabase, message) : Promise.resolve(''),
-      needsCompanies || active_tab === 'business' ? loadCompaniesIndex(supabase) : Promise.resolve(''),
-      needsGrants || active_tab === 'opportunities' ? loadGrantsIndex() : Promise.resolve(''),
-      needsGrants || needsCompanies ? loadFundersIndex(supabase) : Promise.resolve(''),
-    ]);
+    const orgContext = buildOrgContext(profileData, org?.name ?? null);
 
     // Tab-specific focus instructions
     const TAB_FOCUS: Record<string, string> = {
