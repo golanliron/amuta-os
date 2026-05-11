@@ -92,3 +92,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export function useAuth() {
   return useContext(AuthContext);
 }
+
+// Wrapper for server layout — re-exports AuthProvider as named export
+export { AuthProvider as AuthWrapper };

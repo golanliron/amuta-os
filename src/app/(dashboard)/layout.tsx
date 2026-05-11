@@ -1,15 +1,13 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import SplashScreen from '@/components/SplashScreen';
 import FishLogo from '@/components/chat/FishLogo';
 import Link from 'next/link';
 import SidebarPanel from '@/components/sidebar/SidebarPanel';
 import type { AppStage, SidebarTab } from '@/types';
-
-// Dev mode - skip auth entirely
-const DEV_ORG_ID = 'd5f860e8-4958-408c-a00f-679a93f1d470';
-const DEV_USER_ID = 'dev-user';
+import { useAuth } from '@/lib/auth-context';
 
 const MOBILE_TABS: { id: 'chat' | SidebarTab; label: string; icon: string }[] = [
   { id: 'chat', label: 'צ\'אט', icon: 'M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z' },
@@ -20,7 +18,7 @@ const MOBILE_TABS: { id: 'chat' | SidebarTab; label: string; icon: string }[] = 
   { id: 'foundations', label: 'קרנות', icon: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5' },
 ];
 
-function FeedbackModal({ onClose }: { onClose: () => void }) {
+function FeedbackModal({ onClose, orgId }: { onClose: () => void; orgId: string | null }) {
   const [type, setType] = useState<'bug' | 'idea' | 'love' | 'other'>('idea');
   const [text, setText] = useState('');
   const [sent, setSent] = useState(false);
@@ -33,7 +31,7 @@ function FeedbackModal({ onClose }: { onClose: () => void }) {
     try {
       const supabase = (await import('@/lib/supabase/client')).createClient();
       await supabase.from('feedback').insert({
-        org_id: DEV_ORG_ID,
+        org_id: orgId,
         type,
         message: text,
       });
@@ -96,6 +94,8 @@ function FeedbackModal({ onClose }: { onClose: () => void }) {
 }
 
 function DashboardInner({ children }: { children: React.ReactNode }) {
+  const { orgId, user, loading: authLoading, signOut } = useAuth();
+  const router = useRouter();
   const [showSplash, setShowSplash] = useState(true);
   const [stage, setStage] = useState<AppStage>(0);
   const [mobileTab, setMobileTab] = useState<'chat' | SidebarTab>('chat');
@@ -116,9 +116,19 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener('fishgold:closeSidebar', closeSidebar);
   }, []);
 
+  if (authLoading) {
+    return (
+      <div className="h-dvh flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-2 border-accent border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
   if (showSplash) {
     return <SplashScreen onComplete={() => setShowSplash(false)} />;
   }
+
+  const userInitial = user?.user_metadata?.full_name?.[0] || user?.email?.[0]?.toUpperCase() || '?';
 
   return (
     <div className="h-dvh flex flex-col fade-in">
@@ -154,9 +164,13 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
           >
             📤 אהבתם? שתפו חבר
           </button>
-          <div className="w-7 h-7 rounded-full bg-accent text-white flex items-center justify-center text-xs font-bold">
-            ל
-          </div>
+          <button
+            onClick={async () => { await signOut(); router.push('/login'); }}
+            className="w-7 h-7 rounded-full bg-accent text-white flex items-center justify-center text-xs font-bold hover:opacity-80 transition-opacity"
+            title="התנתק"
+          >
+            {userInitial}
+          </button>
         </div>
       </header>
 
@@ -164,7 +178,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
       <div className="flex-1 hidden md:flex overflow-hidden">
         {/* Sidebar - right side (RTL) */}
         <aside className="w-[370px] flex-shrink-0 border-l border-border overflow-hidden bg-bg2">
-          <SidebarPanel stage={stage} orgId={DEV_ORG_ID} />
+          <SidebarPanel stage={stage} orgId={orgId || ''} />
         </aside>
         {/* Chat */}
         <main className="flex-1 overflow-hidden">
@@ -182,7 +196,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
             </main>
           ) : (
             <div className="h-full overflow-y-auto bg-bg2">
-              <SidebarPanel stage={stage} orgId={DEV_ORG_ID} initialTab={mobileTab as SidebarTab} />
+              <SidebarPanel stage={stage} orgId={orgId || ''} initialTab={mobileTab as SidebarTab} />
             </div>
           )}
         </div>
@@ -210,7 +224,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
           </div>
         </nav>
       </div>
-      {showFeedback && <FeedbackModal onClose={() => setShowFeedback(false)} />}
+      {showFeedback && <FeedbackModal onClose={() => setShowFeedback(false)} orgId={orgId} />}
     </div>
   );
 }
